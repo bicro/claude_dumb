@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>claudedumb.com — Is Claude Being Dumb Right Now?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Grain overlay -->
+  <div class="grain"></div>
+
+  <header>
+    <a href="/" class="logo">claude<span class="accent">dumb</span><span class="tld">.com</span></a>
+    <nav class="header-nav">
+      <span class="tagline">real-time claude vibes from around the world</span>
+      <a class="gh-link" href="https://github.com/bicro/claude_dumb" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- LEFT: Vibes + Vote -->
+    <section class="panel-left">
+      <!-- Big status hero -->
+      <div class="vibes-hero">
+        <div class="vibes-hero-label">
+          <span class="pulse-dot"></span>
+          community vibes
+        </div>
+        <div class="vibes-hero-status" id="vibes-status">Loading...</div>
+        <div class="vibes-hero-count" id="vibes-count"></div>
+      </div>
+
+      <!-- 24h tile grid -->
+      <div class="tiles-section">
+        <div class="tiles-grid" id="vibes-tiles"></div>
+        <div class="tiles-axis">
+          <span>24h ago</span>
+          <span>now</span>
+        </div>
+      </div>
+
+      <!-- Vote -->
+      <div class="vote-area">
+        <input type="text" class="comment-input" id="comment-input" placeholder="leave a comment (optional)" maxlength="280" autocomplete="off">
+        <div class="vote-buttons">
+          <button class="vote-btn smart" id="btn-smart">
+            <span class="vote-btn-icon">&#9650;</span>
+            Smart
+          </button>
+          <button class="vote-btn dumb" id="btn-dumb">
+            <span class="vote-btn-icon">&#9660;</span>
+            Dumb
+          </button>
+        </div>
+        <div class="vote-feedback" id="vote-status"></div>
+      </div>
+
+      <!-- Meter -->
+      <div class="meter">
+        <div class="meter-header">
+          <span class="meter-val smart" id="count-smart">0</span>
+          <span class="meter-label">last hour</span>
+          <span class="meter-val dumb" id="count-dumb">0</span>
+        </div>
+        <div class="meter-track">
+          <div class="meter-fill smart" id="meter-smart"></div>
+          <div class="meter-fill dumb" id="meter-dumb"></div>
+        </div>
+      </div>
+
+      <!-- Live Activity Feed -->
+      <div class="activity-feed">
+        <div class="activity-label">Live Activity</div>
+        <div class="activity-list" id="activity-list"></div>
+      </div>
+    </section>
+
+    <!-- CENTER: Globe -->
+    <section class="panel-globe">
+      <div class="globe-wrapper" id="globe-wrapper"></div>
+    </section>
+
+    <!-- RIGHT: Official status -->
+    <section class="panel-right">
+      <div class="status-header-row">
+        <span class="status-title">Official Status</span>
+        <a class="status-source" href="https://status.claude.com" target="_blank" rel="noopener">status.claude.com</a>
+      </div>
+
+      <div class="overall-banner" id="overall-banner">
+        <span class="overall-dot" id="overall-icon">●</span>
+        <span id="overall-text">Loading...</span>
+      </div>
+
+      <div class="uptime-list" id="uptime-cards"></div>
+
+      <div class="incidents-area" id="incidents-section" style="display:none">
+        <div class="incidents-label">Active Incidents</div>
+        <div id="incidents-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="//unpkg.com/globe.gl"></script>
+  <script src="app.js"></script>
+</body>
+</html>

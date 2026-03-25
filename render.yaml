@@ -1,0 +1,20 @@
+databases:
+  - name: claudedumb-db
+    plan: free
+    databaseName: claudedumb
+    user: claudedumb
+
+services:
+  - type: web
+    name: claudedumb
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: claudedumb-db
+          property: connectionString
+      - key: NODE_ENV
+        value: production
