@@ -244,7 +244,7 @@ app.post('/api/vote', async (req, res) => {
       return res.status(400).json({ error: 'Invalid vote' });
     }
 
-    const cleanComment = comment ? String(comment).slice(0, 280).trim() : null;
+    const cleanComment = comment ? String(comment).slice(0, 120).trim() : null;
     const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress;
 
     const recent = await db.getRecentVoteByIP(ip);

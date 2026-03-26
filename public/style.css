@@ -1,6 +1,6 @@
 /* ============================================================
    claudedumb.com — Premium dashboard aesthetic
-   JetBrains Mono, warm neutrals, tight layout
+   JetBrains Mono, warm neutrals
    ============================================================ */
 
 :root {
@@ -22,7 +22,7 @@
   --orange: #e67e22;
   --orange-bg: rgba(230, 126, 34, 0.08);
   --border: #e5e0da;
-  --r: 10px;
+  --r: 12px;
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
   --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.02);
   --shadow-lg: 0 4px 24px rgba(0,0,0,0.06);
@@ -39,7 +39,7 @@ body {
   font-family: var(--font);
   background: var(--bg);
   color: var(--text);
-  font-size: 12px;
+  font-size: 16px;
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
@@ -62,8 +62,8 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1.5rem;
-  height: 44px;
+  padding: 0 2rem;
+  height: 56px;
   border-bottom: 1px solid var(--border);
   background: var(--bg-card);
   flex-shrink: 0;
@@ -71,7 +71,7 @@ header {
 }
 
 .logo {
-  font-size: 1.15rem;
+  font-size: 1.5rem;
   font-weight: 800;
   text-decoration: none;
   color: var(--text);
@@ -84,12 +84,12 @@ header {
 .header-nav {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
 .tagline {
   color: var(--text-3);
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.02em;
 }
@@ -100,12 +100,13 @@ header {
   transition: color 0.15s;
 }
 .gh-link:hover { color: var(--text); }
+.gh-link svg { width: 22px; height: 22px; }
 
 /* ---- Main 3-column layout ---- */
 main {
   flex: 1;
   display: grid;
-  grid-template-columns: 260px 1fr 280px;
+  grid-template-columns: 340px 1fr 360px;
   gap: 0;
   min-height: 0;
   overflow: hidden;
@@ -115,8 +116,8 @@ main {
 .panel-left {
   display: flex;
   flex-direction: column;
-  padding: 1.2rem 1.2rem 1rem;
-  gap: 1rem;
+  padding: 1.5rem 1.5rem 1.2rem;
+  gap: 1.2rem;
   border-right: 1px solid var(--border);
   background: var(--bg-card);
   overflow-y: auto;
@@ -130,21 +131,21 @@ main {
 }
 
 .vibes-hero-label {
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   color: var(--text-3);
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.7rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .pulse-dot {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--green);
   display: inline-block;
@@ -153,15 +154,15 @@ main {
 
 @keyframes pulse {
   0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(90,154,31,0.4); }
-  50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(90,154,31,0); }
+  50% { opacity: 0.7; box-shadow: 0 0 0 5px rgba(90,154,31,0); }
 }
 
 .vibes-hero-status {
-  font-size: 1.6rem;
+  font-size: 2.2rem;
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1.1;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.3rem;
 }
 
 .vibes-hero-status.smart { color: var(--green); }
@@ -169,7 +170,7 @@ main {
 .vibes-hero-status.dumb { color: var(--red); }
 
 .vibes-hero-count {
-  font-size: 10px;
+  font-size: 14px;
   color: var(--text-3);
   font-weight: 500;
 }
@@ -182,12 +183,12 @@ main {
 .tiles-grid {
   display: grid;
   grid-template-columns: repeat(24, 1fr);
-  gap: 3px;
+  gap: 4px;
 }
 
 .vibes-tile {
   aspect-ratio: 1;
-  border-radius: 3px;
+  border-radius: 4px;
   position: relative;
   cursor: default;
   transition: transform 0.1s, box-shadow 0.1s;
@@ -202,14 +203,14 @@ main {
 .vibes-tile-tooltip {
   display: none;
   position: absolute;
-  bottom: calc(100% + 6px);
+  bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
   background: var(--text);
   color: #fff;
-  padding: 4px 8px;
-  border-radius: 5px;
-  font-size: 9px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
   z-index: 10;
@@ -221,9 +222,9 @@ main {
 .tiles-axis {
   display: flex;
   justify-content: space-between;
-  font-size: 8px;
+  font-size: 13px;
   color: var(--text-3);
-  margin-top: 3px;
+  margin-top: 4px;
   font-weight: 500;
 }
 
@@ -231,22 +232,22 @@ main {
 .vote-area {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.5rem;
 }
 
 /* Comment input */
 .comment-input {
   width: 100%;
   font-family: var(--font);
-  font-size: 11px;
-  padding: 8px 10px;
+  font-size: 14px;
+  padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: var(--r);
   background: var(--bg);
   color: var(--text);
   outline: none;
   transition: border-color 0.15s;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .comment-input:focus {
@@ -260,21 +261,21 @@ main {
 .vote-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
 }
 
 .vote-btn {
   font-family: var(--font);
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 700;
   border: none;
   border-radius: var(--r);
-  padding: 0.7rem 0;
+  padding: 0.8rem 0;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   transition: all 0.15s;
   position: relative;
   overflow: hidden;
@@ -316,14 +317,14 @@ main {
 .vote-btn:active { transform: translateY(0) !important; }
 
 .vote-btn-icon {
-  font-size: 8px;
+  font-size: 14px;
 }
 
 .vote-feedback {
-  font-size: 10px;
+  font-size: 14px;
   text-align: center;
   color: var(--text-3);
-  min-height: 14px;
+  min-height: 18px;
 }
 
 .vote-feedback.success { color: var(--green); }
@@ -331,7 +332,7 @@ main {
 
 /* Meter */
 .meter {
-  padding-top: 0.2rem;
+  padding-top: 0.3rem;
   border-top: 1px solid var(--border);
 }
 
@@ -339,19 +340,19 @@ main {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.4rem;
 }
 
 .meter-val {
   font-weight: 700;
-  font-size: 11px;
+  font-size: 15px;
 }
 
 .meter-val.smart { color: var(--green); }
 .meter-val.dumb { color: var(--red); }
 
 .meter-label {
-  font-size: 9px;
+  font-size: 13px;
   color: var(--text-3);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -359,9 +360,9 @@ main {
 }
 
 .meter-track {
-  height: 6px;
+  height: 8px;
   background: #ebe8e3;
-  border-radius: 3px;
+  border-radius: 4px;
   overflow: hidden;
   display: flex;
 }
@@ -373,13 +374,13 @@ main {
 
 .meter-fill.smart {
   background: var(--green-soft);
-  border-radius: 3px 0 0 3px;
+  border-radius: 4px 0 0 4px;
   width: 50%;
 }
 
 .meter-fill.dumb {
   background: var(--red);
-  border-radius: 0 3px 3px 0;
+  border-radius: 0 4px 4px 0;
   width: 50%;
 }
 
@@ -390,17 +391,17 @@ main {
   display: flex;
   flex-direction: column;
   border-top: 1px solid var(--border);
-  padding-top: 0.5rem;
+  padding-top: 0.6rem;
   overflow: hidden;
 }
 
 .activity-label {
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.2px;
   color: var(--text-3);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
 }
 
 .activity-list {
@@ -408,7 +409,7 @@ main {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
   mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
 }
@@ -418,9 +419,9 @@ main {
 .activity-item {
   display: flex;
   align-items: flex-start;
-  gap: 6px;
-  padding: 4px 0;
-  font-size: 9px;
+  gap: 8px;
+  padding: 5px 0;
+  font-size: 14px;
   color: var(--text-2);
   animation: fadeSlideIn 0.3s ease;
   line-height: 1.4;
@@ -432,10 +433,11 @@ main {
 }
 
 .activity-dot {
-  width: 5px;
-  height: 5px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
+  margin-top: 5px;
 }
 
 .activity-dot.smart { background: var(--green); }
@@ -458,16 +460,15 @@ main {
   color: var(--text-2);
   font-style: italic;
   display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .activity-time {
   color: var(--text-3);
   flex-shrink: 0;
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 /* ---- Energy Dot Styles (rendered as HTML on globe) ---- */
@@ -542,8 +543,8 @@ main {
 .panel-right {
   display: flex;
   flex-direction: column;
-  padding: 1rem 1rem;
-  gap: 0.5rem;
+  padding: 1.2rem 1.2rem;
+  gap: 0.6rem;
   border-left: 1px solid var(--border);
   background: var(--bg-card);
   overflow-y: auto;
@@ -558,7 +559,7 @@ main {
 }
 
 .status-title {
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.2px;
@@ -566,7 +567,7 @@ main {
 }
 
 .status-source {
-  font-size: 9px;
+  font-size: 13px;
   color: var(--accent);
   text-decoration: none;
   font-weight: 500;
@@ -578,10 +579,10 @@ main {
 .overall-banner {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 11px;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 15px;
   font-weight: 600;
 }
 
@@ -600,21 +601,21 @@ main {
   color: var(--red);
 }
 
-.overall-dot { font-size: 8px; }
+.overall-dot { font-size: 10px; }
 
-/* Uptime cards — ultra compact */
+/* Uptime cards */
 .uptime-list {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   flex: 1;
   min-height: 0;
 }
 
 .uptime-card {
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 10px 6px;
+  border-radius: 10px;
+  padding: 10px 12px 8px;
   transition: border-color 0.15s;
 }
 
@@ -624,12 +625,12 @@ main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .uptime-name {
   font-weight: 700;
-  font-size: 10px;
+  font-size: 14px;
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
@@ -637,10 +638,10 @@ main {
 }
 
 .uptime-status {
-  font-size: 8px;
+  font-size: 13px;
   font-weight: 700;
-  padding: 1px 5px;
-  border-radius: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -652,15 +653,15 @@ main {
 
 .uptime-bars {
   display: flex;
-  gap: 1px;
-  height: 16px;
+  gap: 2px;
+  height: 22px;
   align-items: stretch;
 }
 
 .uptime-bar {
   flex: 1;
-  border-radius: 1.5px;
-  min-width: 1px;
+  border-radius: 2px;
+  min-width: 2px;
   position: relative;
   cursor: default;
   transition: transform 0.1s;
@@ -674,14 +675,14 @@ main {
 .uptime-bar-tooltip {
   display: none;
   position: absolute;
-  bottom: calc(100% + 4px);
+  bottom: calc(100% + 6px);
   left: 50%;
   transform: translateX(-50%);
   background: var(--text);
   color: #fff;
-  padding: 3px 6px;
-  border-radius: 4px;
-  font-size: 8px;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
   z-index: 10;
@@ -693,9 +694,9 @@ main {
 .uptime-footer {
   display: flex;
   justify-content: space-between;
-  font-size: 8px;
+  font-size: 13px;
   color: var(--text-3);
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
 .uptime-pct { font-weight: 700; color: var(--text-2); }
@@ -703,44 +704,50 @@ main {
 /* Incidents */
 .incidents-area {
   border-top: 1px solid var(--border);
-  padding-top: 0.5rem;
+  padding-top: 0.6rem;
 }
 
 .incidents-label {
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--text-2);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
 }
 
 .incident-card {
-  border-left: 2px solid var(--orange);
-  padding: 5px 8px;
-  margin-bottom: 4px;
+  border-left: 3px solid var(--orange);
+  padding: 8px 12px;
+  margin-bottom: 6px;
   background: var(--bg-hover);
-  border-radius: 0 6px 6px 0;
+  border-radius: 0 8px 8px 0;
 }
 
 .incident-card.major { border-left-color: var(--red); }
 
 .incident-name {
   font-weight: 700;
-  font-size: 9px;
+  font-size: 14px;
   line-height: 1.3;
 }
 
 .incident-status {
-  font-size: 8px;
+  font-size: 13px;
   color: var(--text-3);
   text-transform: capitalize;
 }
 
 /* ---- Responsive ---- */
+@media (max-width: 1400px) {
+  main {
+    grid-template-columns: 300px 1fr 320px;
+  }
+}
+
 @media (max-width: 1100px) {
   main {
-    grid-template-columns: 220px 1fr 240px;
+    grid-template-columns: 260px 1fr 280px;
   }
 }
 
