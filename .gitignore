@@ -4,3 +4,4 @@ votes.db
 *.db-shm
 .env
 package-lock.json
+*.log

@@ -42,36 +42,32 @@ async function initGlobe() {
     .polygonSideColor(() => 'rgba(200,185,165,0.3)')
     .polygonStrokeColor(() => '#c0b5a0')
     .polygonAltitude(0.004)
-    // Use HTML elements for pulsing energy dots
-    .htmlElementsData([])
-    .htmlLat('lat')
-    .htmlLng('lng')
-    .htmlAltitude(0.01)
-    .htmlElement(d => {
-      const el = document.createElement('div');
-      el.className = 'energy-dot';
-      el.style.color = d.color;
-      el.style.opacity = d.opacity;
-      const core = document.createElement('div');
-      core.className = 'energy-core';
-      core.style.width = d.coreSize + 'px';
-      core.style.height = d.coreSize + 'px';
-      const ring = document.createElement('div');
-      ring.className = 'energy-ring';
-      ring.style.animationDelay = (Math.random() * 2).toFixed(1) + 's';
-      const ring2 = document.createElement('div');
-      ring2.className = 'energy-ring2';
-      ring2.style.animationDelay = (Math.random() * 2 + 0.3).toFixed(1) + 's';
-      el.appendChild(core);
-      el.appendChild(ring);
-      el.appendChild(ring2);
-      return el;
-    })
-    .htmlTransitionDuration(600);
+    // Use native points layer (GPU-rendered, much faster than HTML elements)
+    .pointsData([])
+    .pointLat('lat')
+    .pointLng('lng')
+    .pointColor('color')
+    .pointAltitude(0.008)
+    .pointRadius('radius')
+    .pointsMerge(true)  // merge into single geometry for performance
+    .pointsTransitionDuration(600)
+
+    // Rings layer for the pulsing effect (GPU-rendered)
+    .ringsData([])
+    .ringLat('lat')
+    .ringLng('lng')
+    .ringColor('ringColor')
+    .ringMaxRadius('maxR')
+    .ringPropagationSpeed('speed')
+    .ringRepeatPeriod('period')
+    .ringAltitude(0.005);
 
   const mat = globeInstance.globeMaterial();
   mat.color.set('#f2ece3');
   mat.shininess = 3;
+
+  // Cap pixel ratio for performance on retina displays
+  globeInstance.renderer().setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   const ctrl = globeInstance.controls();
   ctrl.autoRotate = true;
@@ -106,26 +102,42 @@ function toGeoJSON(topo, name) {
   return { type: 'FeatureCollection', features: [{ type: 'Feature', geometry: dGeom(obj), properties: {} }] };
 }
 
-// ---- Vote dots (energy orbs) ----
+// ---- Vote dots (GPU-rendered points + rings) ----
 function loadVotes() {
   fetch('/api/votes/recent').then(r => r.json()).then(data => {
     if (!globeInstance) return;
-    const points = data
-      .filter(v => v.latitude != null && v.longitude != null)
+
+    const filtered = data.filter(v => v.latitude != null && v.longitude != null);
+
+    // Points (solid dots)
+    const points = filtered.map(v => {
+      const fade = Math.max(0.2, 1 - (v.hours_ago / 24));
+      const s = v.vote === 'smart';
+      const r = s ? 90 : 214, g = s ? 154 : 48, b = s ? 31 : 49;
+      return {
+        lat: v.latitude, lng: v.longitude, vote: v.vote,
+        color: `rgba(${r},${g},${b},${fade.toFixed(2)})`,
+        radius: 0.3 + fade * 0.35,
+      };
+    });
+    globeInstance.pointsData(points);
+
+    // Rings (pulsing effect) — only on recent votes (last 6h) to limit count
+    const rings = filtered
+      .filter(v => v.hours_ago < 6)
       .map(v => {
-        const fade = Math.max(0.15, 1 - (v.hours_ago / 24));
         const s = v.vote === 'smart';
+        const fade = Math.max(0.2, 1 - (v.hours_ago / 6));
         return {
-          lat: v.latitude, lng: v.longitude, vote: v.vote,
-          color: s ? '#5a9a1f' : '#d63031',
-          opacity: fade,
-          coreSize: 4 + fade * 6,
-          timeLabel: v.hours_ago < 1 ? `${Math.round(v.hours_ago * 60)}m ago` : `${Math.round(v.hours_ago)}h ago`,
+          lat: v.latitude, lng: v.longitude,
+          ringColor: () => s ? `rgba(90,154,31,${(fade * 0.6).toFixed(2)})` : `rgba(214,48,49,${(fade * 0.6).toFixed(2)})`,
+          maxR: 3 + fade * 2,
+          speed: 1.5 + Math.random(),
+          period: 1500 + Math.random() * 1000,
         };
       });
-    globeInstance.htmlElementsData(points);
+    globeInstance.ringsData(rings);
 
-    // Update activity feed
     updateActivityFeed(data);
   });
 }
