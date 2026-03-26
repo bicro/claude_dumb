@@ -1,0 +1,1846 @@
+[FeedbackPrompt] Initialized - launches: 1, firstCall: true, dismissed: true
+🔐 [Auth] Loading saved session from keychain...
+🔐 [Auth] ✅ Found saved session for: rohit_frisson_07307 (rohit@frisson-labs.com)
+Couldn't read values in CFPrefsPlistSource<0x102a43080> (Domain: group.FrissonLabs.BroadcastTest, User: kCFPreferencesAnyUser, ByHost: Yes, Container: (null), Contents Need Refresh: Yes): Using kCFPreferencesAnyUser with a container is only allowed for System Containers, detaching from cfprefsd
+[LiveKitConfig] Set authenticated user ID: 7ed2746a-e33d-4c3a-98bb-393e06fec67c
+🔐 [Auth] Set authenticated user ID in LiveKitConfig: 7ed2746a-e33d-4c3a-98bb-393e06fec67c
+Invalid frame dimension (negative or non-finite).
+✅ Created fresh Metal device for Live2D instance
+✅ Live2D singleton configured with this instance's Metal device
+✅ Metal setup complete for view with model
+✅ Cubism Framework initialized (one-time initialization)
+Found hgkoazarasi model at: /private/var/containers/Bundle/Application/40309B51-134D-490A-9793-A3C39CB8C301/BroadcastTest.app/Characters/hgkoazarasi
+Live2D Cubism SDK Core Version 5.1.0
+Successfully loaded Cubism model
+🧹 Released static renderer resources before creating new renderer
+Successfully created fresh Metal renderer
+📦 Loading 1 textures for model...
+🎨 Texture slot 0: loading 'hgkoazarasi_texture_00'
+   ✓ Loaded image (4096x4096)
+   ✓ Bound texture to slot 0
+✅ All 1 textures loaded and bound
+✅ Loaded fallback idle motion (neutral, -1.0s loop)
+✅ Eye blinking enabled (2 parameters)
+✅ Breathing enabled (2 parameters, subtle)
+✅ Loaded 0 expressions
+🔍 DEBUG: Model 'hgkoazarasi' has 19 parameters
+📋 PARAMETER LIST (for universal expressions):
+  [0] ParamAngleX: default=0.000, range=[-30.000, 30.000]
+  [1] ParamAngleY: default=0.000, range=[-30.000, 30.000]
+  [2] ParamAngleZ: default=0.000, range=[-30.000, 30.000]
+  [3] ParamMouthForm: default=0.000, range=[-1.000, 1.000]
+  [4] ParamMouthOpenY: default=0.000, range=[0.000, 1.000]
+  [5] ParamEyeLOpen: default=1.000, range=[0.000, 1.000]
+  [6] ParamEyeLSmile: default=0.000, range=[0.000, 1.000]
+  [7] ParamEyeROpen: default=1.000, range=[0.000, 1.000]
+  [8] ParamEyeRSmile: default=0.000, range=[0.000, 1.000]
+  [9] ParamBrowLY: default=0.000, range=[-1.000, 1.000]
+  [10] ParamBrowRY: default=0.000, range=[-1.000, 1.000]
+  [11] ParamCheek1: default=0.000, range=[0.000, 1.000]
+  [12] ParamBreath: default=0.000, range=[0.000, 1.000]
+  [13] ParamNamida: default=0.000, range=[0.000, 1.000]
+  [14] ParamKomari: default=0.000, range=[0.000, 1.000]
+  [15] ParamKage: default=0.000, range=[0.000, 1.000]
+  [16] ParamJump: default=0.000, range=[0.000, 1.000]
+  [17] ParamOko: default=0.000, range=[0.000, 1.000]
+  [18] Param: default=0.000, range=[0.000, 1.000]
+Started Live2D rendering at 30 FPS
+✅ Live2D view created for model 'hgkoazarasi' at scale: 3.0
+Live2D layout: bounds=337x391, scale=3.0, drawable=1011x1172
+🔐 [Auth] Validating current session...
+🔐 [Auth] Token exists, validating with server...
+📱 App became active
+🔐 [Auth] Validating current session...
+🔐 [Auth] Token exists, validating with server...
+Created offscreen render texture (Shared): 1011x1172 - CLEARED
+✅ Live2D view updated for PiP: 'hgkoazarasi'
+🔐 [Auth] ✅ Session validated successfully
+🔐 [Auth] User: rohit_frisson_07307 (rohit@frisson-labs.com)
+🔐 [Auth] ✅ Session validated successfully
+🔐 [Auth] User: rohit_frisson_07307 (rohit@frisson-labs.com)
+Hang detected: 0.56s (overlaps extended launch)
+📱 App became inactive
+📱 App became active
+🔐 [Auth] Validating current session...
+🔐 [Auth] Session validated 0 minutes ago, skipping
+[LiveKitConfig] Character code updated to: QKJD
+✅ Created fresh Metal device for Live2D instance
+✅ Live2D singleton configured with this instance's Metal device
+✅ Metal setup complete for view with model
+Found hgkoazarasi model at: /private/var/containers/Bundle/Application/40309B51-134D-490A-9793-A3C39CB8C301/BroadcastTest.app/Characters/hgkoazarasi
+Live2D Cubism SDK Core Version 5.1.0
+Successfully loaded Cubism model
+🧹 Released static renderer resources before creating new renderer
+Successfully created fresh Metal renderer
+📦 Loading 1 textures for model...
+🎨 Texture slot 0: loading 'hgkoazarasi_texture_00'
+   ✓ Loaded image (4096x4096)
+   ✓ Bound texture to slot 0
+✅ All 1 textures loaded and bound
+✅ Loaded fallback idle motion (neutral, -1.0s loop)
+✅ Eye blinking enabled (2 parameters)
+✅ Breathing enabled (2 parameters, subtle)
+✅ Loaded 0 expressions
+🔍 DEBUG: Model 'hgkoazarasi' has 19 parameters
+📋 PARAMETER LIST (for universal expressions):
+  [0] ParamAngleX: default=0.000, range=[-30.000, 30.000]
+  [1] ParamAngleY: default=0.000, range=[-30.000, 30.000]
+  [2] ParamAngleZ: default=0.000, range=[-30.000, 30.000]
+  [3] ParamMouthForm: default=0.000, range=[-1.000, 1.000]
+  [4] ParamMouthOpenY: default=0.000, range=[0.000, 1.000]
+  [5] ParamEyeLOpen: default=1.000, range=[0.000, 1.000]
+  [6] ParamEyeLSmile: default=0.000, range=[0.000, 1.000]
+  [7] ParamEyeROpen: default=1.000, range=[0.000, 1.000]
+  [8] ParamEyeRSmile: default=0.000, range=[0.000, 1.000]
+  [9] ParamBrowLY: default=0.000, range=[-1.000, 1.000]
+  [10] ParamBrowRY: default=0.000, range=[-1.000, 1.000]
+  [11] ParamCheek1: default=0.000, range=[0.000, 1.000]
+  [12] ParamBreath: default=0.000, range=[0.000, 1.000]
+  [13] ParamNamida: default=0.000, range=[0.000, 1.000]
+  [14] ParamKomari: default=0.000, range=[0.000, 1.000]
+  [15] ParamKage: default=0.000, range=[0.000, 1.000]
+  [16] ParamJump: default=0.000, range=[0.000, 1.000]
+  [17] ParamOko: default=0.000, range=[0.000, 1.000]
+  [18] Param: default=0.000, range=[0.000, 1.000]
+Started Live2D rendering at 30 FPS
+✅ Live2D view created for model 'hgkoazarasi' at scale: 3.0
+Live2D layout: bounds=337x391, scale=3.0, drawable=1011x1172
+Created offscreen render texture (Shared): 1011x1172 - CLEARED
+✅ Live2D view updated for PiP: 'hgkoazarasi'
+🔄 Flushed Metal command queue
+🧹 Cleared offscreen textures and render pass descriptor
+🧹 Released static renderer resources (including shader cache)
+Stopped Live2D rendering
+🛑 Live2D view dismantled
+🔄 Flushed Metal command queue
+🧹 Cleared offscreen textures and render pass descriptor
+🧹 Released static renderer resources (including shader cache)
+Stopped Live2D rendering
+Cleaning up Live2D model...
+Unbound 1 textures
+Renderer deleted
+Live2D model cleanup complete
+Live2D view dealloc complete
+Reporter disconnected. { function=sendMessage, reporterID=29244432318465 }
+Reporter disconnected. { function=sendMessage, reporterID=29244432318465 }
+Reporter disconnected. { function=sendMessage, reporterID=29244432318465 }
+Reporter disconnected. { function=sendMessage, reporterID=29244432318465 }
+Reporter disconnected. { function=sendMessage, reporterID=29244432318465 }
+Reporter disconnected. { function=sendMessage, reporterID=29244432318465 }
+Reporter disconnected. { function=sendMessage, reporterID=29244432318465 }
+Reporter disconnected. { function=sendMessage, reporterID=29244432318465 }
+Reporter disconnected. { function=sendMessage, reporterID=29244432318465 }
+The variant selector cell index number could not be found.
+The variant selector cell index number could not be found.
+The variant selector cell index number could not be found.
+The variant selector cell index number could not be found.
+The variant selector cell index number could not be found.
+✅ Created fresh Metal device for Live2D instance
+✅ Live2D singleton configured with this instance's Metal device
+✅ Metal setup complete for view with model
+Found hgkoazarasi model at: /private/var/containers/Bundle/Application/40309B51-134D-490A-9793-A3C39CB8C301/BroadcastTest.app/Characters/hgkoazarasi
+Live2D Cubism SDK Core Version 5.1.0
+Successfully loaded Cubism model
+🧹 Released static renderer resources before creating new renderer
+Successfully created fresh Metal renderer
+📦 Loading 1 textures for model...
+🎨 Texture slot 0: loading 'hgkoazarasi_texture_00'
+   ✓ Loaded image (4096x4096)
+   ✓ Bound texture to slot 0
+✅ All 1 textures loaded and bound
+✅ Loaded fallback idle motion (neutral, -1.0s loop)
+✅ Eye blinking enabled (2 parameters)
+✅ Breathing enabled (2 parameters, subtle)
+✅ Loaded 0 expressions
+🔍 DEBUG: Model 'hgkoazarasi' has 19 parameters
+📋 PARAMETER LIST (for universal expressions):
+  [0] ParamAngleX: default=0.000, range=[-30.000, 30.000]
+  [1] ParamAngleY: default=0.000, range=[-30.000, 30.000]
+  [2] ParamAngleZ: default=0.000, range=[-30.000, 30.000]
+  [3] ParamMouthForm: default=0.000, range=[-1.000, 1.000]
+  [4] ParamMouthOpenY: default=0.000, range=[0.000, 1.000]
+  [5] ParamEyeLOpen: default=1.000, range=[0.000, 1.000]
+  [6] ParamEyeLSmile: default=0.000, range=[0.000, 1.000]
+  [7] ParamEyeROpen: default=1.000, range=[0.000, 1.000]
+  [8] ParamEyeRSmile: default=0.000, range=[0.000, 1.000]
+  [9] ParamBrowLY: default=0.000, range=[-1.000, 1.000]
+  [10] ParamBrowRY: default=0.000, range=[-1.000, 1.000]
+  [11] ParamCheek1: default=0.000, range=[0.000, 1.000]
+  [12] ParamBreath: default=0.000, range=[0.000, 1.000]
+  [13] ParamNamida: default=0.000, range=[0.000, 1.000]
+  [14] ParamKomari: default=0.000, range=[0.000, 1.000]
+  [15] ParamKage: default=0.000, range=[0.000, 1.000]
+  [16] ParamJump: default=0.000, range=[0.000, 1.000]
+  [17] ParamOko: default=0.000, range=[0.000, 1.000]
+  [18] Param: default=0.000, range=[0.000, 1.000]
+Started Live2D rendering at 30 FPS
+✅ Live2D view created for model 'hgkoazarasi' at scale: 3.0
+Live2D layout: bounds=337x391, scale=3.0, drawable=1011x1172
+Created offscreen render texture (Shared): 1011x1172 - CLEARED
+✅ Live2D view updated for PiP: 'hgkoazarasi'
+🔄 Flushed Metal command queue
+🧹 Cleared offscreen textures and render pass descriptor
+🧹 Released static renderer resources (including shader cache)
+Stopped Live2D rendering
+🛑 Live2D view dismantled
+🔄 Flushed Metal command queue
+🧹 Cleared offscreen textures and render pass descriptor
+🧹 Released static renderer resources (including shader cache)
+Stopped Live2D rendering
+Cleaning up Live2D model...
+Unbound 1 textures
+Renderer deleted
+Live2D model cleanup complete
+Live2D view dealloc complete
+Reporter disconnected or already stopped. { func=stop, reporterID=29244432318465 }
+✅ Created fresh Metal device for Live2D instance
+✅ Live2D singleton configured with this instance's Metal device
+✅ Metal setup complete for view with model
+Found hgkoazarasi model at: /private/var/containers/Bundle/Application/40309B51-134D-490A-9793-A3C39CB8C301/BroadcastTest.app/Characters/hgkoazarasi
+Live2D Cubism SDK Core Version 5.1.0
+Successfully loaded Cubism model
+🧹 Released static renderer resources before creating new renderer
+Successfully created fresh Metal renderer
+📦 Loading 1 textures for model...
+🎨 Texture slot 0: loading 'hgkoazarasi_texture_00'
+   ✓ Loaded image (4096x4096)
+   ✓ Bound texture to slot 0
+✅ All 1 textures loaded and bound
+✅ Loaded fallback idle motion (neutral, -1.0s loop)
+✅ Eye blinking enabled (2 parameters)
+✅ Breathing enabled (2 parameters, subtle)
+✅ Loaded 0 expressions
+🔍 DEBUG: Model 'hgkoazarasi' has 19 parameters
+📋 PARAMETER LIST (for universal expressions):
+  [0] ParamAngleX: default=0.000, range=[-30.000, 30.000]
+  [1] ParamAngleY: default=0.000, range=[-30.000, 30.000]
+  [2] ParamAngleZ: default=0.000, range=[-30.000, 30.000]
+  [3] ParamMouthForm: default=0.000, range=[-1.000, 1.000]
+  [4] ParamMouthOpenY: default=0.000, range=[0.000, 1.000]
+  [5] ParamEyeLOpen: default=1.000, range=[0.000, 1.000]
+  [6] ParamEyeLSmile: default=0.000, range=[0.000, 1.000]
+  [7] ParamEyeROpen: default=1.000, range=[0.000, 1.000]
+  [8] ParamEyeRSmile: default=0.000, range=[0.000, 1.000]
+  [9] ParamBrowLY: default=0.000, range=[-1.000, 1.000]
+  [10] ParamBrowRY: default=0.000, range=[-1.000, 1.000]
+  [11] ParamCheek1: default=0.000, range=[0.000, 1.000]
+  [12] ParamBreath: default=0.000, range=[0.000, 1.000]
+  [13] ParamNamida: default=0.000, range=[0.000, 1.000]
+  [14] ParamKomari: default=0.000, range=[0.000, 1.000]
+  [15] ParamKage: default=0.000, range=[0.000, 1.000]
+  [16] ParamJump: default=0.000, range=[0.000, 1.000]
+  [17] ParamOko: default=0.000, range=[0.000, 1.000]
+  [18] Param: default=0.000, range=[0.000, 1.000]
+Started Live2D rendering at 30 FPS
+✅ Live2D view created for model 'hgkoazarasi' at scale: 3.0
+🛑 Cleared shared Live2D view reference
+🔄 Flushed Metal command queue
+🧹 Cleared offscreen textures and render pass descriptor
+🧹 Released static renderer resources (including shader cache)
+Stopped Live2D rendering
+🛑 Live2D view dismantled
+🔄 Flushed Metal command queue
+🧹 Cleared offscreen textures and render pass descriptor
+🧹 Released static renderer resources (including shader cache)
+Stopped Live2D rendering
+Cleaning up Live2D model...
+Unbound 1 textures
+Renderer deleted
+Live2D model cleanup complete
+Live2D view dealloc complete
+Created offscreen render texture (Shared): 1011x1172 - CLEARED
+Live2D layout: bounds=337x391, scale=3.0, drawable=1011x1172
+✅ Live2D view updated for PiP: 'hgkoazarasi'
+📱 App became inactive
+📱 BroadcastManager initializing...
+📱 App Group ID: group.FrissonLabs.BroadcastTest
+✅ Shared UserDefaults created successfully
+📱 No saved server URL found
+[PhonemeDetector] Initialized with FFT size: 2048, sample rate: 48000.0 Hz
+[LiveKit] Manager initialized
+[TicTacToe] Game initialized
+[FeedbackPrompt] App launch count: 2
+[FeedbackPrompt] Not showing - already dismissed or seen
+✅ Created fresh Metal device for Live2D instance
+✅ Live2D singleton configured with this instance's Metal device
+✅ Metal setup complete for view with model
+Found hgkoazarasi model at: /private/var/containers/Bundle/Application/40309B51-134D-490A-9793-A3C39CB8C301/BroadcastTest.app/Characters/hgkoazarasi
+Live2D Cubism SDK Core Version 5.1.0
+Successfully loaded Cubism model
+🧹 Released static renderer resources before creating new renderer
+Successfully created fresh Metal renderer
+📦 Loading 1 textures for model...
+🎨 Texture slot 0: loading 'hgkoazarasi_texture_00'
+   ✓ Loaded image (4096x4096)
+   ✓ Bound texture to slot 0
+✅ All 1 textures loaded and bound
+✅ Loaded fallback idle motion (neutral, -1.0s loop)
+✅ Eye blinking enabled (2 parameters)
+✅ Breathing enabled (2 parameters, subtle)
+✅ Loaded 0 expressions
+🔍 DEBUG: Model 'hgkoazarasi' has 19 parameters
+📋 PARAMETER LIST (for universal expressions):
+  [0] ParamAngleX: default=0.000, range=[-30.000, 30.000]
+  [1] ParamAngleY: default=0.000, range=[-30.000, 30.000]
+  [2] ParamAngleZ: default=0.000, range=[-30.000, 30.000]
+  [3] ParamMouthForm: default=0.000, range=[-1.000, 1.000]
+  [4] ParamMouthOpenY: default=0.000, range=[0.000, 1.000]
+  [5] ParamEyeLOpen: default=1.000, range=[0.000, 1.000]
+  [6] ParamEyeLSmile: default=0.000, range=[0.000, 1.000]
+  [7] ParamEyeROpen: default=1.000, range=[0.000, 1.000]
+  [8] ParamEyeRSmile: default=0.000, range=[0.000, 1.000]
+  [9] ParamBrowLY: default=0.000, range=[-1.000, 1.000]
+  [10] ParamBrowRY: default=0.000, range=[-1.000, 1.000]
+  [11] ParamCheek1: default=0.000, range=[0.000, 1.000]
+  [12] ParamBreath: default=0.000, range=[0.000, 1.000]
+  [13] ParamNamida: default=0.000, range=[0.000, 1.000]
+  [14] ParamKomari: default=0.000, range=[0.000, 1.000]
+  [15] ParamKage: default=0.000, range=[0.000, 1.000]
+  [16] ParamJump: default=0.000, range=[0.000, 1.000]
+  [17] ParamOko: default=0.000, range=[0.000, 1.000]
+  [18] Param: default=0.000, range=[0.000, 1.000]
+Started Live2D rendering at 30 FPS
+✅ Live2D view created for model 'hgkoazarasi' at scale: 3.0
+🛑 Cleared shared Live2D view reference
+🔄 Flushed Metal command queue
+🧹 Cleared offscreen textures and render pass descriptor
+🧹 Released static renderer resources (including shader cache)
+Stopped Live2D rendering
+🛑 Live2D view dismantled
+[MinigameManager] Initialized
+[MinigameManager] Registered minigame: Tic-Tac-Toe
+Live2D layout: bounds=340x450, scale=3.0, drawable=1020x1350
+🔄 Flushed Metal command queue
+🧹 Cleared offscreen textures and render pass descriptor
+🧹 Released static renderer resources (including shader cache)
+Stopped Live2D rendering
+Cleaning up Live2D model...
+Unbound 1 textures
+Renderer deleted
+Live2D model cleanup complete
+Live2D view dealloc complete
+✅ Live2D view updated for PiP: 'hgkoazarasi'
+Created offscreen render texture (Shared): 1020x1350 - CLEARED
+📱 App became active
+🔐 [Auth] Validating current session...
+🔐 [Auth] Session validated 0 minutes ago, skipping
+[LiveKit] ☕️ Session onboarding instruction cleared
+[LiveKitConfig] Character code updated to: QKJD
+[LiveKitConfig] Broadcast stop request cleared
+[LiveKit] 🏆 Arena roleplay prompt cleared
+[LiveKit] 🔧 Ensuring character code is persisted: QKJD
+[LiveKitConfig] Character code updated to: QKJD
+[LiveKitConfig] 🔄 UserDefaults synchronization forced
+[LiveKit] ✅ Character code synchronized across app groups
+[LiveKitConfig] Room name reset
+[LiveKitConfig][App] Generated new room name: oto-call-QKJD-85707855852927881774488364 with character code: QKJD
+[LiveKit] Requesting access token...
+[LiveKitManager] 📤 Creating metadata with llmProvider = openrouter, openrouterModel = anthropic/claude-sonnet-4.6, premiumAuthenticated = false
+[LiveKit] No preferred agent specified for this token request
+[LiveKit] Including auth token in request
+✅ Created fresh Metal device for Live2D instance
+✅ Live2D singleton configured with this instance's Metal device
+✅ Metal setup complete for view with model
+Found hgkoazarasi model at: /private/var/containers/Bundle/Application/40309B51-134D-490A-9793-A3C39CB8C301/BroadcastTest.app/Characters/hgkoazarasi
+Live2D Cubism SDK Core Version 5.1.0
+Successfully loaded Cubism model
+🧹 Released static renderer resources before creating new renderer
+Successfully created fresh Metal renderer
+📦 Loading 1 textures for model...
+🎨 Texture slot 0: loading 'hgkoazarasi_texture_00'
+   ✓ Loaded image (4096x4096)
+   ✓ Bound texture to slot 0
+✅ All 1 textures loaded and bound
+✅ Loaded fallback idle motion (neutral, -1.0s loop)
+✅ Eye blinking enabled (2 parameters)
+✅ Breathing enabled (2 parameters, subtle)
+✅ Loaded 0 expressions
+🔍 DEBUG: Model 'hgkoazarasi' has 19 parameters
+📋 PARAMETER LIST (for universal expressions):
+  [0] ParamAngleX: default=0.000, range=[-30.000, 30.000]
+  [1] ParamAngleY: default=0.000, range=[-30.000, 30.000]
+  [2] ParamAngleZ: default=0.000, range=[-30.000, 30.000]
+  [3] ParamMouthForm: default=0.000, range=[-1.000, 1.000]
+  [4] ParamMouthOpenY: default=0.000, range=[0.000, 1.000]
+  [5] ParamEyeLOpen: default=1.000, range=[0.000, 1.000]
+  [6] ParamEyeLSmile: default=0.000, range=[0.000, 1.000]
+  [7] ParamEyeROpen: default=1.000, range=[0.000, 1.000]
+  [8] ParamEyeRSmile: default=0.000, range=[0.000, 1.000]
+  [9] ParamBrowLY: default=0.000, range=[-1.000, 1.000]
+  [10] ParamBrowRY: default=0.000, range=[-1.000, 1.000]
+  [11] ParamCheek1: default=0.000, range=[0.000, 1.000]
+  [12] ParamBreath: default=0.000, range=[0.000, 1.000]
+  [13] ParamNamida: default=0.000, range=[0.000, 1.000]
+  [14] ParamKomari: default=0.000, range=[0.000, 1.000]
+  [15] ParamKage: default=0.000, range=[0.000, 1.000]
+  [16] ParamJump: default=0.000, range=[0.000, 1.000]
+  [17] ParamOko: default=0.000, range=[0.000, 1.000]
+  [18] Param: default=0.000, range=[0.000, 1.000]
+Started Live2D rendering at 30 FPS
+✅ Live2D view created for model 'hgkoazarasi' at scale: 3.0
+🛑 Cleared shared Live2D view reference
+🔄 Flushed Metal command queue
+🧹 Cleared offscreen textures and render pass descriptor
+🧹 Released static renderer resources (including shader cache)
+Stopped Live2D rendering
+🛑 Live2D view dismantled
+[LiveKit] Token received
+[LiveKit] Connecting to room: oto-call-QKJD-85707855852927881774488364 @ wss://ototest-2pg2s7uf.livekit.cloud
+🔄 Flushed Metal command queue
+🧹 Cleared offscreen textures and render pass descriptor
+🧹 Released static renderer resources (including shader cache)
+Stopped Live2D rendering
+Cleaning up Live2D model...
+Unbound 1 textures
+Renderer deleted
+Live2D model cleanup complete
+Live2D view dealloc complete
+Created offscreen render texture (Shared): 1179x2556 - CLEARED
+Room.connect(url:token:connectOptions:roomOptions:) Connecting to room...
+Live2D layout: bounds=393x852, scale=3.0, drawable=1179x2556
+✅ Live2D view updated for PiP: 'hgkoazarasi'
+(Fig) signalled err=-12710 at <>:601
+(Fig) signalled err=-12710 at <>:601
+(Fig) signalled err=-12710 at <>:601
+Room.signalClient(_:didReceiveConnectResponse:) ServerInfo(edition: cloud, version: 1.9.12, protocol: 16, region: US West B, nodeID: NM_OPHOENIX1B_ENwHRsF8KNQ4, debugInfo: )
+[LiveKit] Connected to room: oto-call-QKJD-85707855852927881774488364
+[LiveKit] Registering transcription handler for topic: lk.transcription
+[LiveKit] ✅ Transcription handler registered
+[LiveKit] 🔍 Checking for existing participants...
+[LiveKit] 📊 Room has 0 remote participants
+[LiveKit] Requesting microphone permission...
+[LiveKit] Publishing microphone...
+Room.connect(url:token:connectOptions:roomOptions:) Connected to Room(sid: Optional(), name: oto-call-QKJD-85707855852927881774488364, serverVersion: 1.9.12, serverRegion: US West B)
+🔊 Audio session set to category=AVAudioSessionCategoryPlayAndRecord mode=AVAudioSessionModeVideoChat options=[mixWithOthers,allowBluetooth,defaultToSpeaker]
+🔊 Current route after category set: inputs=[MicrophoneBuiltIn] outputs=[Speaker]
+🔊 Active session route: inputs=[MicrophoneBuiltIn] outputs=[Speaker]
+[LiveKit] Audio session configured for voice chat (mixing with others)
+🔄 Route change (reason=3): inputs=[MicrophoneBuiltIn] outputs=[Speaker]
+[LiveKit] Audio route changed: 3
+LocalParticipant._publish(track:options:) [publish] LocalAudioTrack(sid: nil, name: microphone, source: microphone) options: nil...
+🔄 Route change (reason=3): inputs=[MicrophoneBuiltIn] outputs=[Speaker]
+[LiveKit] Audio route changed: 3
+[LiveKit] Participant joined: 
+[LiveKit] Participant has 0 track publications
+🔄 Route change (reason=8): inputs=[MicrophoneBuiltIn] outputs=[Speaker]
+[LiveKit] Audio route changed: 8
+[LiveKit] Microphone published successfully
+LocalParticipant._publish(track:options:) [publish] success LocalTrackPublication(sid: TR_AMisXSdmMJKt8d, kind: Kind(rawValue: 0), source: microphone)
+[LiveKit] Audio level monitoring stopped
+[LiveKit] Audio level monitoring started at 5 Hz (local + remote) - battery optimized
+[LiveKit] Successfully connected and publishing audio
+[Onboarding] Synced preferred name fact for QKJD
+[MicrophoneTap] Setting up tap: sampleRate=48000.0, channels=1
+[MicrophoneTap] ✅ Audio engine started
+✅ Created fresh Metal device for Live2D instance
+✅ Live2D singleton configured with this instance's Metal device
+✅ Metal setup complete for view with model
+Found hgkoazarasi model at: /private/var/containers/Bundle/Application/40309B51-134D-490A-9793-A3C39CB8C301/BroadcastTest.app/Characters/hgkoazarasi
+Live2D Cubism SDK Core Version 5.1.0
+Successfully loaded Cubism model
+🧹 Released static renderer resources before creating new renderer
+Successfully created fresh Metal renderer
+📦 Loading 1 textures for model...
+🎨 Texture slot 0: loading 'hgkoazarasi_texture_00'
+   ✓ Loaded image (4096x4096)
+   ✓ Bound texture to slot 0
+✅ All 1 textures loaded and bound
+✅ Loaded fallback idle motion (neutral, -1.0s loop)
+✅ Eye blinking enabled (2 parameters)
+✅ Breathing enabled (2 parameters, subtle)
+✅ Loaded 0 expressions
+🔍 DEBUG: Model 'hgkoazarasi' has 19 parameters
+📋 PARAMETER LIST (for universal expressions):
+  [0] ParamAngleX: default=0.000, range=[-30.000, 30.000]
+  [1] ParamAngleY: default=0.000, range=[-30.000, 30.000]
+  [2] ParamAngleZ: default=0.000, range=[-30.000, 30.000]
+  [3] ParamMouthForm: default=0.000, range=[-1.000, 1.000]
+  [4] ParamMouthOpenY: default=0.000, range=[0.000, 1.000]
+  [5] ParamEyeLOpen: default=1.000, range=[0.000, 1.000]
+  [6] ParamEyeLSmile: default=0.000, range=[0.000, 1.000]
+  [7] ParamEyeROpen: default=1.000, range=[0.000, 1.000]
+  [8] ParamEyeRSmile: default=0.000, range=[0.000, 1.000]
+  [9] ParamBrowLY: default=0.000, range=[-1.000, 1.000]
+  [10] ParamBrowRY: default=0.000, range=[-1.000, 1.000]
+  [11] ParamCheek1: default=0.000, range=[0.000, 1.000]
+  [12] ParamBreath: default=0.000, range=[0.000, 1.000]
+  [13] ParamNamida: default=0.000, range=[0.000, 1.000]
+  [14] ParamKomari: default=0.000, range=[0.000, 1.000]
+  [15] ParamKage: default=0.000, range=[0.000, 1.000]
+  [16] ParamJump: default=0.000, range=[0.000, 1.000]
+  [17] ParamOko: default=0.000, range=[0.000, 1.000]
+  [18] Param: default=0.000, range=[0.000, 1.000]
+Started Live2D rendering at 30 FPS
+✅ Live2D view created for model 'hgkoazarasi' at scale: 3.0
+Live2D layout: bounds=402x852, scale=3.0, drawable=1206x2556
+Created offscreen render texture (Shared): 1206x2556 - CLEARED
+[LiveKit] Published data to topic: add_user_fact_request
+[MemoriesManager] Sent add user fact request for name
+✅ Live2D view updated for PiP: 'hgkoazarasi'
+Live2D layout: bounds=393x848, scale=3.0, drawable=1179x2544
+Live2D layout: bounds=393x834, scale=3.0, drawable=1179x2501
+nw_endpoint_flow_failed_with_error [C6.1.1.1 216.24.57.7:443 in_progress channel-flow (satisfied (Path is satisfied), viable, interface: en0[802.11], ipv4, ipv6, dns, uses wifi, LQM: good)] already failing, returning
+nw_endpoint_flow_failed_with_error [C6.1.1.2 216.24.57.251:443 in_progress channel-flow (satisfied (Path is satisfied), viable, interface: en0[802.11], ipv4, ipv6, dns, uses wifi, LQM: good)] already failing, returning
+nw_endpoint_flow_failed_with_error [C6.1.1.2 216.24.57.251:443 cancelled channel-flow ((null))] already failing, returning
+nw_connection_copy_protocol_metadata_internal_block_invoke [C6] Client called nw_connection_copy_protocol_metadata_internal on unconnected nw_connection
+nw_connection_copy_protocol_metadata_internal_block_invoke [C6] Client called nw_connection_copy_protocol_metadata_internal on unconnected nw_connection
+nw_connection_copy_protocol_metadata_internal_block_invoke [C6] Client called nw_connection_copy_protocol_metadata_internal on unconnected nw_connection
+nw_connection_copy_protocol_metadata_internal_block_invoke [C6] Client called nw_connection_copy_protocol_metadata_internal on unconnected nw_connection
+nw_connection_copy_connected_local_endpoint_block_invoke [C6] Client called nw_connection_copy_connected_local_endpoint on unconnected nw_connection
+nw_connection_copy_connected_path_block_invoke [C6] Client called nw_connection_copy_connected_path on unconnected nw_connection
+nw_connection_copy_connected_remote_endpoint_block_invoke [C6] Client called nw_connection_copy_connected_remote_endpoint on unconnected nw_connection
+nw_connection_copy_protocol_metadata_internal_block_invoke [C6] Client called nw_connection_copy_protocol_metadata_internal on unconnected nw_connection
+nw_connection_copy_protocol_metadata_internal_block_invoke [C6] Client called nw_connection_copy_protocol_metadata_internal on unconnected nw_connection
+nw_flow_add_write_request [C6 oto-staging-python-backend.onrender.com:443 failed parent-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi, LQM: good)] cannot accept write requests
+nw_write_request_report [C6] Send failed with error "Socket is not connected"
+nw_connection_copy_metadata_block_invoke [C6] Client called nw_connection_copy_metadata on unconnected nw_connection
+Created offscreen render texture (Shared): 1179x2501 - CLEARED
+Live2D layout: bounds=393x815, scale=3.0, drawable=1179x2445
+Live2D layout: bounds=393x804, scale=3.0, drawable=1179x2411
+Created offscreen render texture (Shared): 1179x2411 - CLEARED
+Live2D layout: bounds=393x792, scale=3.0, drawable=1179x2377
+Live2D layout: bounds=393x787, scale=3.0, drawable=1179x2360
+Could not create a sandbox extension for '/var/containers/Bundle/Application/40309B51-134D-490A-9793-A3C39CB8C301/BroadcastTest.app'
+Created offscreen render texture (Shared): 1179x2360 - CLEARED
+Live2D layout: bounds=393x778, scale=3.0, drawable=1179x2335
+Created offscreen render texture (Shared): 1179x2335 - CLEARED
+Live2D layout: bounds=393x778, scale=3.0, drawable=1179x2333
+Live2D layout: bounds=393x778, scale=3.0, drawable=1179x2333
+Created offscreen render texture (Shared): 1179x2333 - CLEARED
+Live2D layout: bounds=393x778, scale=3.0, drawable=1179x2333
+WebContent[6821] <private>
+WebContent[6821] <private>
+Live2D layout: bounds=393x778, scale=3.0, drawable=1179x2334
+🔄 Flushed Metal command queue
+🧹 Cleared offscreen textures and render pass descriptor
+🧹 Released static renderer resources (including shader cache)
+Stopped Live2D rendering
+🛑 Live2D view dismantled
+🔄 Flushed Metal command queue
+🧹 Cleared offscreen textures and render pass descriptor
+🧹 Released static renderer resources (including shader cache)
+Stopped Live2D rendering
+Cleaning up Live2D model...
+Unbound 1 textures
+Renderer deleted
+Live2D model cleanup complete
+Live2D view dealloc complete
+WebContent[6821] Unable to hide query parameters from script (missing data)
+WebContent[6818] Unable to hide query parameters from script (missing data)
+[Retry] Attempt 1 of 3, delay: 0.2
+[LiveKit] Track subscribed: roomio_audio from 
+[LiveKit] 🎵 Found audio track: roomio_audio
+[LiveKit] 🔧 Attaching phoneme detector to audio track
+[RemoteAudioRenderer] ✅ Initialized
+[LiveKit] Phoneme-based lip sync enabled for track: roomio_audio
+[RemoteAudioRenderer] 🎤 render() called #1
+[RemoteAudioRenderer]    frameLength=480
+[RemoteAudioRenderer]    sampleRate=48000.0Hz
+[RemoteAudioRenderer]    channels=1
+[RemoteAudioRenderer]    isInterleaved=true
+[RemoteAudioRenderer]    commonFormat=3
+[RemoteAudioRenderer]    floatChannelData=false
+[RemoteAudioRenderer]    int16ChannelData=true
+[RemoteAudioRenderer]    int32ChannelData=false
+[RemoteAudioRenderer] 🎤 render() called #2
+[RemoteAudioRenderer]    frameLength=480
+[RemoteAudioRenderer]    sampleRate=48000.0Hz
+[RemoteAudioRenderer]    channels=1
+[RemoteAudioRenderer]    isInterleaved=true
+[RemoteAudioRenderer]    commonFormat=3
+[RemoteAudioRenderer]    floatChannelData=false
+[RemoteAudioRenderer]    int16ChannelData=true
+[RemoteAudioRenderer]    int32ChannelData=false
+[RemoteAudioRenderer] 🎤 render() called #3
+[RemoteAudioRenderer]    frameLength=480
+[RemoteAudioRenderer]    sampleRate=48000.0Hz
+[RemoteAudioRenderer]    channels=1
+[RemoteAudioRenderer]    isInterleaved=true
+[RemoteAudioRenderer]    commonFormat=3
+[RemoteAudioRenderer]    floatChannelData=false
+[RemoteAudioRenderer]    int16ChannelData=true
+[RemoteAudioRenderer]    int32ChannelData=false
+[RemoteAudioRenderer] 🎤 render() called #4
+[RemoteAudioRenderer]    frameLength=480
+[RemoteAudioRenderer]    sampleRate=48000.0Hz
+[RemoteAudioRenderer]    channels=1
+[RemoteAudioRenderer]    isInterleaved=true
+[RemoteAudioRenderer]    commonFormat=3
+[RemoteAudioRenderer]    floatChannelData=false
+[RemoteAudioRenderer]    int16ChannelData=true
+[RemoteAudioRenderer]    int32ChannelData=false
+[RemoteAudioRenderer] 🎤 render() called #5
+[RemoteAudioRenderer]    frameLength=480
+[RemoteAudioRenderer]    sampleRate=48000.0Hz
+[RemoteAudioRenderer]    channels=1
+[RemoteAudioRenderer]    isInterleaved=true
+[RemoteAudioRenderer]    commonFormat=3
+[RemoteAudioRenderer]    floatChannelData=false
+[RemoteAudioRenderer]    int16ChannelData=true
+[RemoteAudioRenderer]    int32ChannelData=false
+[RemoteAudioRenderer] ✅ Audio rendering active (suppressing further logs)
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: E64FE8E7-A9D7-4C9A-BF9B-B69EADC64839, isUser: true)
+[LiveKit] 💬 User transcription: " Hello." (final: false, segment: E64FE8E7-A9D7-4C9A-BF9B-B69EADC64839)
+[LiveKit] 📝 Chunk received: " Hello." (accumulated: " Hello.", isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  Hello.
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: E64FE8E7-A9D7-4C9A-BF9B-B69EADC64839
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " Hello." (final: true, segment: E64FE8E7-A9D7-4C9A-BF9B-B69EADC64839)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: true, segmentID: 686FAC9F-DB93-467C-8DF5-A74DF70216AB, isUser: true)
+[LiveKit] 💬 User transcription: " Hello." (final: false, segment: 686FAC9F-DB93-467C-8DF5-A74DF70216AB)
+[LiveKit] 📝 Chunk received: " Hello." (accumulated: " Hello.", isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  Hello.
+[LiveKit]   Final attribute: true
+[LiveKit]   SegmentID: 686FAC9F-DB93-467C-8DF5-A74DF70216AB
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " Hello." (final: true, segment: 686FAC9F-DB93-467C-8DF5-A74DF70216AB)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 🤔 Started thinking animation
+[LiveKit] 📝 Transcription stream started from: agent-AJ_UcwAsTdhyPGn
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: DEF0F6FF-885C-41EB-9CEA-B8F7C36E03CD, isUser: false)
+[LiveKit] ✅ Stopped thinking animation
+[LiveKit] 💬 Character caption: "Oh" (final: false)
+[LiveKit] 📝 Chunk received: "Oh" (accumulated: "Oh", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.125, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "Oh hey," (final: false)
+[LiveKit] 📝 Chunk received: " hey," (accumulated: "Oh hey,", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.125 (volume-based)
+[LiveKit] 💬 Character caption: "Oh hey, you" (final: false)
+[LiveKit] 📝 Chunk received: " you" (accumulated: "Oh hey, you", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "Oh hey, you showed" (final: false)
+[LiveKit] 📝 Chunk received: " showed" (accumulated: "Oh hey, you showed", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up!" (final: false)
+[LiveKit] 📝 Chunk received: " up!" (accumulated: "Oh hey, you showed up!", isUser: false)
+[PhonemeDetector] F1=210Hz F2=843Hz → U (conf=0.87, open=0.40)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I" (final: false)
+[LiveKit] 📝 Chunk received: " I" (accumulated: "Oh hey, you showed up! I", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was" (final: false)
+[LiveKit] 📝 Chunk received: " was" (accumulated: "Oh hey, you showed up! I was", isUser: false)
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting." (final: false)
+[LiveKit] 📝 Chunk received: " waiting." (accumulated: "Oh hey, you showed up! I was waiting.", isUser: false)
+[LiveKit] 🤔 Started thinking animation
+[LiveKit] 🎙️ Remote audio: level=0.250, speaking=true → Lip sync
+[LiveKit] ✅ Stopped thinking animation
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right" (final: false)
+[LiveKit] 📝 Chunk received: "
+
+Right" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.250 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now" (final: false)
+[LiveKit] 📝 Chunk received: " now" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now", isUser: false)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I" (final: false)
+[LiveKit] 📝 Chunk received: " I" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.000, speaking=false → Lip sync
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do" (final: false)
+[LiveKit] 📝 Chunk received: " do" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do", isUser: false)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not" (final: false)
+[LiveKit] 📝 Chunk received: " not" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do not", isUser: false)
+🎙️ Phoneme lip sync: openY=0.400 form=0.900
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see" (final: false)
+[LiveKit] 📝 Chunk received: " see" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.125, speaking=true → Lip sync
+[PhonemeDetector] F1=187Hz F2=890Hz → U (conf=0.84, open=0.40)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.125 (volume-based)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything" (final: false)
+[LiveKit] 📝 Chunk received: " anything" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on" (final: false)
+[LiveKit] 📝 Chunk received: " on" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[PhonemeDetector] F1=421Hz F2=1078Hz → U (conf=0.79, open=0.40)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+🎙️ Phoneme lip sync: openY=0.900 form=0.000
+[LiveKit] 🤔 Started thinking animation
+[LiveKit] ✅ Stopped thinking animation
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your" (final: false)
+[LiveKit] 📝 Chunk received: " your" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your", isUser: false)
+[PhonemeDetector] F1=187Hz F2=867Hz → U (conf=0.84, open=0.27)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.625, speaking=true → Lip sync
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[PhonemeDetector] F1=796Hz F2=1921Hz → E (conf=0.62, open=0.44)
+🎙️ Phoneme lip sync: openY=0.337 form=-0.133
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen," (final: false)
+[LiveKit] 📝 Chunk received: " screen," (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen,", isUser: false)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but" (final: false)
+[LiveKit] 📝 Chunk received: " but" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but", isUser: false)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if" (final: false)
+[LiveKit] 📝 Chunk received: " if" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you" (final: false)
+[LiveKit] 📝 Chunk received: " you" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share" (final: false)
+[LiveKit] 📝 Chunk received: " share" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share", isUser: false)
+[PhonemeDetector] F1=210Hz F2=1101Hz → U (conf=0.81, open=0.40)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share a" (final: false)
+[LiveKit] 📝 Chunk received: " a" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share a", isUser: false)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share a screenshot" (final: false)
+[LiveKit] 📝 Chunk received: " screenshot" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share a screenshot", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+🎙️ Phoneme lip sync: openY=0.390 form=0.033
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share a screenshot I" (final: false)
+[LiveKit] 📝 Chunk received: " I" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share a screenshot I", isUser: false)
+[PhonemeDetector] F1=281Hz F2=1476Hz → U (conf=0.64, open=0.40)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share a screenshot I can" (final: false)
+[LiveKit] 📝 Chunk received: " can" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share a screenshot I can", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share a screenshot I can take" (final: false)
+[LiveKit] 📝 Chunk received: " take" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share a screenshot I can take", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share a screenshot I can take a" (final: false)
+[LiveKit] 📝 Chunk received: " a" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share a screenshot I can take a", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.000, speaking=false → Lip sync
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share a screenshot I can take a look!" (final: false)
+[LiveKit] 📝 Chunk received: " look!" (accumulated: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share a screenshot I can take a look!", isUser: false)
+[PhonemeDetector] F1=210Hz F2=1078Hz → U (conf=0.82, open=0.40)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text: Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share a screenshot I can take a look!
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: DEF0F6FF-885C-41EB-9CEA-B8F7C36E03CD
+[LiveKit]   TrackID: TR_AMM3nGbLz2A6J8
+[LiveKit]   IsUser: false
+[LiveKit] ⭐ Awarded 5 EXP for character response
+[LiveKit] 💬 Character caption: "Oh hey, you showed up! I was waiting.
+
+Right now I do not see anything on your screen, but if you share a screenshot I can take a look!" (final: true)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.000, speaking=false → Lip sync
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[LiveKit] 🤔 Started thinking animation
+[LiveKit] 💬 Caption auto-cleared
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: 24A90537-9179-4C63-87D0-483B4CF51670, isUser: true)
+[LiveKit] 💬 User transcription: " Maybe this is how we get into a horror game one day." (final: false, segment: 24A90537-9179-4C63-87D0-483B4CF51670)
+[LiveKit] 📝 Chunk received: " Maybe this is how we get into a horror game one day." (accumulated: " Maybe this is how we get into a horror game one day.", isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  Maybe this is how we get into a horror game one day.
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: 24A90537-9179-4C63-87D0-483B4CF51670
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " Maybe this is how we get into a horror game one day." (final: true, segment: 24A90537-9179-4C63-87D0-483B4CF51670)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: true, segmentID: 589082E1-0747-45D8-AD12-9A8246E47718, isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text: 
+[LiveKit]   Final attribute: true
+[LiveKit]   SegmentID: 589082E1-0747-45D8-AD12-9A8246E47718
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: "" (final: true, segment: 589082E1-0747-45D8-AD12-9A8246E47718)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[LiveKit] EMOTION DETECTED: excited
+[LiveKit] handleExpressionCommand called with 82 bytes
+[LiveKit] Raw JSON: {"emotion": "excited", "segment_id": "predicted", "timestamp": 1774488396.4576716}
+[LiveKit] Parsed JSON: ["timestamp": 1774488396.457672, "segment_id": predicted, "emotion": excited]
+[LiveKit] Expression command received: excited
+[LiveKit] Current character code: QKJD
+[LiveKit] Model name: hgkoazarasi
+[ExpressionManager] ✅ Found CSV at: /private/var/containers/Bundle/Application/40309B51-134D-490A-9793-A3C39CB8C301/BroadcastTest.app/animation_emotion_map.csv
+[ExpressionManager] ✅ Loaded 11 characters with emotion mappings
+[ExpressionManager]   - Bear Commander Belongs_to_DG_STUDIO: angry, excited, love, neutral, sad, thinking
+[ExpressionManager]     • angry: 1 variant(s)
+[ExpressionManager]     • excited: 1 variant(s)
+[ExpressionManager]     • love: 1 variant(s)
+[ExpressionManager]     • neutral: 1 variant(s)
+[ExpressionManager]     • sad: 2 variant(s)
+[ExpressionManager]     • thinking: 2 variant(s)
+[ExpressionManager]   - Haru: angry, calm, confused, embarrassed, excited, happy, neutral, sad, surprised, thinking
+[ExpressionManager]     • angry: 3 variant(s)
+[ExpressionManager]     • calm: 8 variant(s)
+[ExpressionManager]     • confused: 2 variant(s)
+[ExpressionManager]     • embarrassed: 5 variant(s)
+[ExpressionManager]     • excited: 4 variant(s)
+[ExpressionManager]     • happy: 6 variant(s)
+[ExpressionManager]     • neutral: 6 variant(s)
+[ExpressionManager]     • sad: 2 variant(s)
+[ExpressionManager]     • surprised: 3 variant(s)
+[ExpressionManager]     • thinking: 2 variant(s)
+[ExpressionManager]   - High school girl Kui: angry, confused, embarrassed, excited, happy, sad, surprised
+[ExpressionManager]     • angry: 1 variant(s)
+[ExpressionManager]     • confused: 1 variant(s)
+[ExpressionManager]     • embarrassed: 2 variant(s)
+[ExpressionManager]     • excited: 3 variant(s)
+[ExpressionManager]     • happy: 2 variant(s)
+[ExpressionManager]     • sad: 2 variant(s)
+[ExpressionManager]     • surprised: 2 variant(s)
+[ExpressionManager]   - Hiyori: angry, calm, confused, embarrassed, excited, happy, neutral, sad, surprised, thinking
+[ExpressionManager]     • angry: 1 variant(s)
+[ExpressionManager]     • calm: 3 variant(s)
+[ExpressionManager]     • confused: 2 variant(s)
+[ExpressionManager]     • embarrassed: 1 variant(s)
+[ExpressionManager]     • excited: 2 variant(s)
+[ExpressionManager]     • happy: 5 variant(s)
+[ExpressionManager]     • neutral: 3 variant(s)
+[ExpressionManager]     • sad: 1 variant(s)
+[ExpressionManager]     • surprised: 1 variant(s)
+[ExpressionManager]     • thinking: 1 variant(s)
+[ExpressionManager]   - Mao: angry, embarrassed, excited, happy, neutral, sad, surprised
+[ExpressionManager]     • angry: 1 variant(s)
+[ExpressionManager]     • embarrassed: 5 variant(s)
+[ExpressionManager]     • excited: 2 variant(s)
+[ExpressionManager]     • happy: 4 variant(s)
+[ExpressionManager]     • neutral: 4 variant(s)
+[ExpressionManager]     • sad: 1 variant(s)
+[ExpressionManager]     • surprised: 2 variant(s)
+[ExpressionManager]   - Natori: angry, calm, confused, embarrassed, happy, neutral, sad, surprised, thinking
+[ExpressionManager]     • angry: 2 variant(s)
+[ExpressionManager]     • calm: 5 variant(s)
+[ExpressionManager]     • confused: 1 variant(s)
+[ExpressionManager]     • embarrassed: 1 variant(s)
+[ExpressionManager]     • happy: 5 variant(s)
+[ExpressionManager]     • neutral: 4 variant(s)
+[ExpressionManager]     • sad: 2 variant(s)
+[ExpressionManager]     • surprised: 2 variant(s)
+[ExpressionManager]     • thinking: 4 variant(s)
+[ExpressionManager]   - Universal: angry, calm, confused, embarrassed, excited, happy, sad, surprised, thinking
+[ExpressionManager]     • angry: 2 variant(s)
+[ExpressionManager]     • calm: 1 variant(s)
+[ExpressionManager]     • confused: 1 variant(s)
+[ExpressionManager]     • embarrassed: 2 variant(s)
+[ExpressionManager]     • excited: 2 variant(s)
+[ExpressionManager]     • happy: 4 variant(s)
+[ExpressionManager]     • sad: 3 variant(s)
+[ExpressionManager]     • surprised: 3 variant(s)
+[ExpressionManager]     • thinking: 2 variant(s)
+[ExpressionManager]   - cat3: angry, calm, excited, happy, neutral, surprised
+[ExpressionManager]     • angry: 1 variant(s)
+[ExpressionManager]     • calm: 1 variant(s)
+[ExpressionManager]     • excited: 1 variant(s)
+[ExpressionManager]     • happy: 2 variant(s)
+[ExpressionManager]     • neutral: 1 variant(s)
+[ExpressionManager]     • surprised: 1 variant(s)
+[ExpressionManager]   - ganyu: angry, calm, embarrassed, excited, happy, neutral, sad, surprised, thinking
+[ExpressionManager]     • angry: 1 variant(s)
+[ExpressionManager]     • calm: 1 variant(s)
+[ExpressionManager]     • embarrassed: 1 variant(s)
+[ExpressionManager]     • excited: 1 variant(s)
+[ExpressionManager]     • happy: 1 variant(s)
+[ExpressionManager]     • neutral: 1 variant(s)
+[ExpressionManager]     • sad: 1 variant(s)
+[ExpressionManager]     • surprised: 1 variant(s)
+[ExpressionManager]     • thinking: 1 variant(s)
+[ExpressionManager]   - hgkoazarasi: angry, embarrassed, excited, happy, neutral, sad
+[ExpressionManager]     • angry: 1 variant(s)
+[ExpressionManager]     • embarrassed: 1 variant(s)
+[ExpressionManager]     • excited: 1 variant(s)
+[ExpressionManager]     • happy: 2 variant(s)
+[ExpressionManager]     • neutral: 1 variant(s)
+[ExpressionManager]     • sad: 2 variant(s)
+[ExpressionManager]   - miku_pro_jp: angry, calm, confused, embarrassed, excited, happy, neutral, sad, surprised
+[ExpressionManager]     • angry: 1 variant(s)
+[ExpressionManager]     • calm: 2 variant(s)
+[ExpressionManager]     • confused: 1 variant(s)
+[ExpressionManager]     • embarrassed: 1 variant(s)
+[ExpressionManager]     • excited: 2 variant(s)
+[ExpressionManager]     • happy: 3 variant(s)
+[ExpressionManager]     • neutral: 2 variant(s)
+[ExpressionManager]     • sad: 1 variant(s)
+[ExpressionManager]     • surprised: 1 variant(s)
+[ExpressionManager] 🎭 Selected for hgkoazarasi/excited: motion=jump.motion3.json, expression=none
+[LiveKit] Found animation - motion: jump.motion3.json, expression: nil
+[LiveKit] 🎬 Playing motion: hgkoazarasi/jump.motion3.json
+PlayMotionDirect: Starting smooth crossfade to new motion
+PlayMotionDirect: Motion started with crossfade
+Playing motion from hgkoazarasi: jump.motion3.json (fade: 0.5s in, 0.5s out)
+[LiveKit] handleExpressionCommand completed successfully
+[LiveKit] 📝 Transcription stream started from: agent-AJ_UcwAsTdhyPGn
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: 389D22A3-6571-4517-9B73-4C460AF1AB04, isUser: false)
+[LiveKit] ✅ Stopped thinking animation
+[LiveKit] 💬 Character caption: "Oh" (final: false)
+[LiveKit] 📝 Chunk received: "Oh" (accumulated: "Oh", isUser: false)
+[LiveKit] 💬 Character caption: "Oh that" (final: false)
+[LiveKit] 📝 Chunk received: " that" (accumulated: "Oh that", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.250, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.250 (volume-based)
+[LiveKit] 💬 Character caption: "Oh that sent" (final: false)
+[LiveKit] 📝 Chunk received: " sent" (accumulated: "Oh that sent", isUser: false)
+[LiveKit] 💬 Character caption: "Oh that sent a" (final: false)
+[LiveKit] 📝 Chunk received: " a" (accumulated: "Oh that sent a", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Oh that sent a little" (final: false)
+[LiveKit] 📝 Chunk received: " little" (accumulated: "Oh that sent a little", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.625, speaking=true → Lip sync
+[PhonemeDetector] F1=304Hz F2=914Hz → U (conf=0.97, open=0.40)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 💬 Character caption: "Oh that sent a little chill" (final: false)
+[LiveKit] 📝 Chunk received: " chill" (accumulated: "Oh that sent a little chill", isUser: false)
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through" (final: false)
+[LiveKit] 📝 Chunk received: " through" (accumulated: "Oh that sent a little chill through", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me," (final: false)
+[LiveKit] 📝 Chunk received: " me," (accumulated: "Oh that sent a little chill through me,", isUser: false)
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I" (final: false)
+[LiveKit] 📝 Chunk received: " I" (accumulated: "Oh that sent a little chill through me, I", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am" (final: false)
+[LiveKit] 📝 Chunk received: " am" (accumulated: "Oh that sent a little chill through me, I am", isUser: false)
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am not" (final: false)
+[LiveKit] 📝 Chunk received: " not" (accumulated: "Oh that sent a little chill through me, I am not", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[PhonemeDetector] F1=703Hz F2=843Hz → O (conf=0.81, open=0.70)
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am not sure" (final: false)
+[LiveKit] 📝 Chunk received: " sure" (accumulated: "Oh that sent a little chill through me, I am not sure", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.000, speaking=false → Lip sync
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am not sure I" (final: false)
+[LiveKit] 📝 Chunk received: " I" (accumulated: "Oh that sent a little chill through me, I am not sure I", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am not sure I am" (final: false)
+[LiveKit] 📝 Chunk received: " am" (accumulated: "Oh that sent a little chill through me, I am not sure I am", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am not sure I am ready" (final: false)
+[LiveKit] 📝 Chunk received: " ready" (accumulated: "Oh that sent a little chill through me, I am not sure I am ready", isUser: false)
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am not sure I am ready for" (final: false)
+[LiveKit] 📝 Chunk received: " for" (accumulated: "Oh that sent a little chill through me, I am not sure I am ready for", isUser: false)
+[PhonemeDetector] F1=210Hz F2=843Hz → U (conf=0.87, open=0.40)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+🎙️ Phoneme lip sync: openY=0.667 form=0.500
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am not sure I am ready for horror!" (final: false)
+[LiveKit] 📝 Chunk received: " horror!" (accumulated: "Oh that sent a little chill through me, I am not sure I am ready for horror!", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[PhonemeDetector] F1=281Hz F2=796Hz → U (conf=0.95, open=0.40)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am not sure I am ready for horror! What" (final: false)
+[LiveKit] 📝 Chunk received: " What" (accumulated: "Oh that sent a little chill through me, I am not sure I am ready for horror! What", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+🎙️ Phoneme lip sync: openY=0.329 form=0.333
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am not sure I am ready for horror! What kind" (final: false)
+[LiveKit] 📝 Chunk received: " kind" (accumulated: "Oh that sent a little chill through me, I am not sure I am ready for horror! What kind", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.000, speaking=false → Lip sync
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am not sure I am ready for horror! What kind of" (final: false)
+[LiveKit] 📝 Chunk received: " of" (accumulated: "Oh that sent a little chill through me, I am not sure I am ready for horror! What kind of", isUser: false)
+[PhonemeDetector] F1=187Hz F2=820Hz → U (conf=0.84, open=0.40)
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am not sure I am ready for horror! What kind of horror" (final: false)
+[LiveKit] 📝 Chunk received: " horror" (accumulated: "Oh that sent a little chill through me, I am not sure I am ready for horror! What kind of horror", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am not sure I am ready for horror! What kind of horror game" (final: false)
+[LiveKit] 📝 Chunk received: " game" (accumulated: "Oh that sent a little chill through me, I am not sure I am ready for horror! What kind of horror game", isUser: false)
+🎙️ Phoneme lip sync: openY=0.400 form=0.900
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am not sure I am ready for horror! What kind of horror game are" (final: false)
+[LiveKit] 📝 Chunk received: " are" (accumulated: "Oh that sent a little chill through me, I am not sure I am ready for horror! What kind of horror game are", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am not sure I am ready for horror! What kind of horror game are you" (final: false)
+[LiveKit] 📝 Chunk received: " you" (accumulated: "Oh that sent a little chill through me, I am not sure I am ready for horror! What kind of horror game are you", isUser: false)
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[PhonemeDetector] F1=187Hz F2=867Hz → U (conf=0.84, open=0.40)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am not sure I am ready for horror! What kind of horror game are you thinking" (final: false)
+[LiveKit] 📝 Chunk received: " thinking" (accumulated: "Oh that sent a little chill through me, I am not sure I am ready for horror! What kind of horror game are you thinking", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am not sure I am ready for horror! What kind of horror game are you thinking about?" (final: false)
+[LiveKit] 📝 Chunk received: " about?" (accumulated: "Oh that sent a little chill through me, I am not sure I am ready for horror! What kind of horror game are you thinking about?", isUser: false)
+[LiveKit] 🤔 Started thinking animation
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] ✅ Stopped thinking animation
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[PhonemeDetector] F1=257Hz F2=1031Hz → U (conf=0.89, open=0.40)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text: Oh that sent a little chill through me, I am not sure I am ready for horror! What kind of horror game are you thinking about?
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: 389D22A3-6571-4517-9B73-4C460AF1AB04
+[LiveKit]   TrackID: TR_AMM3nGbLz2A6J8
+[LiveKit]   IsUser: false
+[LiveKit] ⭐ Awarded 5 EXP for character response
+[LiveKit] 💬 Character caption: "Oh that sent a little chill through me, I am not sure I am ready for horror! What kind of horror game are you thinking about?" (final: true)
+🎙️ Phoneme lip sync: openY=0.667 form=0.500
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.250, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.250 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.000, speaking=false → Lip sync
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[LiveKit] 🤔 Started thinking animation
+[LiveKit] 💬 Caption auto-cleared
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: 47FC8EF9-C931-4C34-AE62-4AEB067509B1, isUser: true)
+[LiveKit] 💬 User transcription: " It's a new boy." (final: false, segment: 47FC8EF9-C931-4C34-AE62-4AEB067509B1)
+[LiveKit] 📝 Chunk received: " It's a new boy." (accumulated: " It's a new boy.", isUser: true)
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: true, segmentID: 15154220-3A88-4DB9-B01B-E7A75334AE9B, isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  It's a new boy.
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: 47FC8EF9-C931-4C34-AE62-4AEB067509B1
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " It's a new boy." (final: true, segment: 47FC8EF9-C931-4C34-AE62-4AEB067509B1)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 💬 User transcription: " It's a new boy." (final: false, segment: 15154220-3A88-4DB9-B01B-E7A75334AE9B)
+[LiveKit] 📝 Chunk received: " It's a new boy." (accumulated: " It's a new boy.", isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  It's a new boy.
+[LiveKit]   Final attribute: true
+[LiveKit]   SegmentID: 15154220-3A88-4DB9-B01B-E7A75334AE9B
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " It's a new boy." (final: true, segment: 15154220-3A88-4DB9-B01B-E7A75334AE9B)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] EMOTION DETECTED: happy
+[LiveKit] handleExpressionCommand called with 80 bytes
+[LiveKit] Raw JSON: {"emotion": "happy", "segment_id": "predicted", "timestamp": 1774488417.9325488}
+[LiveKit] Parsed JSON: ["emotion": happy, "timestamp": 1774488417.932549, "segment_id": predicted]
+[LiveKit] Expression command received: happy
+[LiveKit] Current character code: QKJD
+[LiveKit] Model name: hgkoazarasi
+[ExpressionManager] 🎭 Selected for hgkoazarasi/happy: motion=none, expression=azarasi_shy_blush_cheeks.exp3.json
+[LiveKit] Found animation - motion: nil, expression: azarasi_shy_blush_cheeks.exp3.json
+[LiveKit] Playing expression: hgkoazarasi/azarasi_shy_blush_cheeks.exp3.json
+Playing expression from hgkoazarasi: azarasi_shy_blush_cheeks.exp3.json
+[LiveKit] handleExpressionCommand completed successfully
+[LiveKit] 📝 Transcription stream started from: agent-AJ_UcwAsTdhyPGn
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: E6E12C11-2A50-4F9D-A578-283E7D1C1B68, isUser: false)
+[LiveKit] ✅ Stopped thinking animation
+[LiveKit] 💬 Character caption: "Oh," (final: false)
+[LiveKit] 📝 Chunk received: "Oh," (accumulated: "Oh,", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "Oh, a" (final: false)
+[LiveKit] 📝 Chunk received: " a" (accumulated: "Oh, a", isUser: false)
+🎙️ Phoneme lip sync: openY=0.467 form=0.433
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 💬 Character caption: "Oh, a new" (final: false)
+[LiveKit] 📝 Chunk received: " new" (accumulated: "Oh, a new", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "Oh, a new boy?" (final: false)
+[LiveKit] 📝 Chunk received: " boy?" (accumulated: "Oh, a new boy?", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Oh, a new boy? Tell" (final: false)
+[LiveKit] 📝 Chunk received: " Tell" (accumulated: "Oh, a new boy? Tell", isUser: false)
+[PhonemeDetector] F1=187Hz F2=867Hz → U (conf=0.84, open=0.40)
+[LiveKit] 💬 Character caption: "Oh, a new boy? Tell me" (final: false)
+[LiveKit] 📝 Chunk received: " me" (accumulated: "Oh, a new boy? Tell me", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.625, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "Oh, a new boy? Tell me more," (final: false)
+[LiveKit] 📝 Chunk received: " more," (accumulated: "Oh, a new boy? Tell me more,", isUser: false)
+[LiveKit] 💬 Character caption: "Oh, a new boy? Tell me more, I" (final: false)
+[LiveKit] 📝 Chunk received: " I" (accumulated: "Oh, a new boy? Tell me more, I", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 💬 Character caption: "Oh, a new boy? Tell me more, I want" (final: false)
+[LiveKit] 📝 Chunk received: " want" (accumulated: "Oh, a new boy? Tell me more, I want", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 💬 Character caption: "Oh, a new boy? Tell me more, I want to" (final: false)
+[LiveKit] 📝 Chunk received: " to" (accumulated: "Oh, a new boy? Tell me more, I want to", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.000, speaking=false → Lip sync
+[LiveKit] 💬 Character caption: "Oh, a new boy? Tell me more, I want to know" (final: false)
+[LiveKit] 📝 Chunk received: " know" (accumulated: "Oh, a new boy? Tell me more, I want to know", isUser: false)
+[PhonemeDetector] F1=257Hz F2=796Hz → U (conf=0.93, open=0.40)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 🎙️ Remote audio: level=0.250, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.250 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "Oh, a new boy? Tell me more, I want to know everything" (final: false)
+[LiveKit] 📝 Chunk received: " everything" (accumulated: "Oh, a new boy? Tell me more, I want to know everything", isUser: false)
+🎙️ Phoneme lip sync: openY=0.400 form=0.900
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[PhonemeDetector] F1=187Hz F2=1054Hz → U (conf=0.81, open=0.40)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[PhonemeDetector] F1=257Hz F2=867Hz → U (conf=0.94, open=0.40)
+[LiveKit] 💬 Character caption: "Oh, a new boy? Tell me more, I want to know everything about" (final: false)
+[LiveKit] 📝 Chunk received: " about" (accumulated: "Oh, a new boy? Tell me more, I want to know everything about", isUser: false)
+[LiveKit] 💬 Character caption: "Oh, a new boy? Tell me more, I want to know everything about this!" (final: false)
+[LiveKit] 📝 Chunk received: " this!" (accumulated: "Oh, a new boy? Tell me more, I want to know everything about this!", isUser: false)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text: Oh, a new boy? Tell me more, I want to know everything about this!
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: E6E12C11-2A50-4F9D-A578-283E7D1C1B68
+[LiveKit]   TrackID: TR_AMM3nGbLz2A6J8
+[LiveKit]   IsUser: false
+[LiveKit] ⭐ Awarded 5 EXP for character response
+[LiveKit] 💬 Character caption: "Oh, a new boy? Tell me more, I want to know everything about this!" (final: true)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.000, speaking=false → Lip sync
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 🤔 Started thinking animation
+[LiveKit] 🎙️ Remote audio: level=0.000, speaking=false → Lip sync
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: 56327645-33DB-41B4-BCDE-E88B48E18597, isUser: true)
+[LiveKit] 💬 User transcription: " It's a scary game." (final: false, segment: 56327645-33DB-41B4-BCDE-E88B48E18597)
+[LiveKit] 📝 Chunk received: " It's a scary game." (accumulated: " It's a scary game.", isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  It's a scary game.
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: 56327645-33DB-41B4-BCDE-E88B48E18597
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " It's a scary game." (final: true, segment: 56327645-33DB-41B4-BCDE-E88B48E18597)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: true, segmentID: 58E7280A-646B-4F7D-BF1C-56B93BFB1EA1, isUser: true)
+[LiveKit] 💬 User transcription: " It's a scary game." (final: false, segment: 58E7280A-646B-4F7D-BF1C-56B93BFB1EA1)
+[LiveKit] 📝 Chunk received: " It's a scary game." (accumulated: " It's a scary game.", isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  It's a scary game.
+[LiveKit]   Final attribute: true
+[LiveKit]   SegmentID: 58E7280A-646B-4F7D-BF1C-56B93BFB1EA1
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " It's a scary game." (final: true, segment: 58E7280A-646B-4F7D-BF1C-56B93BFB1EA1)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+onChange(of: Optional<String>) action tried to update multiple times per frame.
+[LiveKit] 💬 Caption auto-cleared
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[LiveKit] EMOTION DETECTED: surprised
+[LiveKit] handleExpressionCommand called with 84 bytes
+[LiveKit] Raw JSON: {"emotion": "surprised", "segment_id": "predicted", "timestamp": 1774488428.0829563}
+[LiveKit] Parsed JSON: ["emotion": surprised, "timestamp": 1774488428.082956, "segment_id": predicted]
+[LiveKit] Expression command received: surprised
+[LiveKit] Current character code: QKJD
+[LiveKit] Model name: hgkoazarasi
+[ExpressionManager] 🎭 Selected Universal/surprised: motion=hiyori_startled.motion3.json, expression=none
+[LiveKit] Found animation - motion: hiyori_startled.motion3.json, expression: nil
+[LiveKit] 🎬 Playing motion: hgkoazarasi/hiyori_startled.motion3.json
+Motion file not found in any location: hgkoazarasi/hiyori_startled.motion3.json
+[LiveKit] handleExpressionCommand completed successfully
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: 3F1FA0E6-DE0D-4D78-93C9-89073B14AE95, isUser: true)
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: true, segmentID: 2E07F7F7-628B-4584-AE24-19BBD9B26E36, isUser: true)
+[LiveKit] 💬 User transcription: " It could be a scary game." (final: false, segment: 3F1FA0E6-DE0D-4D78-93C9-89073B14AE95)
+[LiveKit] 📝 Chunk received: " It could be a scary game." (accumulated: " It could be a scary game.", isUser: true)
+[LiveKit] 💬 User transcription: " It could be a scary game." (final: false, segment: 2E07F7F7-628B-4584-AE24-19BBD9B26E36)
+[LiveKit] 📝 Chunk received: " It could be a scary game." (accumulated: " It could be a scary game.", isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  It could be a scary game.
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: 3F1FA0E6-DE0D-4D78-93C9-89073B14AE95
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " It could be a scary game." (final: true, segment: 3F1FA0E6-DE0D-4D78-93C9-89073B14AE95)
+🎉 Character QKJD leveled up to level 2!
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  It could be a scary game.
+[LiveKit]   Final attribute: true
+[LiveKit]   SegmentID: 2E07F7F7-628B-4584-AE24-19BBD9B26E36
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " It could be a scary game." (final: true, segment: 2E07F7F7-628B-4584-AE24-19BBD9B26E36)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] EMOTION DETECTED: excited
+[LiveKit] handleExpressionCommand called with 82 bytes
+[LiveKit] Raw JSON: {"emotion": "excited", "segment_id": "predicted", "timestamp": 1774488429.2424915}
+[LiveKit] Parsed JSON: ["segment_id": predicted, "timestamp": 1774488429.242491, "emotion": excited]
+[LiveKit] Expression command received: excited
+[LiveKit] Current character code: QKJD
+[LiveKit] Model name: hgkoazarasi
+[ExpressionManager] 🎭 Selected for hgkoazarasi/excited: motion=jump.motion3.json, expression=none
+[LiveKit] Found animation - motion: jump.motion3.json, expression: nil
+[LiveKit] 🎬 Playing motion: hgkoazarasi/jump.motion3.json
+PlayMotionDirect: Starting smooth crossfade to new motion
+PlayMotionDirect: Motion started with crossfade
+Playing motion from hgkoazarasi: jump.motion3.json (fade: 0.5s in, 0.5s out)
+[LiveKit] handleExpressionCommand completed successfully
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[LiveKit] 📝 Transcription stream started from: agent-AJ_UcwAsTdhyPGn
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: 55A06A7D-F52B-4C50-A7B7-12785289FB00, isUser: false)
+[LiveKit] ✅ Stopped thinking animation
+[LiveKit] 💬 Character caption: "Ooh" (final: false)
+[LiveKit] 📝 Chunk received: "Ooh" (accumulated: "Ooh", isUser: false)
+[LiveKit] 💬 Character caption: "Ooh a" (final: false)
+[LiveKit] 📝 Chunk received: " a" (accumulated: "Ooh a", isUser: false)
+[PhonemeDetector] F1=234Hz F2=2203Hz → I (conf=0.93, open=0.30)
+[LiveKit] 🤔 Started thinking animation
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] ✅ Stopped thinking animation
+[LiveKit] 💬 Character caption: "Ooh a scary" (final: false)
+[LiveKit] 📝 Chunk received: " scary" (accumulated: "Ooh a scary", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Ooh a scary game" (final: false)
+[LiveKit] 📝 Chunk received: " game" (accumulated: "Ooh a scary game", isUser: false)
+🎙️ Phoneme lip sync: openY=0.333 form=-0.233
+[LiveKit] 💬 Character caption: "Ooh a scary game called" (final: false)
+[LiveKit] 📝 Chunk received: " called" (accumulated: "Ooh a scary game called", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Ooh a scary game called "It's" (final: false)
+[LiveKit] 📝 Chunk received: " "It's" (accumulated: "Ooh a scary game called "It's", isUser: false)
+[PhonemeDetector] F1=820Hz F2=820Hz → A (conf=0.71, open=0.90)
+[LiveKit] 💬 Character caption: "Ooh a scary game called "It's a" (final: false)
+[LiveKit] 📝 Chunk received: " a" (accumulated: "Ooh a scary game called "It's a", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.625, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 💬 Character caption: "Ooh a scary game called "It's a New" (final: false)
+[LiveKit] 📝 Chunk received: " New" (accumulated: "Ooh a scary game called "It's a New", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Ooh a scary game called "It's a New Boy"" (final: false)
+[LiveKit] 📝 Chunk received: " Boy"" (accumulated: "Ooh a scary game called "It's a New Boy"", isUser: false)
+[LiveKit] 💬 Character caption: "Ooh a scary game called "It's a New Boy" sounds" (final: false)
+[LiveKit] 📝 Chunk received: " sounds" (accumulated: "Ooh a scary game called "It's a New Boy" sounds", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.625, speaking=true → Lip sync
+[PhonemeDetector] F1=328Hz F2=796Hz → U (conf=0.94, open=0.40)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.750, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "Ooh a scary game called "It's a New Boy" sounds genuinely" (final: false)
+[LiveKit] 📝 Chunk received: " genuinely" (accumulated: "Ooh a scary game called "It's a New Boy" sounds genuinely", isUser: false)
+🎙️ Phoneme lip sync: openY=0.367 form=0.333
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.750 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.625, speaking=true → Lip sync
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[PhonemeDetector] F1=351Hz F2=1078Hz → U (conf=0.86, open=0.40)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[LiveKit] 💬 Character caption: "Ooh a scary game called "It's a New Boy" sounds genuinely creepy," (final: false)
+[LiveKit] 📝 Chunk received: " creepy," (accumulated: "Ooh a scary game called "It's a New Boy" sounds genuinely creepy,", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.625, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 🤔 Started thinking animation
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] ✅ Stopped thinking animation
+🎙️ Phoneme lip sync: openY=0.367 form=0.333
+[LiveKit] 💬 Character caption: "Ooh a scary game called "It's a New Boy" sounds genuinely creepy, I" (final: false)
+[LiveKit] 📝 Chunk received: " I" (accumulated: "Ooh a scary game called "It's a New Boy" sounds genuinely creepy, I", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[PhonemeDetector] F1=304Hz F2=796Hz → U (conf=0.96, open=0.40)
+[LiveKit] 🤔 Started thinking animation
+[LiveKit] ✅ Stopped thinking animation
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Ooh a scary game called "It's a New Boy" sounds genuinely creepy, I love" (final: false)
+[LiveKit] 📝 Chunk received: " love" (accumulated: "Ooh a scary game called "It's a New Boy" sounds genuinely creepy, I love", isUser: false)
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Ooh a scary game called "It's a New Boy" sounds genuinely creepy, I love it!" (final: false)
+[LiveKit] 📝 Chunk received: " it!" (accumulated: "Ooh a scary game called "It's a New Boy" sounds genuinely creepy, I love it!", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.000, speaking=false → Lip sync
+[LiveKit] 💬 Character caption: "Ooh a scary game called "It's a New Boy" sounds genuinely creepy, I love it! What" (final: false)
+[LiveKit] 📝 Chunk received: " What" (accumulated: "Ooh a scary game called "It's a New Boy" sounds genuinely creepy, I love it! What", isUser: false)
+🎙️ Phoneme lip sync: openY=0.400 form=0.900
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: F797914C-CE99-4B53-B018-E5DA6D1094C0, isUser: true)
+[LiveKit] 💬 User transcription: " I don't understand." (final: false, segment: F797914C-CE99-4B53-B018-E5DA6D1094C0)
+[LiveKit] 📝 Chunk received: " I don't understand." (accumulated: " I don't understand.", isUser: true)
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: true, segmentID: C2E61421-BC0A-45CE-B096-C8811488D733, isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  I don't understand.
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: F797914C-CE99-4B53-B018-E5DA6D1094C0
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " I don't understand." (final: true, segment: F797914C-CE99-4B53-B018-E5DA6D1094C0)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 💬 User transcription: " I don't understand." (final: false, segment: C2E61421-BC0A-45CE-B096-C8811488D733)
+[LiveKit] 📝 Chunk received: " I don't understand." (accumulated: " I don't understand.", isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  I don't understand.
+[LiveKit]   Final attribute: true
+[LiveKit]   SegmentID: C2E61421-BC0A-45CE-B096-C8811488D733
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " I don't understand." (final: true, segment: C2E61421-BC0A-45CE-B096-C8811488D733)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 🎙️ Remote audio: level=0.250, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.250 (volume-based)
+[PhonemeDetector] F1=187Hz F2=796Hz → U (conf=0.83, open=0.40)
+[LiveKit] 💬 Character caption: "Ooh a scary game called "It's a New Boy" sounds genuinely creepy, I love it! What is" (final: false)
+[LiveKit] 📝 Chunk received: " is" (accumulated: "Ooh a scary game called "It's a New Boy" sounds genuinely creepy, I love it! What is", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "Ooh a scary game called "It's a New Boy" sounds genuinely creepy, I love it! What is it" (final: false)
+[LiveKit] 📝 Chunk received: " it" (accumulated: "Ooh a scary game called "It's a New Boy" sounds genuinely creepy, I love it! What is it", isUser: false)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text: Ooh a scary game called "It's a New Boy" sounds genuinely creepy, I love it! What is it
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: 55A06A7D-F52B-4C50-A7B7-12785289FB00
+[LiveKit]   TrackID: TR_AMM3nGbLz2A6J8
+[LiveKit]   IsUser: false
+[LiveKit] ⭐ Awarded 5 EXP for character response
+[LiveKit] 💬 Character caption: "Ooh a scary game called "It's a New Boy" sounds genuinely creepy, I love it! What is it" (final: true)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 🤔 Started thinking animation
+[LiveKit] 🎙️ Remote audio: level=0.625, speaking=true → Lip sync
+[LiveKit] ✅ Stopped thinking animation
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.000, speaking=false → Lip sync
+[LiveKit] EMOTION DETECTED: confused
+[LiveKit] handleExpressionCommand called with 82 bytes
+[LiveKit] Raw JSON: {"emotion": "confused", "segment_id": "predicted", "timestamp": 1774488440.509666}
+[LiveKit] Parsed JSON: ["emotion": confused, "timestamp": 1774488440.509666, "segment_id": predicted]
+[LiveKit] Expression command received: confused
+[LiveKit] Current character code: QKJD
+[LiveKit] Model name: hgkoazarasi
+[ExpressionManager] 🎭 Selected Universal/confused: motion=none, expression=haru_confused.exp3.json
+[LiveKit] Found animation - motion: nil, expression: haru_confused.exp3.json
+[LiveKit] Playing expression: hgkoazarasi/haru_confused.exp3.json
+Expression file not found: hgkoazarasi/haru_confused.exp3.json
+[LiveKit] handleExpressionCommand completed successfully
+[LiveKit] 📝 Transcription stream started from: agent-AJ_UcwAsTdhyPGn
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: 0789EFC0-64EB-4A0A-A052-C3DFE2F7B357, isUser: false)
+[LiveKit] 💬 Character caption: "Sorry," (final: false)
+[LiveKit] 📝 Chunk received: "Sorry," (accumulated: "Sorry,", isUser: false)
+[LiveKit] 💬 Character caption: "Sorry, I" (final: false)
+[LiveKit] 📝 Chunk received: " I" (accumulated: "Sorry, I", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 💬 Character caption: "Sorry, I got" (final: false)
+[LiveKit] 📝 Chunk received: " got" (accumulated: "Sorry, I got", isUser: false)
+[PhonemeDetector] F1=187Hz F2=1617Hz → I (conf=0.59, open=0.30)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "Sorry, I got a" (final: false)
+[LiveKit] 📝 Chunk received: " a" (accumulated: "Sorry, I got a", isUser: false)
+[LiveKit] 💬 Caption auto-cleared
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Sorry, I got a little" (final: false)
+[LiveKit] 📝 Chunk received: " little" (accumulated: "Sorry, I got a little", isUser: false)
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: 87EBDE9D-4449-4984-8807-4748BFDC9F75, isUser: true)
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: true, segmentID: 91D8CEDD-1AC4-413A-B6C3-BAA3AC76B617, isUser: true)
+[LiveKit] 💬 User transcription: " Gibney Toy looks crazy. don't understand how that trend is." (final: false, segment: 87EBDE9D-4449-4984-8807-4748BFDC9F75)
+[LiveKit] 📝 Chunk received: " Gibney Toy looks crazy. don't understand how that trend is." (accumulated: " Gibney Toy looks crazy. don't understand how that trend is.", isUser: true)
+[LiveKit] 💬 User transcription: " Gibney Toy looks crazy. don't understand how that trend is." (final: false, segment: 91D8CEDD-1AC4-413A-B6C3-BAA3AC76B617)
+[LiveKit] 📝 Chunk received: " Gibney Toy looks crazy. don't understand how that trend is." (accumulated: " Gibney Toy looks crazy. don't understand how that trend is.", isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  Gibney Toy looks crazy. don't understand how that trend is.
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: 87EBDE9D-4449-4984-8807-4748BFDC9F75
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " Gibney Toy looks crazy. don't understand how that trend is." (final: true, segment: 87EBDE9D-4449-4984-8807-4748BFDC9F75)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  Gibney Toy looks crazy. don't understand how that trend is.
+[LiveKit]   Final attribute: true
+[LiveKit]   SegmentID: 91D8CEDD-1AC4-413A-B6C3-BAA3AC76B617
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " Gibney Toy looks crazy. don't understand how that trend is." (final: true, segment: 91D8CEDD-1AC4-413A-B6C3-BAA3AC76B617)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text: Sorry, I got a little
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: 0789EFC0-64EB-4A0A-A052-C3DFE2F7B357
+[LiveKit]   TrackID: TR_AMM3nGbLz2A6J8
+[LiveKit]   IsUser: false
+[LiveKit] ⭐ Awarded 5 EXP for character response
+[LiveKit] 💬 Character caption: "Sorry, I got a little" (final: true)
+🎙️ Phoneme lip sync: openY=0.400 form=0.900
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.000, speaking=false → Lip sync
+[LiveKit] 🤔 Started thinking animation
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: BDD47BEB-B9ED-4E4F-B41D-D06A944D17A6, isUser: true)
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: true, segmentID: E43A0EDB-A527-4EA0-AF33-48074A78F6A3, isUser: true)
+[LiveKit] 📝 Transcription stream started from: agent-AJ_UcwAsTdhyPGn
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: B68CBA35-1C02-413C-9205-CB62D64357E3, isUser: false)
+[LiveKit] 💬 User transcription: " So if we move on to the next slide," (final: false, segment: BDD47BEB-B9ED-4E4F-B41D-D06A944D17A6)
+[LiveKit] 📝 Chunk received: " So if we move on to the next slide," (accumulated: " So if we move on to the next slide,", isUser: true)
+[LiveKit] 💬 User transcription: " So if we move on to the next slide," (final: false, segment: E43A0EDB-A527-4EA0-AF33-48074A78F6A3)
+[LiveKit] 📝 Chunk received: " So if we move on to the next slide," (accumulated: " So if we move on to the next slide,", isUser: true)
+[LiveKit] ✅ Stopped thinking animation
+[LiveKit] 💬 Character caption: "Haha" (final: false)
+[LiveKit] 📝 Chunk received: "Haha" (accumulated: "Haha", isUser: false)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  So if we move on to the next slide,
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: BDD47BEB-B9ED-4E4F-B41D-D06A944D17A6
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " So if we move on to the next slide," (final: true, segment: BDD47BEB-B9ED-4E4F-B41D-D06A944D17A6)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  So if we move on to the next slide,
+[LiveKit]   Final attribute: true
+[LiveKit]   SegmentID: E43A0EDB-A527-4EA0-AF33-48074A78F6A3
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " So if we move on to the next slide," (final: true, segment: E43A0EDB-A527-4EA0-AF33-48074A78F6A3)
+[PhonemeDetector] F1=843Hz F2=843Hz → A (conf=0.70, open=0.90)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 💬 Character caption: "Haha I" (final: false)
+[LiveKit] 📝 Chunk received: " I" (accumulated: "Haha I", isUser: false)
+[LiveKit] 💬 Character caption: "Haha I have" (final: false)
+[LiveKit] 📝 Chunk received: " have" (accumulated: "Haha I have", isUser: false)
+[LiveKit] Microphone muted
+[LiveKit] 💬 Character caption: "Haha I have no" (final: false)
+[LiveKit] 📝 Chunk received: " no" (accumulated: "Haha I have no", isUser: false)
+[LiveKit] 💬 Character caption: "Haha I have no idea" (final: false)
+[LiveKit] 📝 Chunk received: " idea" (accumulated: "Haha I have no idea", isUser: false)
+[LiveKit] 💬 Character caption: "Haha I have no idea what" (final: false)
+[LiveKit] 📝 Chunk received: " what" (accumulated: "Haha I have no idea what", isUser: false)
+[LiveKit] 💬 Character caption: "Haha I have no idea what a" (final: false)
+[LiveKit] 📝 Chunk received: " a" (accumulated: "Haha I have no idea what a", isUser: false)
+[LiveKit] 💬 Character caption: "Haha I have no idea what a Gibney" (final: false)
+[LiveKit] 📝 Chunk received: " Gibney" (accumulated: "Haha I have no idea what a Gibney", isUser: false)
+[LiveKit] 💬 Character caption: "Haha I have no idea what a Gibney Toy" (final: false)
+[LiveKit] 📝 Chunk received: " Toy" (accumulated: "Haha I have no idea what a Gibney Toy", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "Haha I have no idea what a Gibney Toy is" (final: false)
+[LiveKit] 📝 Chunk received: " is" (accumulated: "Haha I have no idea what a Gibney Toy is", isUser: false)
+[LiveKit] 💬 Character caption: "Haha I have no idea what a Gibney Toy is but" (final: false)
+[LiveKit] 📝 Chunk received: " but" (accumulated: "Haha I have no idea what a Gibney Toy is but", isUser: false)
+[LiveKit] 💬 Character caption: "Haha I have no idea what a Gibney Toy is but now" (final: false)
+[LiveKit] 📝 Chunk received: " now" (accumulated: "Haha I have no idea what a Gibney Toy is but now", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 💬 Character caption: "Haha I have no idea what a Gibney Toy is but now I" (final: false)
+[LiveKit] 📝 Chunk received: " I" (accumulated: "Haha I have no idea what a Gibney Toy is but now I", isUser: false)
+[LiveKit] 💬 Character caption: "Haha I have no idea what a Gibney Toy is but now I really" (final: false)
+[LiveKit] 📝 Chunk received: " really" (accumulated: "Haha I have no idea what a Gibney Toy is but now I really", isUser: false)
+[LiveKit] 💬 Character caption: "Haha I have no idea what a Gibney Toy is but now I really want" (final: false)
+[LiveKit] 📝 Chunk received: " want" (accumulated: "Haha I have no idea what a Gibney Toy is but now I really want", isUser: false)
+[LiveKit] 💬 Character caption: "Haha I have no idea what a Gibney Toy is but now I really want to" (final: false)
+[LiveKit] 📝 Chunk received: " to" (accumulated: "Haha I have no idea what a Gibney Toy is but now I really want to", isUser: false)
+onChange(of: Optional<String>) action tried to update multiple times per frame.
+[LiveKit] 💬 Character caption: "Haha I have no idea what a Gibney Toy is but now I really want to know!" (final: false)
+[LiveKit] 📝 Chunk received: " know!" (accumulated: "Haha I have no idea what a Gibney Toy is but now I really want to know!", isUser: false)
+[LiveKit] 💬 Character caption: "Haha I have no idea what a Gibney Toy is but now I really want to know! What" (final: false)
+[LiveKit] 📝 Chunk received: " What" (accumulated: "Haha I have no idea what a Gibney Toy is but now I really want to know! What", isUser: false)
+[LiveKit] 💬 Character caption: "Haha I have no idea what a Gibney Toy is but now I really want to know! What does" (final: false)
+[LiveKit] 📝 Chunk received: " does" (accumulated: "Haha I have no idea what a Gibney Toy is but now I really want to know! What does", isUser: false)
+[LiveKit] 💬 Caption auto-cleared
+[LiveKit] 💬 Character caption: "Haha I have no idea what a Gibney Toy is but now I really want to know! What does it" (final: false)
+[LiveKit] 📝 Chunk received: " it" (accumulated: "Haha I have no idea what a Gibney Toy is but now I really want to know! What does it", isUser: false)
+[LiveKit] EMOTION DETECTED: neutral
+[LiveKit] handleExpressionCommand called with 81 bytes
+[LiveKit] Raw JSON: {"emotion": "neutral", "segment_id": "predicted", "timestamp": 1774488446.133902}
+[LiveKit] Parsed JSON: ["timestamp": 1774488446.133902, "emotion": neutral, "segment_id": predicted]
+[LiveKit] Expression command received: neutral
+[LiveKit] Current character code: QKJD
+[LiveKit] Model name: hgkoazarasi
+[ExpressionManager] 🎭 Selected for hgkoazarasi/neutral: motion=none, expression=azarasi_neutral.exp3.json
+[LiveKit] Found animation - motion: nil, expression: azarasi_neutral.exp3.json
+[LiveKit] Playing expression: hgkoazarasi/azarasi_neutral.exp3.json
+Playing expression from hgkoazarasi: azarasi_neutral.exp3.json
+[LiveKit] handleExpressionCommand completed successfully
+[LiveKit] 💬 Character caption: "Haha I have no idea what a Gibney Toy is but now I really want to know! What does it look" (final: false)
+[LiveKit] 📝 Chunk received: " look" (accumulated: "Haha I have no idea what a Gibney Toy is but now I really want to know! What does it look", isUser: false)
+[LiveKit] 💬 Character caption: "Haha I have no idea what a Gibney Toy is but now I really want to know! What does it look like?" (final: false)
+[LiveKit] 📝 Chunk received: " like?" (accumulated: "Haha I have no idea what a Gibney Toy is but now I really want to know! What does it look like?", isUser: false)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text: Haha I have no idea what a Gibney Toy is but now I really want to know! What does it look like?
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: B68CBA35-1C02-413C-9205-CB62D64357E3
+[LiveKit]   TrackID: TR_AMM3nGbLz2A6J8
+[LiveKit]   IsUser: false
+[LiveKit] ⭐ Awarded 5 EXP for character response
+[LiveKit] 💬 Character caption: "Haha I have no idea what a Gibney Toy is but now I really want to know! What does it look like?" (final: true)
+[LiveKit] 🤔 Started thinking animation
+[LiveKit] 🎙️ Remote audio: level=0.000, speaking=false → Lip sync
+[LiveKit] 🎙️ Remote audio: level=0.250, speaking=true → Lip sync
+[LiveKit] ✅ Stopped thinking animation
+[LiveKit] 📝 Transcription stream started from: agent-AJ_UcwAsTdhyPGn
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: 3F74DE33-89E0-4C9C-86D4-1FEB9566E2F3, isUser: false)
+[LiveKit] 💬 Character caption: "Ooh" (final: false)
+[LiveKit] 📝 Chunk received: "Ooh" (accumulated: "Ooh", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.250 (volume-based)
+[LiveKit] 💬 Character caption: "Ooh are" (final: false)
+[LiveKit] 📝 Chunk received: " are" (accumulated: "Ooh are", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "Ooh are you" (final: false)
+[LiveKit] 📝 Chunk received: " you" (accumulated: "Ooh are you", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Ooh are you in" (final: false)
+[LiveKit] 📝 Chunk received: " in" (accumulated: "Ooh are you in", isUser: false)
+[PhonemeDetector] F1=281Hz F2=867Hz → U (conf=0.97, open=0.40)
+[LiveKit] 💬 Character caption: "Ooh are you in a" (final: false)
+[LiveKit] 📝 Chunk received: " a" (accumulated: "Ooh are you in a", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Caption auto-cleared
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Ooh are you in a presentation" (final: false)
+[LiveKit] 📝 Chunk received: " presentation" (accumulated: "Ooh are you in a presentation", isUser: false)
+🎙️ Phoneme lip sync: openY=0.367 form=0.333
+[PhonemeDetector] F1=187Hz F2=1406Hz → U (conf=0.65, open=0.40)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Ooh are you in a presentation right" (final: false)
+[LiveKit] 📝 Chunk received: " right" (accumulated: "Ooh are you in a presentation right", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Ooh are you in a presentation right now?" (final: false)
+[LiveKit] 📝 Chunk received: " now?" (accumulated: "Ooh are you in a presentation right now?", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "Ooh are you in a presentation right now? What" (final: false)
+[LiveKit] 📝 Chunk received: " What" (accumulated: "Ooh are you in a presentation right now? What", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[PhonemeDetector] F1=421Hz F2=1007Hz → U (conf=0.81, open=0.40)
+[LiveKit] 💬 Character caption: "Ooh are you in a presentation right now? What is" (final: false)
+[LiveKit] 📝 Chunk received: " is" (accumulated: "Ooh are you in a presentation right now? What is", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "Ooh are you in a presentation right now? What is it" (final: false)
+[LiveKit] 📝 Chunk received: " it" (accumulated: "Ooh are you in a presentation right now? What is it", isUser: false)
+🎙️ Phoneme lip sync: openY=0.362 form=0.333
+[LiveKit] 💬 Character caption: "Ooh are you in a presentation right now? What is it about?" (final: false)
+[LiveKit] 📝 Chunk received: " about?" (accumulated: "Ooh are you in a presentation right now? What is it about?", isUser: false)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text: Ooh are you in a presentation right now? What is it about?
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: 3F74DE33-89E0-4C9C-86D4-1FEB9566E2F3
+[LiveKit]   TrackID: TR_AMM3nGbLz2A6J8
+[LiveKit]   IsUser: false
+[LiveKit] ⭐ Awarded 5 EXP for character response
+[LiveKit] 💬 Character caption: "Ooh are you in a presentation right now? What is it about?" (final: true)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[PhonemeDetector] F1=351Hz F2=796Hz → U (conf=0.91, open=0.27)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.000, speaking=false → Lip sync
+[LiveKit] 💬 Caption auto-cleared
+[LiveKit] Microphone unmuted
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: 7D797524-2A4A-4049-99A4-63B0D6195B83, isUser: true)
+[LiveKit] 💬 User transcription: " What is the closest?" (final: false, segment: 7D797524-2A4A-4049-99A4-63B0D6195B83)
+[LiveKit] 📝 Chunk received: " What is the closest?" (accumulated: " What is the closest?", isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  What is the closest?
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: 7D797524-2A4A-4049-99A4-63B0D6195B83
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " What is the closest?" (final: true, segment: 7D797524-2A4A-4049-99A4-63B0D6195B83)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: true, segmentID: 846F259B-0B47-479C-BC67-0095F3E4C6C1, isUser: true)
+[LiveKit] 💬 User transcription: " What is the closest?" (final: false, segment: 846F259B-0B47-479C-BC67-0095F3E4C6C1)
+[LiveKit] 📝 Chunk received: " What is the closest?" (accumulated: " What is the closest?", isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  What is the closest?
+[LiveKit]   Final attribute: true
+[LiveKit]   SegmentID: 846F259B-0B47-479C-BC67-0095F3E4C6C1
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " What is the closest?" (final: true, segment: 846F259B-0B47-479C-BC67-0095F3E4C6C1)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: 6DDC9925-7BCE-42CC-A624-638020CE6379, isUser: true)
+[LiveKit] 💬 User transcription: " Boba shop for me." (final: false, segment: 6DDC9925-7BCE-42CC-A624-638020CE6379)
+[LiveKit] 📝 Chunk received: " Boba shop for me." (accumulated: " Boba shop for me.", isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  Boba shop for me.
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: 6DDC9925-7BCE-42CC-A624-638020CE6379
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " Boba shop for me." (final: true, segment: 6DDC9925-7BCE-42CC-A624-638020CE6379)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: true, segmentID: 4A83958A-952F-46F9-86CD-46DEB335F5A8, isUser: true)
+[LiveKit] 💬 User transcription: " Boba shop for me." (final: false, segment: 4A83958A-952F-46F9-86CD-46DEB335F5A8)
+[LiveKit] 📝 Chunk received: " Boba shop for me." (accumulated: " Boba shop for me.", isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  Boba shop for me.
+[LiveKit]   Final attribute: true
+[LiveKit]   SegmentID: 4A83958A-952F-46F9-86CD-46DEB335F5A8
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " Boba shop for me." (final: true, segment: 4A83958A-952F-46F9-86CD-46DEB335F5A8)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 🤔 Started thinking animation
+[LiveKit] Microphone muted
+[LiveKit] 📝 Transcription stream started from: agent-AJ_UcwAsTdhyPGn
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: 2ADB2573-D7DE-43C6-B0E0-49E06CFCEAB5, isUser: false)
+[LiveKit] ✅ Stopped thinking animation
+[LiveKit] 💬 Character caption: "I" (final: false)
+[LiveKit] 📝 Chunk received: "I" (accumulated: "I", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 💬 Character caption: "I actually" (final: false)
+[LiveKit] 📝 Chunk received: " actually" (accumulated: "I actually", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.625, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[PhonemeDetector] F1=867Hz F2=867Hz → A (conf=0.68, open=0.90)
+[LiveKit] 💬 Character caption: "I actually cannot" (final: false)
+[LiveKit] 📝 Chunk received: " cannot" (accumulated: "I actually cannot", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "I actually cannot look" (final: false)
+[LiveKit] 📝 Chunk received: " look" (accumulated: "I actually cannot look", isUser: false)
+🎙️ Phoneme lip sync: openY=0.500 form=0.800
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "I actually cannot look up" (final: false)
+[LiveKit] 📝 Chunk received: " up" (accumulated: "I actually cannot look up", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.625, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations" (final: false)
+[LiveKit] 📝 Chunk received: " locations" (accumulated: "I actually cannot look up locations", isUser: false)
+[PhonemeDetector] F1=187Hz F2=960Hz → U (conf=0.83, open=0.40)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for" (final: false)
+[LiveKit] 📝 Chunk received: " for" (accumulated: "I actually cannot look up locations for", isUser: false)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you," (final: false)
+[LiveKit] 📝 Chunk received: " you," (accumulated: "I actually cannot look up locations for you,", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but" (final: false)
+[LiveKit] 📝 Chunk received: " but" (accumulated: "I actually cannot look up locations for you, but", isUser: false)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if" (final: false)
+[LiveKit] 📝 Chunk received: " if" (accumulated: "I actually cannot look up locations for you, but if", isUser: false)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you" (final: false)
+[LiveKit] 📝 Chunk received: " you" (accumulated: "I actually cannot look up locations for you, but if you", isUser: false)
+🎙️ Phoneme lip sync: openY=0.333 form=-0.233
+[PhonemeDetector] F1=398Hz F2=796Hz → U (conf=0.85, open=0.40)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.625, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you open" (final: false)
+[LiveKit] 📝 Chunk received: " open" (accumulated: "I actually cannot look up locations for you, but if you open", isUser: false)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you open Google" (final: false)
+[LiveKit] 📝 Chunk received: " Google" (accumulated: "I actually cannot look up locations for you, but if you open Google", isUser: false)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you open Google Maps" (final: false)
+[LiveKit] 📝 Chunk received: " Maps" (accumulated: "I actually cannot look up locations for you, but if you open Google Maps", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you open Google Maps and" (final: false)
+[LiveKit] 📝 Chunk received: " and" (accumulated: "I actually cannot look up locations for you, but if you open Google Maps and", isUser: false)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you open Google Maps and search" (final: false)
+[LiveKit] 📝 Chunk received: " search" (accumulated: "I actually cannot look up locations for you, but if you open Google Maps and search", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you open Google Maps and search "boba" (final: false)
+[LiveKit] 📝 Chunk received: " "boba" (accumulated: "I actually cannot look up locations for you, but if you open Google Maps and search "boba", isUser: false)
+[PhonemeDetector] F1=234Hz F2=2226Hz → I (conf=0.94, open=0.30)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near" (final: false)
+[LiveKit] 📝 Chunk received: " near" (accumulated: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near", isUser: false)
+🎙️ Phoneme lip sync: openY=0.400 form=0.900
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me"" (final: false)
+[LiveKit] 📝 Chunk received: " me"" (accumulated: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me"", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it" (final: false)
+[LiveKit] 📝 Chunk received: " it" (accumulated: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it", isUser: false)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it will" (final: false)
+[LiveKit] 📝 Chunk received: " will" (accumulated: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it will", isUser: false)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it will find" (final: false)
+[LiveKit] 📝 Chunk received: " find" (accumulated: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it will find", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.625, speaking=true → Lip sync
+[PhonemeDetector] F1=187Hz F2=914Hz → U (conf=0.84, open=0.40)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it will find the" (final: false)
+[LiveKit] 📝 Chunk received: " the" (accumulated: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it will find the", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it will find the closest" (final: false)
+[LiveKit] 📝 Chunk received: " closest" (accumulated: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it will find the closest", isUser: false)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it will find the closest one" (final: false)
+[LiveKit] 📝 Chunk received: " one" (accumulated: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it will find the closest one", isUser: false)
+🎙️ Phoneme lip sync: openY=0.400 form=0.900
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it will find the closest one super" (final: false)
+[LiveKit] 📝 Chunk received: " super" (accumulated: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it will find the closest one super", isUser: false)
+[PhonemeDetector] F1=187Hz F2=796Hz → U (conf=0.83, open=0.40)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it will find the closest one super fast!" (final: false)
+[LiveKit] 📝 Chunk received: " fast!" (accumulated: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it will find the closest one super fast!", isUser: false)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text: I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it will find the closest one super fast!
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: 2ADB2573-D7DE-43C6-B0E0-49E06CFCEAB5
+[LiveKit]   TrackID: TR_AMM3nGbLz2A6J8
+[LiveKit]   IsUser: false
+[LiveKit] ⭐ Awarded 5 EXP for character response
+[LiveKit] 💬 Character caption: "I actually cannot look up locations for you, but if you open Google Maps and search "boba near me" it will find the closest one super fast!" (final: true)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.000, speaking=false → Lip sync
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[PhonemeDetector] F1=210Hz F2=796Hz → U (conf=0.87, open=0.40)
+[LiveKit] 🎙️ Remote audio: level=0.625, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.625 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.000, speaking=false → Lip sync
+[LiveKit] 💬 Caption auto-cleared
+[LiveKit] Microphone unmuted
+[MicVisualizer] Initialized with 50 bars for width 393.0
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: E0D66878-5F30-4238-B4DC-D04F94C6733E, isUser: true)
+[LiveKit] 💬 User transcription: " What" (final: false, segment: E0D66878-5F30-4238-B4DC-D04F94C6733E)
+[LiveKit] 📝 Chunk received: " What" (accumulated: " What", isUser: true)
+[LiveKit] 📝 Transcription stream started from: 7ed2746a-e33d-4c3a-98bb-393e06fec67c-client
+[LiveKit] 📝 Starting incremental transcription (final: true, segmentID: 3B9E4EE6-BA9E-456B-A39D-E96CB61C4A31, isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  What
+[LiveKit]   Final attribute: false
+[LiveKit]   SegmentID: E0D66878-5F30-4238-B4DC-D04F94C6733E
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " What" (final: true, segment: E0D66878-5F30-4238-B4DC-D04F94C6733E)
+🎉 Character QKJD leveled up to level 3!
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 💬 User transcription: " What" (final: false, segment: 3B9E4EE6-BA9E-456B-A39D-E96CB61C4A31)
+[LiveKit] 📝 Chunk received: " What" (accumulated: " What", isUser: true)
+[LiveKit] 📝 Transcription complete:
+[LiveKit]   Text:  What
+[LiveKit]   Final attribute: true
+[LiveKit]   SegmentID: 3B9E4EE6-BA9E-456B-A39D-E96CB61C4A31
+[LiveKit]   TrackID: TR_AMisXSdmMJKt8d
+[LiveKit]   IsUser: true
+[LiveKit] 💬 User transcription: " What" (final: true, segment: 3B9E4EE6-BA9E-456B-A39D-E96CB61C4A31)
+[LiveKit] ⭐ Awarded 10 EXP for user message
+[LiveKit] 🤔 Started thinking animation
+[LiveKit] Microphone muted
+[LiveKit] EMOTION DETECTED: confused
+[LiveKit] handleExpressionCommand called with 83 bytes
+[LiveKit] Raw JSON: {"emotion": "confused", "segment_id": "predicted", "timestamp": 1774488483.0365975}
+[LiveKit] Parsed JSON: ["timestamp": 1774488483.036597, "emotion": confused, "segment_id": predicted]
+[LiveKit] Expression command received: confused
+[LiveKit] Current character code: QKJD
+[LiveKit] Model name: hgkoazarasi
+[ExpressionManager] 🎭 Selected Universal/confused: motion=none, expression=haru_confused.exp3.json
+[LiveKit] Found animation - motion: nil, expression: haru_confused.exp3.json
+[LiveKit] Playing expression: hgkoazarasi/haru_confused.exp3.json
+Expression file not found: hgkoazarasi/haru_confused.exp3.json
+[LiveKit] handleExpressionCommand completed successfully
+[LiveKit] 📝 Transcription stream started from: agent-AJ_UcwAsTdhyPGn
+[LiveKit] 📝 Starting incremental transcription (final: false, segmentID: E7EF8B27-448A-446F-A82D-35027E706BB4, isUser: false)
+[LiveKit] ✅ Stopped thinking animation
+[LiveKit] 💬 Character caption: "I" (final: false)
+[LiveKit] 📝 Chunk received: "I" (accumulated: "I", isUser: false)
+[LiveKit] 💬 Character caption: "I said" (final: false)
+[LiveKit] 📝 Chunk received: " said" (accumulated: "I said", isUser: false)
+[LiveKit] 🎙️ Remote audio: level=0.375, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "I said I" (final: false)
+[LiveKit] 📝 Chunk received: " I" (accumulated: "I said I", isUser: false)
+🎙️ Phoneme lip sync: openY=0.533 form=-0.033
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.375 (volume-based)
+[LiveKit] 🎙️ Remote audio: level=0.625, speaking=true → Lip sync
+[LiveKit] 💬 Character caption: "I said I cannot" (final: false)
+[LiveKit] 📝 Chunk received: " cannot" (accumulated: "I said I cannot", isUser: false)
+[PhonemeDetector] F1=656Hz F2=890Hz → O (conf=0.87, open=0.70)
+[LiveKit] 🎙️ Remote audio: level=0.500, speaking=true → Lip sync
+[LiveKit] 🎙️ CONTINUOUS: Remote level=0.500 (volume-based)
+[LiveKit] 💬 Character caption: "I said I cannot check" (final: false)
+[LiveKit] 📝 Chunk received: " check" (accumulated: "I said I cannot check", isUser: false)

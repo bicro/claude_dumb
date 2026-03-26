@@ -472,7 +472,203 @@ main {
   margin-top: 2px;
 }
 
-/* Energy dots now use GPU-rendered Globe.GL points + rings layer */
+/* ---- Globe Zone Markers ---- */
+
+/* Hot zone: floating avatar hologram */
+.zone-hot {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  pointer-events: none;
+}
+
+.zone-hot-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  filter: drop-shadow(0 0 8px rgba(90, 154, 31, 0.6));
+  animation: floatAvatar 3s ease-in-out infinite;
+  border: 2px solid rgba(90, 154, 31, 0.5);
+}
+
+.zone-hot-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(90, 154, 31, 0.4);
+  transform: translate(-50%, -50%);
+  animation: hotRingPulse 2.5s ease-out infinite;
+}
+
+.zone-hot-label {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--green);
+  white-space: nowrap;
+  text-shadow: 0 0 8px rgba(90,154,31,0.5);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+@keyframes floatAvatar {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes hotRingPulse {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+  100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
+}
+
+/* Cold zone: meteor impact / kaiju warning */
+.zone-cold {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  pointer-events: none;
+}
+
+/* Meteor streak */
+.meteor-streak {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  width: 3px;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, #ff4444, #ff8800);
+  transform: translateX(-50%) rotate(-15deg);
+  animation: meteorFall 1.8s ease-in infinite;
+  border-radius: 2px;
+  filter: blur(0.5px);
+  box-shadow: 0 0 6px 1px rgba(255,68,68,0.5);
+}
+
+.meteor-streak:nth-child(2) {
+  left: 35%;
+  height: 30px;
+  animation-delay: 0.6s;
+  transform: translateX(-50%) rotate(-25deg);
+  opacity: 0.7;
+}
+
+.meteor-streak:nth-child(3) {
+  left: 65%;
+  height: 25px;
+  animation-delay: 1.2s;
+  transform: translateX(-50%) rotate(-5deg);
+  opacity: 0.5;
+}
+
+@keyframes meteorFall {
+  0% { opacity: 0; transform: translateX(-50%) translateY(-20px) rotate(-15deg); }
+  20% { opacity: 1; }
+  60% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) translateY(30px) rotate(-15deg); }
+}
+
+/* Impact crater ring */
+.impact-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 68, 68, 0.6);
+  transform: translate(-50%, -50%);
+  animation: impactExpand 2s ease-out infinite;
+  box-shadow: 0 0 10px 2px rgba(255, 68, 68, 0.3), inset 0 0 10px 2px rgba(255, 68, 68, 0.1);
+}
+
+.impact-ring:nth-of-type(2) {
+  animation-delay: 0.7s;
+  border-color: rgba(255, 136, 0, 0.4);
+}
+
+@keyframes impactExpand {
+  0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(2.8); opacity: 0; }
+}
+
+/* Kaiju hologram warning */
+.kaiju-holo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kaiju-icon {
+  font-size: 22px;
+  animation: kaijuGlitch 3s step-end infinite, kaijuGlow 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(255,68,68,0.6));
+}
+
+.kaiju-scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(255,68,68,0.06) 2px,
+    rgba(255,68,68,0.06) 4px
+  );
+  animation: scanDrift 4s linear infinite;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.zone-cold-label {
+  position: absolute;
+  bottom: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font);
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--red);
+  white-space: nowrap;
+  text-shadow: 0 0 8px rgba(255,68,68,0.6);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  animation: kaijuGlitch 4s step-end infinite;
+}
+
+@keyframes kaijuGlitch {
+  0%, 90%, 100% { opacity: 1; transform: translate(-50%, -50%); }
+  92% { opacity: 0.5; transform: translate(-48%, -52%); }
+  94% { opacity: 1; transform: translate(-52%, -50%); }
+  96% { opacity: 0.3; transform: translate(-50%, -48%); }
+  98% { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+@keyframes kaijuGlow {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(255,68,68,0.4)); }
+  50% { filter: drop-shadow(0 0 10px rgba(255,68,68,0.8)); }
+}
+
+@keyframes scanDrift {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(40px); }
+}
 
 /* ---- Center: Globe ---- */
 .panel-globe {

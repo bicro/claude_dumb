@@ -102,7 +102,7 @@ function toGeoJSON(topo, name) {
   return { type: 'FeatureCollection', features: [{ type: 'Feature', geometry: dGeom(obj), properties: {} }] };
 }
 
-// ---- Vote dots (GPU-rendered points + rings) ----
+// ---- Vote dots (GPU-rendered points + rings) + zone markers ----
 function loadVotes() {
   fetch('/api/votes/recent').then(r => r.json()).then(data => {
     if (!globeInstance) return;
@@ -122,7 +122,7 @@ function loadVotes() {
     });
     globeInstance.pointsData(points);
 
-    // Rings (pulsing effect) — only on recent votes (last 6h) to limit count
+    // Rings (pulsing effect) — only on recent votes (last 6h)
     const rings = filtered
       .filter(v => v.hours_ago < 6)
       .map(v => {
@@ -138,8 +138,123 @@ function loadVotes() {
       });
     globeInstance.ringsData(rings);
 
+    // Cluster votes into zones and render markers
+    const zones = clusterVotes(filtered);
+    globeInstance.htmlElementsData(zones);
+
     updateActivityFeed(data);
   });
+}
+
+// ---- Cluster votes into geographic zones ----
+function clusterVotes(votes) {
+  // Grid-based clustering: 30-degree cells
+  const cells = {};
+  for (const v of votes) {
+    const key = `${Math.round(v.latitude / 25) * 25},${Math.round(v.longitude / 30) * 30}`;
+    if (!cells[key]) cells[key] = { lat: 0, lng: 0, smart: 0, dumb: 0, count: 0 };
+    cells[key].lat += v.latitude;
+    cells[key].lng += v.longitude;
+    cells[key].count++;
+    if (v.vote === 'smart') cells[key].smart++;
+    else cells[key].dumb++;
+  }
+
+  const zones = [];
+  for (const [, cell] of Object.entries(cells)) {
+    if (cell.count < 3) continue; // need at least 3 votes to show a marker
+    const lat = cell.lat / cell.count;
+    const lng = cell.lng / cell.count;
+    const ratio = cell.smart / cell.count;
+    const type = ratio >= 0.6 ? 'hot' : ratio <= 0.4 ? 'cold' : null;
+    if (!type) continue;
+
+    zones.push({ lat, lng, type, smart: cell.smart, dumb: cell.dumb, count: cell.count, ratio });
+  }
+
+  // Limit to top 4 hot and top 4 cold by vote count
+  const hot = zones.filter(z => z.type === 'hot').sort((a, b) => b.count - a.count).slice(0, 4);
+  const cold = zones.filter(z => z.type === 'cold').sort((a, b) => b.count - a.count).slice(0, 4);
+
+  return [...hot, ...cold];
+}
+
+// Configure the HTML elements layer for zone markers
+function setupZoneMarkers() {
+  if (!globeInstance) return;
+  globeInstance
+    .htmlLat('lat')
+    .htmlLng('lng')
+    .htmlAltitude(d => d.type === 'hot' ? 0.06 : 0.03)
+    .htmlElement(d => {
+      if (d.type === 'hot') return createHotZone(d);
+      return createColdZone(d);
+    })
+    .htmlTransitionDuration(800);
+}
+
+function createHotZone(d) {
+  const el = document.createElement('div');
+  el.className = 'zone-hot';
+
+  const img = document.createElement('img');
+  img.src = '/avatar.jpg';
+  img.className = 'zone-hot-avatar';
+  el.appendChild(img);
+
+  const ring = document.createElement('div');
+  ring.className = 'zone-hot-ring';
+  el.appendChild(ring);
+
+  const label = document.createElement('div');
+  label.className = 'zone-hot-label';
+  label.textContent = `${Math.round(d.ratio * 100)}% vibes`;
+  el.appendChild(label);
+
+  return el;
+}
+
+function createColdZone(d) {
+  const el = document.createElement('div');
+  el.className = 'zone-cold';
+
+  // Meteor streaks
+  for (let i = 0; i < 3; i++) {
+    const streak = document.createElement('div');
+    streak.className = 'meteor-streak';
+    el.appendChild(streak);
+  }
+
+  // Impact rings
+  for (let i = 0; i < 2; i++) {
+    const ring = document.createElement('div');
+    ring.className = 'impact-ring';
+    el.appendChild(ring);
+  }
+
+  // Kaiju hologram
+  const holo = document.createElement('div');
+  holo.className = 'kaiju-holo';
+
+  const icon = document.createElement('div');
+  icon.className = 'kaiju-icon';
+  // Alternate between kaiju icons
+  const icons = ['\u{1F9E0}', '\u{1F4A5}', '\u{26A0}\uFE0F}', '\u{1F525}'];
+  icon.textContent = d.ratio <= 0.25 ? '\u{1F4A5}' : '\u{26A0}\uFE0F';
+  holo.appendChild(icon);
+
+  const scanline = document.createElement('div');
+  scanline.className = 'kaiju-scanline';
+  holo.appendChild(scanline);
+
+  el.appendChild(holo);
+
+  const label = document.createElement('div');
+  label.className = 'zone-cold-label';
+  label.textContent = d.ratio <= 0.25 ? 'CRITICAL' : 'WARNING';
+  el.appendChild(label);
+
+  return el;
 }
 
 function updateActivityFeed(votes) {
@@ -379,7 +494,10 @@ document.getElementById('btn-smart').addEventListener('click', () => submitVote(
 document.getElementById('btn-dumb').addEventListener('click', () => submitVote('dumb'));
 
 // ---- Init ----
-initGlobe().then(loadVotes);
+initGlobe().then(() => {
+  setupZoneMarkers();
+  loadVotes();
+});
 updateVibes();
 updateMeter();
 loadOfficialStatus();
