@@ -43,6 +43,7 @@ body {
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
+  padding-bottom: 130px;
 }
 
 /* Subtle grain texture */
@@ -888,6 +889,54 @@ main {
   text-transform: capitalize;
 }
 
+/* ---- 7-Day Trend Footer ---- */
+.trend-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  padding: 10px 24px 6px;
+  z-index: 50;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.04);
+}
+
+.trend-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.trend-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-2);
+}
+
+.trend-pct {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-3);
+}
+
+.trend-pct.up { color: var(--green); }
+.trend-pct.down { color: var(--red); }
+
+.trend-chart {
+  width: 100%;
+  height: 100px;
+}
+
+.trend-chart svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 1400px) {
   main {
@@ -913,4 +962,6 @@ main {
     border-bottom: 1px solid var(--border);
   }
   .globe-wrapper { min-height: 400px; }
+  .trend-footer { position: relative; }
+  body { padding-bottom: 0; }
 }

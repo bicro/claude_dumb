@@ -424,9 +424,13 @@ async function loadUptimeBars(cid) {
     const bEl = document.getElementById(`bars-${cid}`);
     const pEl = document.getElementById(`pct-${cid}`);
     if (!bEl) return;
+    // Collect only real days (with a date), skip offsets and future placeholders
     const allD = [];
-    for (const m of (d.months || [])) for (const day of (m.days || [])) allD.push(day);
-    const days = allD.slice(-30);
+    for (const m of (d.months || [])) for (const day of (m.days || [])) if (day.date) allD.push(day);
+    // Filter to only days up to today, then take last 30
+    const today = new Date().toISOString().slice(0, 10);
+    const pastDays = allD.filter(day => day.date.slice(0, 10) <= today);
+    const days = pastDays.slice(-30);
     bEl.innerHTML = '';
     for (const day of days) {
       const b = document.createElement('div');
@@ -434,14 +438,17 @@ async function loadUptimeBars(cid) {
       b.style.backgroundColor = day.color || '#76ad2a';
       const tt = document.createElement('div');
       tt.className = 'uptime-bar-tooltip';
-      const ds = day.date ? new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+      const ds = new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       const ev = (day.events || []).map(e => e.name).join(', ');
       tt.textContent = ev ? `${ds}: ${ev}` : `${ds}: OK`;
       b.appendChild(tt);
       bEl.appendChild(b);
     }
-    const lm = (d.months || []).slice(-1)[0];
-    pEl.textContent = lm?.uptime_percentage != null ? `${(lm.uptime_percentage * 100).toFixed(1)}%` : '—';
+    // Calculate actual 30-day uptime from the days we're showing
+    const totalSecs = days.length * 86400;
+    const downSecs = days.reduce((sum, day) => sum + (day.p || 0) + (day.m || 0), 0);
+    const uptimePct = totalSecs > 0 ? ((totalSecs - downSecs) / totalSecs * 100).toFixed(2) : '—';
+    pEl.textContent = uptimePct !== '—' ? `${uptimePct}%` : '—';
   } catch {}
 }
 
@@ -479,7 +486,7 @@ async function submitVote(type) {
       fb.textContent = `recorded${cityMsg}`;
       fb.className = 'vote-feedback success';
       commentInput.value = '';
-      updateVibes(); updateMeter(); loadVotes();
+      updateVibes(); updateMeter(); loadVotes(); updateTrend();
     } else {
       fb.textContent = data.error || 'failed';
       fb.className = 'vote-feedback error';
@@ -493,6 +500,107 @@ async function submitVote(type) {
 document.getElementById('btn-smart').addEventListener('click', () => submitVote('smart'));
 document.getElementById('btn-dumb').addEventListener('click', () => submitVote('dumb'));
 
+// ---- 7-Day Trend ----
+function updateTrend() {
+  fetch('/api/votes/daily').then(r => r.json()).then(rows => {
+    const dayMap = {};
+    for (const r of rows) dayMap[r.day] = r;
+
+    // Build 7 data points (one per day)
+    const points = [];
+    const now = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      const label = d.toLocaleDateString('en-US', { weekday: 'short' });
+      const data = dayMap[key];
+      if (data && (data.smart + data.dumb > 0)) {
+        points.push({ label, pct: Math.round(data.smart / (data.smart + data.dumb) * 100), votes: data.smart + data.dumb });
+      } else {
+        points.push({ label, pct: null, votes: 0 });
+      }
+    }
+
+    // Update summary
+    const valid = points.filter(p => p.pct !== null);
+    const pctEl = document.getElementById('trend-pct');
+    if (valid.length >= 2) {
+      const diff = valid[valid.length - 1].pct - valid[0].pct;
+      const arrow = diff > 0 ? '\u2191' : diff < 0 ? '\u2193' : '\u2192';
+      pctEl.textContent = `${arrow} ${Math.abs(diff)}pts`;
+      pctEl.className = 'trend-pct ' + (diff > 0 ? 'up' : diff < 0 ? 'down' : '');
+    } else {
+      pctEl.textContent = '';
+    }
+
+    // Render SVG
+    const container = document.getElementById('trend-chart');
+    const W = container.clientWidth || 800;
+    const H = 100;
+    const pad = { top: 16, bottom: 24, left: 12, right: 12 };
+    const plotW = W - pad.left - pad.right;
+    const plotH = H - pad.top - pad.bottom;
+
+    // Scale: y goes from 0..100 (percent smart)
+    const xStep = points.length > 1 ? plotW / (points.length - 1) : 0;
+    const coords = points.map((p, i) => ({
+      x: pad.left + i * xStep,
+      y: p.pct !== null ? pad.top + plotH - (p.pct / 100 * plotH) : null,
+      ...p,
+    }));
+    const validCoords = coords.filter(c => c.y !== null);
+
+    let pathD = '';
+    if (validCoords.length >= 2) {
+      // Smooth curve using cardinal spline
+      pathD = `M${validCoords[0].x},${validCoords[0].y}`;
+      for (let i = 1; i < validCoords.length; i++) {
+        const prev = validCoords[i - 1];
+        const curr = validCoords[i];
+        const cpx = (prev.x + curr.x) / 2;
+        pathD += ` C${cpx},${prev.y} ${cpx},${curr.y} ${curr.x},${curr.y}`;
+      }
+    }
+
+    // Area fill path
+    let areaD = '';
+    if (validCoords.length >= 2) {
+      areaD = pathD + ` L${validCoords[validCoords.length - 1].x},${H - pad.bottom} L${validCoords[0].x},${H - pad.bottom} Z`;
+    }
+
+    let svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+    svg += `<defs><linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">`;
+    svg += `<stop offset="0%" stop-color="var(--green)" stop-opacity="0.2"/>`;
+    svg += `<stop offset="100%" stop-color="var(--green)" stop-opacity="0"/>`;
+    svg += `</linearGradient></defs>`;
+
+    // 50% reference line
+    const midY = pad.top + plotH / 2;
+    svg += `<line x1="${pad.left}" y1="${midY}" x2="${W - pad.right}" y2="${midY}" stroke="var(--border)" stroke-dasharray="4 4"/>`;
+    svg += `<text x="${W - pad.right + 4}" y="${midY + 3}" fill="var(--text-3)" font-size="9" font-family="var(--font)">50%</text>`;
+
+    // Area + line
+    if (areaD) svg += `<path d="${areaD}" fill="url(#trendGrad)"/>`;
+    if (pathD) svg += `<path d="${pathD}" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"/>`;
+
+    // Dots + labels
+    for (const c of coords) {
+      const lx = c.x;
+      const ly = H - 4;
+      svg += `<text x="${lx}" y="${ly}" text-anchor="middle" fill="var(--text-3)" font-size="10" font-family="var(--font)">${c.label}</text>`;
+      if (c.y !== null) {
+        const dotColor = c.pct >= 70 ? 'var(--green)' : c.pct >= 40 ? 'var(--yellow)' : 'var(--red)';
+        svg += `<circle cx="${c.x}" cy="${c.y}" r="4" fill="${dotColor}" stroke="var(--bg-card)" stroke-width="2"/>`;
+        svg += `<text x="${c.x}" y="${c.y - 8}" text-anchor="middle" fill="var(--text-2)" font-size="10" font-weight="600" font-family="var(--font)">${c.pct}%</text>`;
+      }
+    }
+
+    svg += `</svg>`;
+    container.innerHTML = svg;
+  });
+}
+
 // ---- Init ----
 initGlobe().then(() => {
   setupZoneMarkers();
@@ -500,6 +608,9 @@ initGlobe().then(() => {
 });
 updateVibes();
 updateMeter();
+updateTrend();
 loadOfficialStatus();
 setInterval(() => { updateVibes(); updateMeter(); loadVotes(); }, 30000);
+setInterval(updateTrend, 60000);
 setInterval(loadOfficialStatus, 120000);
+window.addEventListener('resize', updateTrend);

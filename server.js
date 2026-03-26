@@ -80,6 +80,19 @@ if (process.env.DATABASE_URL) {
       `);
       return rows[0];
     },
+    async getDailyVotes() {
+      const { rows } = await pool.query(`
+        SELECT
+          TO_CHAR(DATE_TRUNC('day', created_at), 'YYYY-MM-DD') as day,
+          COALESCE(SUM(CASE WHEN vote = 'smart' THEN 1 ELSE 0 END), 0)::int as smart,
+          COALESCE(SUM(CASE WHEN vote = 'dumb' THEN 1 ELSE 0 END), 0)::int as dumb
+        FROM votes
+        WHERE created_at > NOW() - INTERVAL '7 days'
+        GROUP BY DATE_TRUNC('day', created_at)
+        ORDER BY day ASC
+      `);
+      return rows;
+    },
     async getRecentVoteByIP(ip) {
       const { rows } = await pool.query(
         `SELECT id FROM votes WHERE ip = $1 AND created_at > NOW() - INTERVAL '5 minutes'`,
@@ -157,6 +170,18 @@ if (process.env.DATABASE_URL) {
         WHERE created_at > datetime('now', '-24 hours')
       `).get();
     },
+    async getDailyVotes() {
+      return sqliteDb.prepare(`
+        SELECT
+          strftime('%Y-%m-%d', created_at) as day,
+          COALESCE(SUM(CASE WHEN vote = 'smart' THEN 1 ELSE 0 END), 0) as smart,
+          COALESCE(SUM(CASE WHEN vote = 'dumb' THEN 1 ELSE 0 END), 0) as dumb
+        FROM votes
+        WHERE created_at > datetime('now', '-7 days')
+        GROUP BY strftime('%Y-%m-%d', created_at)
+        ORDER BY day ASC
+      `).all();
+    },
     async getRecentVoteByIP(ip) {
       return sqliteDb.prepare(
         `SELECT id FROM votes WHERE ip = ? AND created_at > datetime('now', '-5 minutes')`
@@ -210,6 +235,11 @@ app.get('/api/votes/hourly', async (req, res) => {
 
 app.get('/api/votes/vibes', async (req, res) => {
   try { res.json(await db.getVibes()); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/votes/daily', async (req, res) => {
+  try { res.json(await db.getDailyVotes()); }
   catch (e) { res.status(500).json({ error: e.message }); }
 });
 
