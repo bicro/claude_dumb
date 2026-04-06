@@ -24,17 +24,23 @@
   <header>
     <a href="/" class="logo">claude<span class="accent">dumb</span><span class="tld">.com</span></a>
     <nav class="header-nav">
-      <span class="tagline">real-time claude vibes from around the world</span>
-      <a class="gh-link" href="https://github.com/bicro/claude_dumb" target="_blank" rel="noopener">
+      <span class="tagline">the claude vibe check</span>
+      <span class="header-status" id="header-status">
+        <span class="header-status-dot" id="header-status-dot">●</span>
+        <span id="header-status-text"></span>
+      </span>
+      <a class="gh-link" href="https://x.com/bicro_" target="_blank" rel="noopener" title="Follow on X">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </a>
+      <a class="gh-link" href="https://github.com/bicro/claude_dumb" target="_blank" rel="noopener" title="GitHub">
         <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
       </a>
     </nav>
   </header>
 
   <main>
-    <!-- LEFT: Vibes + Vote -->
+    <!-- LEFT: Vibes + Vote + Globe -->
     <section class="panel-left">
-      <!-- Big status hero -->
       <div class="vibes-hero">
         <div class="vibes-hero-label">
           <span class="pulse-dot"></span>
@@ -44,7 +50,6 @@
         <div class="vibes-hero-count" id="vibes-count"></div>
       </div>
 
-      <!-- 24h tile grid -->
       <div class="tiles-section">
         <div class="tiles-grid" id="vibes-tiles"></div>
         <div class="tiles-axis">
@@ -53,9 +58,19 @@
         </div>
       </div>
 
-      <!-- Vote -->
       <div class="vote-area">
-        <input type="text" class="comment-input" id="comment-input" placeholder="leave a comment (optional)" maxlength="120" autocomplete="off">
+        <input type="text" class="comment-input" id="comment-input" placeholder="what's claude doing?" maxlength="120" autocomplete="off">
+        <div class="screenshot-drop" id="screenshot-drop">
+          <input type="file" id="screenshot-input" accept="image/png,image/jpeg,image/gif,image/webp" hidden>
+          <span class="screenshot-drop-text" id="screenshot-drop-text">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            drop or click to add screenshot
+          </span>
+        </div>
+        <div class="upload-preview" id="upload-preview" style="display:none">
+          <img id="preview-img" alt="Preview">
+          <button class="upload-remove" id="upload-remove">&times;</button>
+        </div>
         <div class="vote-buttons">
           <button class="vote-btn smart" id="btn-smart">
             <span class="vote-btn-icon">&#9650;</span>
@@ -69,7 +84,6 @@
         <div class="vote-feedback" id="vote-status"></div>
       </div>
 
-      <!-- Meter -->
       <div class="meter">
         <div class="meter-header">
           <span class="meter-val smart" id="count-smart">0</span>
@@ -82,35 +96,25 @@
         </div>
       </div>
 
-      <!-- Live Activity Feed -->
-      <div class="activity-feed">
-        <div class="activity-label">Live Activity</div>
-        <div class="activity-list" id="activity-list"></div>
+      <!-- Globe -->
+      <div class="globe-container">
+        <div class="globe-wrapper" id="globe-wrapper"></div>
       </div>
     </section>
 
-    <!-- CENTER: Globe -->
-    <section class="panel-globe">
-      <div class="globe-wrapper" id="globe-wrapper"></div>
-    </section>
-
-    <!-- RIGHT: Official status -->
-    <section class="panel-right">
-      <div class="status-header-row">
-        <span class="status-title">Official Status</span>
-        <a class="status-source" href="https://status.claude.com" target="_blank" rel="noopener">status.claude.com</a>
+    <!-- RIGHT: Feed -->
+    <section class="panel-feed">
+      <div class="feed-top-bar">
+        <div class="feed-tabs">
+          <button class="feed-tab active" id="tab-newest" data-sort="newest">Newest</button>
+          <button class="feed-tab" id="tab-trending" data-sort="trending">Trending</button>
+        </div>
       </div>
-
-      <div class="overall-banner" id="overall-banner">
-        <span class="overall-dot" id="overall-icon">●</span>
-        <span id="overall-text">Loading...</span>
-      </div>
-
-      <div class="uptime-list" id="uptime-cards"></div>
-
-      <div class="incidents-area" id="incidents-section" style="display:none">
-        <div class="incidents-label">Active Incidents</div>
-        <div id="incidents-list"></div>
+      <div class="feed-list" id="feed-list"></div>
+      <!-- Leaderboard: hidden until meaningful data -->
+      <div class="leaderboard-section" id="leaderboard-section" style="display:none">
+        <button class="leaderboard-toggle" id="leaderboard-toggle">Top Influencers</button>
+        <div class="leaderboard-list" id="leaderboard-list" style="display:none"></div>
       </div>
     </section>
   </main>
@@ -122,6 +126,15 @@
     </div>
     <div class="trend-chart" id="trend-chart"></div>
   </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" style="display:none">
+    <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+    <div class="lightbox-content">
+      <img id="lightbox-img" alt="Screenshot">
+      <button class="lightbox-close" id="lightbox-close">&times;</button>
+    </div>
+  </div>
 
   <script src="//unpkg.com/globe.gl"></script>
   <script src="app.js"></script>

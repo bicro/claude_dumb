@@ -5,3 +5,4 @@ votes.db
 .env
 package-lock.json
 *.log
+uploads/

@@ -3,6 +3,8 @@
 // ============================================================
 
 let globeInstance = null;
+let selectedFile = null;
+let currentSort = 'newest';
 
 const COMPONENTS = [
   { id: 'rwppv331jlwc', name: 'claude.ai' },
@@ -11,8 +13,6 @@ const COMPONENTS = [
   { id: 'yyzkbfz2thpt', name: 'Claude Code' },
   { id: '0scnb50nvy53', name: 'Claude for Gov' },
 ];
-
-// No browser geolocation needed — server resolves location from IP
 
 // ---- Globe ----
 async function initGlobe() {
@@ -42,17 +42,14 @@ async function initGlobe() {
     .polygonSideColor(() => 'rgba(200,185,165,0.3)')
     .polygonStrokeColor(() => '#c0b5a0')
     .polygonAltitude(0.004)
-    // Use native points layer (GPU-rendered, much faster than HTML elements)
     .pointsData([])
     .pointLat('lat')
     .pointLng('lng')
     .pointColor('color')
     .pointAltitude(0.008)
     .pointRadius('radius')
-    .pointsMerge(true)  // merge into single geometry for performance
+    .pointsMerge(true)
     .pointsTransitionDuration(600)
-
-    // Rings layer for the pulsing effect (GPU-rendered)
     .ringsData([])
     .ringLat('lat')
     .ringLng('lng')
@@ -66,7 +63,6 @@ async function initGlobe() {
   mat.color.set('#f2ece3');
   mat.shininess = 3;
 
-  // Cap pixel ratio for performance on retina displays
   globeInstance.renderer().setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   const ctrl = globeInstance.controls();
@@ -82,7 +78,6 @@ async function initGlobe() {
   });
 }
 
-// TopoJSON decoder
 function toGeoJSON(topo, name) {
   const obj = topo.objects[name], arcs = topo.arcs, tf = topo.transform;
   function dArc(idx) {
@@ -102,14 +97,12 @@ function toGeoJSON(topo, name) {
   return { type: 'FeatureCollection', features: [{ type: 'Feature', geometry: dGeom(obj), properties: {} }] };
 }
 
-// ---- Vote dots (GPU-rendered points + rings) + zone markers ----
+// ---- Vote dots + zone markers ----
 function loadVotes() {
   fetch('/api/votes/recent').then(r => r.json()).then(data => {
     if (!globeInstance) return;
-
     const filtered = data.filter(v => v.latitude != null && v.longitude != null);
 
-    // Points (solid dots)
     const points = filtered.map(v => {
       const fade = Math.max(0.2, 1 - (v.hours_ago / 24));
       const s = v.vote === 'smart';
@@ -122,7 +115,6 @@ function loadVotes() {
     });
     globeInstance.pointsData(points);
 
-    // Rings (pulsing effect) — only on recent votes (last 6h)
     const rings = filtered
       .filter(v => v.hours_ago < 6)
       .map(v => {
@@ -138,17 +130,12 @@ function loadVotes() {
       });
     globeInstance.ringsData(rings);
 
-    // Cluster votes into zones and render markers
     const zones = clusterVotes(filtered);
     globeInstance.htmlElementsData(zones);
-
-    updateActivityFeed(data);
   });
 }
 
-// ---- Cluster votes into geographic zones ----
 function clusterVotes(votes) {
-  // Grid-based clustering: 30-degree cells
   const cells = {};
   for (const v of votes) {
     const key = `${Math.round(v.latitude / 25) * 25},${Math.round(v.longitude / 30) * 30}`;
@@ -159,152 +146,68 @@ function clusterVotes(votes) {
     if (v.vote === 'smart') cells[key].smart++;
     else cells[key].dumb++;
   }
-
   const zones = [];
   for (const [, cell] of Object.entries(cells)) {
-    if (cell.count < 3) continue; // need at least 3 votes to show a marker
+    if (cell.count < 3) continue;
     const lat = cell.lat / cell.count;
     const lng = cell.lng / cell.count;
     const ratio = cell.smart / cell.count;
     const type = ratio >= 0.6 ? 'hot' : ratio <= 0.4 ? 'cold' : null;
     if (!type) continue;
-
     zones.push({ lat, lng, type, smart: cell.smart, dumb: cell.dumb, count: cell.count, ratio });
   }
-
-  // Limit to top 4 hot and top 4 cold by vote count
   const hot = zones.filter(z => z.type === 'hot').sort((a, b) => b.count - a.count).slice(0, 4);
   const cold = zones.filter(z => z.type === 'cold').sort((a, b) => b.count - a.count).slice(0, 4);
-
   return [...hot, ...cold];
 }
 
-// Configure the HTML elements layer for zone markers
 function setupZoneMarkers() {
   if (!globeInstance) return;
   globeInstance
     .htmlLat('lat')
     .htmlLng('lng')
     .htmlAltitude(d => d.type === 'hot' ? 0.06 : 0.03)
-    .htmlElement(d => {
-      if (d.type === 'hot') return createHotZone(d);
-      return createColdZone(d);
-    })
+    .htmlElement(d => d.type === 'hot' ? createHotZone(d) : createColdZone(d))
     .htmlTransitionDuration(800);
 }
 
 function createHotZone(d) {
   const el = document.createElement('div');
   el.className = 'zone-hot';
-
   const img = document.createElement('img');
   img.src = '/avatar.jpg';
   img.className = 'zone-hot-avatar';
   el.appendChild(img);
-
   const ring = document.createElement('div');
   ring.className = 'zone-hot-ring';
   el.appendChild(ring);
-
   const label = document.createElement('div');
   label.className = 'zone-hot-label';
   label.textContent = `${Math.round(d.ratio * 100)}% vibes`;
   el.appendChild(label);
-
   return el;
 }
 
 function createColdZone(d) {
   const el = document.createElement('div');
   el.className = 'zone-cold';
-
-  // Meteor streaks
-  for (let i = 0; i < 3; i++) {
-    const streak = document.createElement('div');
-    streak.className = 'meteor-streak';
-    el.appendChild(streak);
-  }
-
-  // Impact rings
-  for (let i = 0; i < 2; i++) {
-    const ring = document.createElement('div');
-    ring.className = 'impact-ring';
-    el.appendChild(ring);
-  }
-
-  // Kaiju hologram
+  for (let i = 0; i < 3; i++) { const s = document.createElement('div'); s.className = 'meteor-streak'; el.appendChild(s); }
+  for (let i = 0; i < 2; i++) { const r = document.createElement('div'); r.className = 'impact-ring'; el.appendChild(r); }
   const holo = document.createElement('div');
   holo.className = 'kaiju-holo';
-
   const icon = document.createElement('div');
   icon.className = 'kaiju-icon';
-  // Alternate between kaiju icons
-  const icons = ['\u{1F9E0}', '\u{1F4A5}', '\u{26A0}\uFE0F}', '\u{1F525}'];
   icon.textContent = d.ratio <= 0.25 ? '\u{1F4A5}' : '\u{26A0}\uFE0F';
   holo.appendChild(icon);
-
   const scanline = document.createElement('div');
   scanline.className = 'kaiju-scanline';
   holo.appendChild(scanline);
-
   el.appendChild(holo);
-
   const label = document.createElement('div');
   label.className = 'zone-cold-label';
   label.textContent = d.ratio <= 0.25 ? 'CRITICAL' : 'WARNING';
   el.appendChild(label);
-
   return el;
-}
-
-function updateActivityFeed(votes) {
-  const list = document.getElementById('activity-list');
-  if (!list) return;
-  list.innerHTML = '';
-  const recent = votes.slice(0, 30);
-  for (const v of recent) {
-    const item = document.createElement('div');
-    item.className = 'activity-item';
-
-    const dot = document.createElement('span');
-    dot.className = 'activity-dot ' + v.vote;
-
-    const textWrap = document.createElement('div');
-    textWrap.className = 'activity-text';
-
-    const topLine = document.createElement('span');
-    const voteSpan = document.createElement('span');
-    voteSpan.className = 'activity-vote ' + v.vote;
-    voteSpan.textContent = v.vote;
-    topLine.appendChild(voteSpan);
-
-    if (v.city) {
-      const citySpan = document.createElement('span');
-      citySpan.className = 'activity-city';
-      citySpan.textContent = ` from ${v.city}`;
-      topLine.appendChild(citySpan);
-    }
-    textWrap.appendChild(topLine);
-
-    if (v.comment) {
-      const commentEl = document.createElement('span');
-      commentEl.className = 'activity-comment';
-      commentEl.textContent = `"${v.comment}"`;
-      textWrap.appendChild(commentEl);
-    }
-
-    const timeStr = v.hours_ago < 0.017 ? 'now'
-      : v.hours_ago < 1 ? `${Math.round(v.hours_ago * 60)}m`
-      : `${Math.round(v.hours_ago)}h`;
-    const time = document.createElement('span');
-    time.className = 'activity-time';
-    time.textContent = timeStr;
-
-    item.appendChild(dot);
-    item.appendChild(textWrap);
-    item.appendChild(time);
-    list.appendChild(item);
-  }
 }
 
 // ---- Vibes + tiles ----
@@ -324,7 +227,6 @@ function updateVibes() {
 
     document.getElementById('vibes-count').textContent = `${total} vote${total !== 1 ? 's' : ''} in the last 24 hours`;
 
-    // Tiles
     const tilesEl = document.getElementById('vibes-tiles');
     tilesEl.innerHTML = '';
     const hourMap = {};
@@ -338,21 +240,15 @@ function updateVibes() {
       const utcKey = d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') + '-' + String(d.getUTCDate()).padStart(2, '0') + ' ' + String(d.getUTCHours()).padStart(2, '0') + ':00:00';
       const localKey = d.toISOString().slice(0, 13).replace('T', ' ') + ':00:00';
       const data = hourMap[localKey] || hourMap[utcKey];
-
       const tile = document.createElement('div');
       tile.className = 'vibes-tile';
       let color, label;
       const hr = d.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
-      if (!data || (data.smart + data.dumb === 0)) {
-        color = '#e8e4de';
-        label = `${hr}: no votes`;
-      } else {
+      if (!data || (data.smart + data.dumb === 0)) { color = '#e8e4de'; label = `${hr}: no votes`; }
+      else {
         const r = data.smart / (data.smart + data.dumb);
         const v = data.smart + data.dumb;
-        if (r >= 0.7) color = '#5a9a1f';
-        else if (r >= 0.5) color = '#8cb83a';
-        else if (r >= 0.3) color = '#d4a017';
-        else color = '#d63031';
+        if (r >= 0.7) color = '#5a9a1f'; else if (r >= 0.5) color = '#8cb83a'; else if (r >= 0.3) color = '#d4a017'; else color = '#d63031';
         label = `${hr}: ${Math.round(r * 100)}% smart (${v})`;
       }
       tile.style.backgroundColor = color;
@@ -365,90 +261,17 @@ function updateVibes() {
   });
 }
 
-// ---- Status ----
+// ---- Official Status (header indicator) ----
 async function loadOfficialStatus() {
   try {
     const res = await fetch('/api/claude-status');
     const d = await res.json();
     if (d.error) return;
-
-    const banner = document.getElementById('overall-banner');
     const ind = d.status?.indicator || 'none';
-    banner.className = 'overall-banner ' + (ind === 'none' ? 'operational' : ind);
-    document.getElementById('overall-text').textContent = d.status?.description || 'All Systems Operational';
-
-    const sm = {};
-    for (const c of (d.components || [])) sm[c.id] = c.status;
-
-    const container = document.getElementById('uptime-cards');
-    container.innerHTML = '';
-    for (const comp of COMPONENTS) {
-      const s = sm[comp.id] || 'operational';
-      const card = document.createElement('div');
-      card.className = 'uptime-card';
-      card.innerHTML = `
-        <div class="uptime-header">
-          <span class="uptime-name">${comp.name}</span>
-          <span class="uptime-status ${s}">${fmtStatus(s)}</span>
-        </div>
-        <div class="uptime-bars" id="bars-${comp.id}"></div>
-        <div class="uptime-footer">
-          <span>30d</span>
-          <span class="uptime-pct" id="pct-${comp.id}">...</span>
-          <span>now</span>
-        </div>`;
-      container.appendChild(card);
-      loadUptimeBars(comp.id);
-    }
-
-    const inc = d.incidents || [];
-    const incS = document.getElementById('incidents-section');
-    const incL = document.getElementById('incidents-list');
-    if (inc.length) {
-      incS.style.display = 'block';
-      incL.innerHTML = '';
-      for (const i of inc) {
-        const c = document.createElement('div');
-        c.className = 'incident-card' + (i.impact === 'major' ? ' major' : '');
-        c.innerHTML = `<div class="incident-name">${i.name}</div><div class="incident-status">${i.status}</div>`;
-        incL.appendChild(c);
-      }
-    } else incS.style.display = 'none';
-  } catch { document.getElementById('overall-text').textContent = 'Unable to load'; }
-}
-
-async function loadUptimeBars(cid) {
-  try {
-    const res = await fetch(`/api/uptime/${cid}`);
-    const d = await res.json();
-    const bEl = document.getElementById(`bars-${cid}`);
-    const pEl = document.getElementById(`pct-${cid}`);
-    if (!bEl) return;
-    // Collect only real days (with a date), skip offsets and future placeholders
-    const allD = [];
-    for (const m of (d.months || [])) for (const day of (m.days || [])) if (day.date) allD.push(day);
-    // Filter to only days up to today, then take last 30
-    const today = new Date().toISOString().slice(0, 10);
-    const pastDays = allD.filter(day => day.date.slice(0, 10) <= today);
-    const days = pastDays.slice(-30);
-    bEl.innerHTML = '';
-    for (const day of days) {
-      const b = document.createElement('div');
-      b.className = 'uptime-bar';
-      b.style.backgroundColor = day.color || '#76ad2a';
-      const tt = document.createElement('div');
-      tt.className = 'uptime-bar-tooltip';
-      const ds = new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      const ev = (day.events || []).map(e => e.name).join(', ');
-      tt.textContent = ev ? `${ds}: ${ev}` : `${ds}: OK`;
-      b.appendChild(tt);
-      bEl.appendChild(b);
-    }
-    // Calculate actual 30-day uptime from the days we're showing
-    const totalSecs = days.length * 86400;
-    const downSecs = days.reduce((sum, day) => sum + (day.p || 0) + (day.m || 0), 0);
-    const uptimePct = totalSecs > 0 ? ((totalSecs - downSecs) / totalSecs * 100).toFixed(2) : '—';
-    pEl.textContent = uptimePct !== '—' ? `${uptimePct}%` : '—';
+    const dot = document.getElementById('header-status-dot');
+    const text = document.getElementById('header-status-text');
+    dot.className = 'header-status-dot ' + (ind === 'none' ? 'operational' : ind);
+    text.textContent = d.status?.description || 'All Systems Operational';
   } catch {}
 }
 
@@ -466,27 +289,79 @@ function updateMeter() {
   });
 }
 
+// ---- Screenshot Drop Zone ----
+function initAttach() {
+  const drop = document.getElementById('screenshot-drop');
+  const fileInput = document.getElementById('screenshot-input');
+  const preview = document.getElementById('upload-preview');
+  const previewImg = document.getElementById('preview-img');
+  const removeBtn = document.getElementById('upload-remove');
+
+  drop.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
+
+  drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('drag-over'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('drag-over'));
+  drop.addEventListener('drop', (e) => {
+    e.preventDefault(); drop.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f && f.type.startsWith('image/')) setFile(f);
+  });
+
+  removeBtn.addEventListener('click', clearFile);
+
+  function setFile(file) {
+    if (file.size > 5 * 1024 * 1024) {
+      document.getElementById('vote-status').textContent = 'Screenshot must be under 5MB';
+      document.getElementById('vote-status').className = 'vote-feedback error';
+      return;
+    }
+    selectedFile = file;
+    previewImg.src = URL.createObjectURL(file);
+    preview.style.display = 'flex';
+    drop.style.display = 'none';
+  }
+  function clearFile() {
+    selectedFile = null; fileInput.value = ''; previewImg.src = '';
+    preview.style.display = 'none';
+    drop.style.display = '';
+  }
+}
+
 // ---- Vote ----
 async function submitVote(type) {
   const fb = document.getElementById('vote-status');
   const commentInput = document.getElementById('comment-input');
   const comment = commentInput.value.trim() || null;
-
   fb.textContent = 'voting...';
   fb.className = 'vote-feedback';
   try {
-    const res = await fetch('/api/vote', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ vote: type, comment }),
-    });
+    let res;
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append('vote', type);
+      if (comment) formData.append('comment', comment);
+      formData.append('screenshot', selectedFile);
+      res = await fetch('/api/vote', { method: 'POST', body: formData });
+    } else {
+      res = await fetch('/api/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vote: type, comment }),
+      });
+    }
     const data = await res.json();
     if (data.success) {
       const cityMsg = data.city ? ` from ${data.city}` : '';
       fb.textContent = `recorded${cityMsg}`;
       fb.className = 'vote-feedback success';
       commentInput.value = '';
-      updateVibes(); updateMeter(); loadVotes(); updateTrend();
+      selectedFile = null;
+      document.getElementById('screenshot-input').value = '';
+      document.getElementById('preview-img').src = '';
+      document.getElementById('upload-preview').style.display = 'none';
+      document.getElementById('screenshot-drop').style.display = '';
+      updateVibes(); updateMeter(); loadVotes(); updateTrend(); loadFeed();
     } else {
       fb.textContent = data.error || 'failed';
       fb.className = 'vote-feedback error';
@@ -500,13 +375,217 @@ async function submitVote(type) {
 document.getElementById('btn-smart').addEventListener('click', () => submitVote('smart'));
 document.getElementById('btn-dumb').addEventListener('click', () => submitVote('dumb'));
 
+// ---- Unified Feed ----
+function flyToVote(lat, lng) {
+  if (!globeInstance || lat == null || lng == null) return;
+  globeInstance.controls().autoRotate = false;
+  globeInstance.pointOfView({ lat, lng, altitude: 1.8 }, 1200);
+  setTimeout(() => { if (globeInstance) globeInstance.controls().autoRotate = true; }, 6000);
+}
+
+function loadFeed() {
+  fetch(`/api/feed?sort=${currentSort}&limit=30`).then(r => r.json()).then(items => {
+    const list = document.getElementById('feed-list');
+    if (!list) return;
+    list.innerHTML = '';
+    if (items.length === 0) {
+      list.innerHTML = `<div class="feed-empty">${currentSort === 'trending' ? 'No screenshots yet. Vote dumb with proof!' : 'No votes in the last 24 hours.'}</div>`;
+      return;
+    }
+    for (const item of items) {
+      list.appendChild(renderFeedCard(item));
+    }
+  }).catch(() => {});
+}
+
+function renderFeedCard(item) {
+  const card = document.createElement('div');
+  card.className = 'feed-card';
+
+  // Thumbnail (if available)
+  if (item.thumb_url) {
+    const thumbWrap = document.createElement('div');
+    thumbWrap.className = 'feed-card-thumb-wrap';
+    const thumb = document.createElement('img');
+    thumb.className = 'feed-card-thumb';
+    thumb.src = item.thumb_url;
+    thumb.alt = '';
+    thumb.loading = 'lazy';
+    thumb.addEventListener('click', (e) => { e.stopPropagation(); openLightbox(item.full_url); });
+    thumb.onerror = () => { thumbWrap.style.display = 'none'; };
+    thumbWrap.appendChild(thumb);
+    card.appendChild(thumbWrap);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'feed-card-body';
+
+  if (item.comment) {
+    const comment = document.createElement('div');
+    comment.className = 'feed-card-comment';
+    comment.textContent = item.comment;
+    body.appendChild(comment);
+  }
+
+  // Meta line: vote label · city · time
+  const meta = document.createElement('div');
+  meta.className = 'feed-card-meta';
+  const voteLabel = document.createElement('span');
+  voteLabel.className = 'feed-vote-label ' + item.vote;
+  voteLabel.textContent = item.vote;
+  meta.appendChild(voteLabel);
+  const parts = [];
+  if (item.city) parts.push(item.city);
+  parts.push(getRelativeTime(item.created_at));
+  meta.appendChild(document.createTextNode(' \u00B7 ' + parts.join(' \u00B7 ')));
+  body.appendChild(meta);
+
+  // Actions line: reactions + share
+  const actions = document.createElement('div');
+  actions.className = 'feed-card-actions';
+
+  const upBtn = document.createElement('button');
+  upBtn.className = 'reaction-btn up' + (item.user_reaction === 'up' ? ' active' : '');
+  upBtn.innerHTML = '\u25B2';
+  upBtn.addEventListener('click', (e) => { e.stopPropagation(); handleReaction(item.id, 'up', card); });
+
+  const scoreEl = document.createElement('span');
+  scoreEl.className = 'reaction-score';
+  scoreEl.textContent = item.score;
+
+  const downBtn = document.createElement('button');
+  downBtn.className = 'reaction-btn down' + (item.user_reaction === 'down' ? ' active' : '');
+  downBtn.innerHTML = '\u25BC';
+  downBtn.addEventListener('click', (e) => { e.stopPropagation(); handleReaction(item.id, 'down', card); });
+
+  actions.appendChild(upBtn);
+  actions.appendChild(scoreEl);
+  actions.appendChild(downBtn);
+
+  if (item.thumb_url) {
+    const shareBtn = document.createElement('button');
+    shareBtn.className = 'share-btn';
+    shareBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>';
+    shareBtn.title = 'Share on X';
+    shareBtn.addEventListener('click', (e) => { e.stopPropagation(); shareVote(item.id, item.comment); });
+    actions.appendChild(shareBtn);
+  }
+
+  body.appendChild(actions);
+  card.appendChild(body);
+
+  card.addEventListener('click', () => flyToVote(item.latitude, item.longitude));
+
+  // Collapse heavily downvoted posts
+  if (item.score <= -3) {
+    card.classList.add('feed-card-collapsed');
+    const expandBtn = document.createElement('button');
+    expandBtn.className = 'feed-card-expand';
+    expandBtn.textContent = 'show hidden post (score: ' + item.score + ')';
+    expandBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      card.classList.remove('feed-card-collapsed');
+      expandBtn.remove();
+    });
+    card.prepend(expandBtn);
+  }
+
+  return card;
+}
+
+function getRelativeTime(dateStr) {
+  const now = new Date();
+  const then = new Date(dateStr);
+  const hours = (now - then) / 3600000;
+  if (hours < 0.017) return 'now';
+  if (hours < 1) return `${Math.round(hours * 60)}m ago`;
+  if (hours < 24) return `${Math.round(hours)}h ago`;
+  return `${Math.round(hours / 24)}d ago`;
+}
+
+// ---- Feed Tabs ----
+document.getElementById('tab-newest').addEventListener('click', () => switchTab('newest'));
+document.getElementById('tab-trending').addEventListener('click', () => switchTab('trending'));
+
+function switchTab(sort) {
+  currentSort = sort;
+  document.querySelectorAll('.feed-tab').forEach(t => t.classList.toggle('active', t.dataset.sort === sort));
+  loadFeed();
+}
+
+// ---- Reactions ----
+async function handleReaction(voteId, type, cardEl) {
+  try {
+    const res = await fetch('/api/react', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ voteId, type }),
+    });
+    const data = await res.json();
+    const scoreEl = cardEl.querySelector('.reaction-score');
+    scoreEl.textContent = data.score;
+    const upBtn = cardEl.querySelector('.reaction-btn.up');
+    const downBtn = cardEl.querySelector('.reaction-btn.down');
+    upBtn.classList.toggle('active', data.userReaction === 'up');
+    downBtn.classList.toggle('active', data.userReaction === 'down');
+  } catch {}
+}
+
+// ---- Share ----
+function shareVote(voteId, comment) {
+  const text = comment
+    ? `claude is being dumb rn: "${comment}" \u2014 claudedumb.com`
+    : 'claude is being dumb rn \u{1F480} \u2014 claudedumb.com';
+  const url = `${window.location.origin}/s/${voteId}`;
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank', 'width=550,height=420');
+}
+
+// ---- Lightbox ----
+function openLightbox(imageUrl) {
+  document.getElementById('lightbox-img').src = imageUrl;
+  document.getElementById('lightbox').style.display = 'flex';
+}
+function closeLightbox() {
+  document.getElementById('lightbox-img').src = '';
+  document.getElementById('lightbox').style.display = 'none';
+}
+document.getElementById('lightbox-backdrop').addEventListener('click', closeLightbox);
+document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+
+// ---- Leaderboard ----
+function loadLeaderboard() {
+  fetch('/api/leaderboard').then(r => r.json()).then(items => {
+    const list = document.getElementById('leaderboard-list');
+    list.innerHTML = '';
+    if (items.length === 0) { list.innerHTML = '<div class="leaderboard-empty">No shares yet</div>'; return; }
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const row = document.createElement('div');
+      row.className = 'leaderboard-item';
+      row.innerHTML = `<span class="leaderboard-rank">#${i + 1}</span>` +
+        `<img class="leaderboard-thumb" src="${item.thumb_url}" alt="">` +
+        `<span class="leaderboard-text">${item.comment || item.city || 'Screenshot'}</span>` +
+        `<span class="leaderboard-score">${item.influence} click${item.influence !== 1 ? 's' : ''}</span>`;
+      list.appendChild(row);
+    }
+  }).catch(() => {});
+}
+
+document.getElementById('leaderboard-toggle').addEventListener('click', () => {
+  const list = document.getElementById('leaderboard-list');
+  const btn = document.getElementById('leaderboard-toggle');
+  const showing = list.style.display !== 'none';
+  list.style.display = showing ? 'none' : '';
+  btn.textContent = showing ? 'Top Influencers' : 'Hide Influencers';
+  if (!showing) loadLeaderboard();
+});
+
 // ---- 7-Day Trend ----
 function updateTrend() {
   fetch('/api/votes/daily').then(r => r.json()).then(rows => {
     const dayMap = {};
     for (const r of rows) dayMap[r.day] = r;
-
-    // Build 7 data points (one per day)
     const points = [];
     const now = new Date();
     for (let i = 6; i >= 0; i--) {
@@ -521,8 +600,6 @@ function updateTrend() {
         points.push({ label, pct: null, votes: 0 });
       }
     }
-
-    // Update summary
     const valid = points.filter(p => p.pct !== null);
     const pctEl = document.getElementById('trend-pct');
     if (valid.length >= 2) {
@@ -530,87 +607,53 @@ function updateTrend() {
       const arrow = diff > 0 ? '\u2191' : diff < 0 ? '\u2193' : '\u2192';
       pctEl.textContent = `${arrow} ${Math.abs(diff)}pts`;
       pctEl.className = 'trend-pct ' + (diff > 0 ? 'up' : diff < 0 ? 'down' : '');
-    } else {
-      pctEl.textContent = '';
-    }
+    } else { pctEl.textContent = ''; }
 
-    // Render SVG
     const container = document.getElementById('trend-chart');
-    const W = container.clientWidth || 800;
-    const H = 100;
+    const W = container.clientWidth || 800, H = 100;
     const pad = { top: 16, bottom: 24, left: 12, right: 12 };
-    const plotW = W - pad.left - pad.right;
-    const plotH = H - pad.top - pad.bottom;
-
-    // Scale: y goes from 0..100 (percent smart)
+    const plotW = W - pad.left - pad.right, plotH = H - pad.top - pad.bottom;
     const xStep = points.length > 1 ? plotW / (points.length - 1) : 0;
-    const coords = points.map((p, i) => ({
-      x: pad.left + i * xStep,
-      y: p.pct !== null ? pad.top + plotH - (p.pct / 100 * plotH) : null,
-      ...p,
-    }));
+    const coords = points.map((p, i) => ({ x: pad.left + i * xStep, y: p.pct !== null ? pad.top + plotH - (p.pct / 100 * plotH) : null, ...p }));
     const validCoords = coords.filter(c => c.y !== null);
-
     let pathD = '';
     if (validCoords.length >= 2) {
-      // Smooth curve using cardinal spline
       pathD = `M${validCoords[0].x},${validCoords[0].y}`;
       for (let i = 1; i < validCoords.length; i++) {
-        const prev = validCoords[i - 1];
-        const curr = validCoords[i];
-        const cpx = (prev.x + curr.x) / 2;
+        const prev = validCoords[i - 1], curr = validCoords[i], cpx = (prev.x + curr.x) / 2;
         pathD += ` C${cpx},${prev.y} ${cpx},${curr.y} ${curr.x},${curr.y}`;
       }
     }
-
-    // Area fill path
-    let areaD = '';
-    if (validCoords.length >= 2) {
-      areaD = pathD + ` L${validCoords[validCoords.length - 1].x},${H - pad.bottom} L${validCoords[0].x},${H - pad.bottom} Z`;
-    }
-
+    let areaD = validCoords.length >= 2 ? pathD + ` L${validCoords[validCoords.length - 1].x},${H - pad.bottom} L${validCoords[0].x},${H - pad.bottom} Z` : '';
     let svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
-    svg += `<defs><linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">`;
-    svg += `<stop offset="0%" stop-color="var(--green)" stop-opacity="0.2"/>`;
-    svg += `<stop offset="100%" stop-color="var(--green)" stop-opacity="0"/>`;
-    svg += `</linearGradient></defs>`;
-
-    // 50% reference line
+    svg += `<defs><linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--green)" stop-opacity="0.2"/><stop offset="100%" stop-color="var(--green)" stop-opacity="0"/></linearGradient></defs>`;
     const midY = pad.top + plotH / 2;
     svg += `<line x1="${pad.left}" y1="${midY}" x2="${W - pad.right}" y2="${midY}" stroke="var(--border)" stroke-dasharray="4 4"/>`;
     svg += `<text x="${W - pad.right + 4}" y="${midY + 3}" fill="var(--text-3)" font-size="9" font-family="var(--font)">50%</text>`;
-
-    // Area + line
     if (areaD) svg += `<path d="${areaD}" fill="url(#trendGrad)"/>`;
     if (pathD) svg += `<path d="${pathD}" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"/>`;
-
-    // Dots + labels
     for (const c of coords) {
-      const lx = c.x;
-      const ly = H - 4;
-      svg += `<text x="${lx}" y="${ly}" text-anchor="middle" fill="var(--text-3)" font-size="10" font-family="var(--font)">${c.label}</text>`;
+      svg += `<text x="${c.x}" y="${H - 4}" text-anchor="middle" fill="var(--text-3)" font-size="10" font-family="var(--font)">${c.label}</text>`;
       if (c.y !== null) {
         const dotColor = c.pct >= 70 ? 'var(--green)' : c.pct >= 40 ? 'var(--yellow)' : 'var(--red)';
         svg += `<circle cx="${c.x}" cy="${c.y}" r="4" fill="${dotColor}" stroke="var(--bg-card)" stroke-width="2"/>`;
         svg += `<text x="${c.x}" y="${c.y - 8}" text-anchor="middle" fill="var(--text-2)" font-size="10" font-weight="600" font-family="var(--font)">${c.pct}%</text>`;
       }
     }
-
     svg += `</svg>`;
     container.innerHTML = svg;
   });
 }
 
 // ---- Init ----
-initGlobe().then(() => {
-  setupZoneMarkers();
-  loadVotes();
-});
+initAttach();
+initGlobe().then(() => { setupZoneMarkers(); loadVotes(); });
 updateVibes();
 updateMeter();
 updateTrend();
 loadOfficialStatus();
+loadFeed();
 setInterval(() => { updateVibes(); updateMeter(); loadVotes(); }, 30000);
-setInterval(updateTrend, 60000);
+setInterval(() => { updateTrend(); loadFeed(); }, 60000);
 setInterval(loadOfficialStatus, 120000);
 window.addEventListener('resize', updateTrend);
