@@ -38,12 +38,12 @@ async function uploadToR2(key, buffer, contentType) {
 }
 
 async function saveScreenshot(voteId, fullBuffer, thumbBuffer) {
-  const fullKey = `screenshots/${voteId}-full.jpg`;
+  const fullKey = `screenshots/${voteId}-full.png`;
   const thumbKey = `screenshots/${voteId}-thumb.jpg`;
 
   if (r2) {
     await Promise.all([
-      uploadToR2(fullKey, fullBuffer, 'image/jpeg'),
+      uploadToR2(fullKey, fullBuffer, 'image/png'),
       uploadToR2(thumbKey, thumbBuffer, 'image/jpeg'),
     ]);
   } else {
@@ -58,7 +58,7 @@ async function saveScreenshot(voteId, fullBuffer, thumbBuffer) {
 
 function getScreenshotUrl(key, thumb = false) {
   if (!key) return null;
-  const k = thumb ? key.replace('-full.jpg', '-thumb.jpg') : key;
+  const k = thumb ? key.replace(/-full\.(jpg|png)/, '-thumb.jpg') : key;
   if (R2_PUBLIC_URL) return `${R2_PUBLIC_URL}/${k}`;
   return `/uploads/${k}`;
 }
@@ -241,7 +241,7 @@ if (process.env.DATABASE_URL) {
           FROM reactions GROUP BY vote_id
         ) r ON r.vote_id = v.id
         LEFT JOIN reactions ur ON ur.vote_id = v.id AND ur.ip = $3
-        WHERE v.vote = 'dumb' AND v.screenshot_key IS NOT NULL
+        WHERE v.screenshot_key IS NOT NULL
         ORDER BY (COALESCE(r.score, 0) + 1.0) / POWER(EXTRACT(EPOCH FROM (NOW() - v.created_at)) / 3600 + 2, 1.5) DESC
         LIMIT $1 OFFSET $2
       `, [limit, offset, ip]);
@@ -442,7 +442,7 @@ if (process.env.DATABASE_URL) {
           FROM reactions GROUP BY vote_id
         ) r ON r.vote_id = v.id
         LEFT JOIN reactions ur ON ur.vote_id = v.id AND ur.ip = ?
-        WHERE v.vote = 'dumb' AND v.screenshot_key IS NOT NULL
+        WHERE v.screenshot_key IS NOT NULL
         ORDER BY CAST(COALESCE(r.score, 0) + 1 AS REAL) / (((julianday('now') - julianday(v.created_at)) * 24 + 2) * ((julianday('now') - julianday(v.created_at)) * 24 + 2)) DESC
         LIMIT ? OFFSET ?
       `).all(ip, limit, offset);
@@ -692,31 +692,38 @@ app.get('/api/og-card/:voteId', async (req, res) => {
     }
 
     const W = 1200, H = 630;
+    const pad = 40;
+    const headerH = 70;
+    const footerH = 50;
+    const imgArea = H - headerH - footerH;
 
     const screenshot = await sharp(screenshotBuf)
-      .resize({ width: 1080, height: 400, fit: 'inside' })
+      .resize({ width: W - pad * 2, height: imgArea - 20, fit: 'inside' })
       .toBuffer();
     const meta = await sharp(screenshot).metadata();
 
     const sx = Math.round((W - meta.width) / 2);
-    const sy = Math.round(110 + (400 - meta.height) / 2);
+    const sy = headerH + Math.round((imgArea - meta.height) / 2);
 
-    const comment = vote.comment ? escapeXml(vote.comment.slice(0, 60)) : '';
+    const comment = vote.comment ? escapeXml(vote.comment.slice(0, 80)) : '';
     const city = vote.city ? escapeXml(vote.city) : '';
 
+    // Accent bar at top
     const svgText = `<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
-      <text x="60" y="55" font-family="monospace" font-size="36" font-weight="800" fill="#E36B2B">claudedumb.com</text>
-      <text x="60" y="85" font-family="monospace" font-size="16" fill="#666">proof that claude is dumb</text>
-      ${comment ? `<text x="60" y="${H - 40}" font-family="monospace" font-size="18" fill="#b5b0a8" font-style="italic">\u201C${comment}\u201D</text>` : ''}
-      ${city ? `<text x="${W - 60}" y="${H - 40}" font-family="monospace" font-size="14" fill="#666" text-anchor="end">${city}</text>` : ''}
+      <rect x="0" y="0" width="${W}" height="4" fill="#E36B2B"/>
+      <text x="${pad}" y="42" font-family="monospace" font-size="28" font-weight="800" fill="#E36B2B">claudedumb.com</text>
+      <text x="${W - pad}" y="42" font-family="monospace" font-size="14" font-weight="600" fill="#555" text-anchor="end">the claude vibe check</text>
+      <rect x="${sx - 12}" y="${sy - 12}" width="${meta.width + 24}" height="${meta.height + 24}" rx="8" fill="#2a2723"/>
+      ${comment ? `<text x="${pad}" y="${H - 18}" font-family="monospace" font-size="16" fill="#b5b0a8" font-style="italic">\u201C${comment}\u201D</text>` : ''}
+      ${city ? `<text x="${W - pad}" y="${H - 18}" font-family="monospace" font-size="13" fill="#555" text-anchor="end">${city}</text>` : ''}
     </svg>`;
 
     const card = await sharp({
-      create: { width: W, height: H, channels: 4, background: { r: 26, g: 24, b: 21, alpha: 255 } }
+      create: { width: W, height: H, channels: 4, background: { r: 22, g: 20, b: 18, alpha: 255 } }
     })
       .composite([
-        { input: screenshot, left: sx, top: sy },
         { input: Buffer.from(svgText), left: 0, top: 0 },
+        { input: screenshot, left: sx, top: sy },
       ])
       .png()
       .toBuffer();
@@ -734,7 +741,7 @@ app.get('/s/:voteId', async (req, res) => {
   try {
     const voteId = parseInt(req.params.voteId);
     const vote = await db.getVoteById(voteId);
-    if (!vote || !vote.screenshot_key) return res.redirect('/');
+    if (!vote) return res.redirect('/');
 
     // Track click
     const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress;
@@ -742,27 +749,27 @@ app.get('/s/:voteId', async (req, res) => {
     await db.trackShareClick(voteId, ip, referrer);
 
     const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
-    const screenshotUrl = getScreenshotUrl(vote.screenshot_key, false);
-    const comment = vote.comment ? escapeHtml(vote.comment) : 'Proof that Claude is dumb';
-    const ogImageUrl = `${baseUrl}/api/og-card/${voteId}`;
+    const screenshotUrl = vote.screenshot_key ? getScreenshotUrl(vote.screenshot_key, false) : null;
+    const comment = vote.comment ? escapeHtml(vote.comment) : (vote.vote === 'smart' ? 'Claude is being smart' : 'Claude is being dumb');
+    const ogImageUrl = vote.screenshot_key ? `${baseUrl}/api/og-card/${voteId}` : null;
 
     res.send(`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Claude is being dumb \u2014 claudedumb.com</title>
-  <meta property="og:title" content="Claude is being dumb right now">
+  <title>${vote.vote === 'smart' ? 'Claude is being smart' : 'Claude is being dumb'} \u2014 claudedumb.com</title>
+  <meta property="og:title" content="${vote.vote === 'smart' ? 'Claude is being smart right now' : 'Claude is being dumb right now'}">
   <meta property="og:description" content="${comment}">
-  <meta property="og:image" content="${ogImageUrl}">
+  ${ogImageUrl ? `<meta property="og:image" content="${ogImageUrl}">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
+  <meta property="og:image:height" content="630">` : ''}
   <meta property="og:url" content="${baseUrl}/s/${voteId}">
   <meta property="og:type" content="website">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Claude is being dumb right now">
+  <meta name="twitter:card" content="${ogImageUrl ? 'summary_large_image' : 'summary'}">
+  <meta name="twitter:title" content="${vote.vote === 'smart' ? 'Claude is being smart right now' : 'Claude is being dumb right now'}">
   <meta name="twitter:description" content="${comment}">
-  <meta name="twitter:image" content="${ogImageUrl}">
+  ${ogImageUrl ? `<meta name="twitter:image" content="${ogImageUrl}">` : ''}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
   <style>
@@ -781,7 +788,7 @@ app.get('/s/:voteId', async (req, res) => {
 <body>
   <div class="card">
     <h1>claude<span>dumb</span>.com</h1>
-    <img src="${screenshotUrl}" alt="Screenshot of Claude being dumb">
+    ${screenshotUrl ? `<img src="${screenshotUrl}" alt="Screenshot">` : ''}
     ${vote.comment ? `<p class="comment">\u201C${comment}\u201D</p>` : ''}
     ${vote.city ? `<p class="city">${escapeHtml(vote.city)}</p>` : ''}
     <a class="cta" href="/">Is Claude being dumb right now?</a>
@@ -836,11 +843,11 @@ app.post('/api/vote', handleUpload, async (req, res) => {
 
     // Process screenshot if present
     let screenshotSaved = false;
-    if (req.file && vote === 'dumb') {
+    if (req.file) {
       try {
         const fullBuf = await sharp(req.file.buffer)
-          .resize({ width: 720, withoutEnlargement: true })
-          .jpeg({ quality: 80 })
+          .resize({ width: 2560, withoutEnlargement: true })
+          .png()
           .toBuffer();
         const thumbBuf = await sharp(req.file.buffer)
           .resize({ width: 300, withoutEnlargement: true })

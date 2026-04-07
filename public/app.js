@@ -38,9 +38,9 @@ async function initGlobe() {
     .atmosphereAltitude(0.15)
     .pointOfView({ lat: 20, lng: 10, altitude: 2.2 })
     .polygonsData(countries.features)
-    .polygonCapColor(() => '#e4ddd2')
-    .polygonSideColor(() => 'rgba(200,185,165,0.3)')
-    .polygonStrokeColor(() => '#c0b5a0')
+    .polygonCapColor(() => '#d4c9b8')
+    .polygonSideColor(() => 'rgba(180,165,140,0.4)')
+    .polygonStrokeColor(() => '#a89880')
     .polygonAltitude(0.004)
     .pointsData([])
     .pointLat('lat')
@@ -60,8 +60,8 @@ async function initGlobe() {
     .ringAltitude(0.005);
 
   const mat = globeInstance.globeMaterial();
-  mat.color.set('#f2ece3');
-  mat.shininess = 3;
+  mat.color.set('#e8e0d4');
+  mat.shininess = 5;
 
   globeInstance.renderer().setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
@@ -383,6 +383,8 @@ function flyToVote(lat, lng) {
   setTimeout(() => { if (globeInstance) globeInstance.controls().autoRotate = true; }, 6000);
 }
 
+const pinnedPostId = new URLSearchParams(window.location.search).get('post');
+
 function loadFeed() {
   fetch(`/api/feed?sort=${currentSort}&limit=30`).then(r => r.json()).then(items => {
     const list = document.getElementById('feed-list');
@@ -392,6 +394,21 @@ function loadFeed() {
       list.innerHTML = `<div class="feed-empty">${currentSort === 'trending' ? 'No screenshots yet. Vote dumb with proof!' : 'No votes in the last 24 hours.'}</div>`;
       return;
     }
+
+    let pinned = null;
+    if (pinnedPostId) {
+      const idx = items.findIndex(i => String(i.id) === pinnedPostId);
+      if (idx !== -1) {
+        pinned = items.splice(idx, 1)[0];
+      }
+    }
+
+    if (pinned) {
+      const card = renderFeedCard(pinned);
+      card.classList.add('feed-card-pinned');
+      list.appendChild(card);
+    }
+
     for (const item of items) {
       list.appendChild(renderFeedCard(item));
     }
@@ -402,32 +419,10 @@ function renderFeedCard(item) {
   const card = document.createElement('div');
   card.className = 'feed-card';
 
-  // Thumbnail (if available)
-  if (item.thumb_url) {
-    const thumbWrap = document.createElement('div');
-    thumbWrap.className = 'feed-card-thumb-wrap';
-    const thumb = document.createElement('img');
-    thumb.className = 'feed-card-thumb';
-    thumb.src = item.thumb_url;
-    thumb.alt = '';
-    thumb.loading = 'lazy';
-    thumb.addEventListener('click', (e) => { e.stopPropagation(); openLightbox(item.full_url); });
-    thumb.onerror = () => { thumbWrap.style.display = 'none'; };
-    thumbWrap.appendChild(thumb);
-    card.appendChild(thumbWrap);
-  }
-
   const body = document.createElement('div');
   body.className = 'feed-card-body';
 
-  if (item.comment) {
-    const comment = document.createElement('div');
-    comment.className = 'feed-card-comment';
-    comment.textContent = item.comment;
-    body.appendChild(comment);
-  }
-
-  // Meta line: vote label · city · time
+  // Meta line: vote label · city · time (top)
   const meta = document.createElement('div');
   meta.className = 'feed-card-meta';
   const voteLabel = document.createElement('span');
@@ -440,38 +435,92 @@ function renderFeedCard(item) {
   meta.appendChild(document.createTextNode(' \u00B7 ' + parts.join(' \u00B7 ')));
   body.appendChild(meta);
 
-  // Actions line: reactions + share
-  const actions = document.createElement('div');
-  actions.className = 'feed-card-actions';
-
-  const upBtn = document.createElement('button');
-  upBtn.className = 'reaction-btn up' + (item.user_reaction === 'up' ? ' active' : '');
-  upBtn.innerHTML = '\u25B2';
-  upBtn.addEventListener('click', (e) => { e.stopPropagation(); handleReaction(item.id, 'up', card); });
-
-  const scoreEl = document.createElement('span');
-  scoreEl.className = 'reaction-score';
-  scoreEl.textContent = item.score;
-
-  const downBtn = document.createElement('button');
-  downBtn.className = 'reaction-btn down' + (item.user_reaction === 'down' ? ' active' : '');
-  downBtn.innerHTML = '\u25BC';
-  downBtn.addEventListener('click', (e) => { e.stopPropagation(); handleReaction(item.id, 'down', card); });
-
-  actions.appendChild(upBtn);
-  actions.appendChild(scoreEl);
-  actions.appendChild(downBtn);
-
-  if (item.thumb_url) {
-    const shareBtn = document.createElement('button');
-    shareBtn.className = 'share-btn';
-    shareBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>';
-    shareBtn.title = 'Share on X';
-    shareBtn.addEventListener('click', (e) => { e.stopPropagation(); shareVote(item.id, item.comment); });
-    actions.appendChild(shareBtn);
+  if (item.comment) {
+    const comment = document.createElement('div');
+    comment.className = 'feed-card-comment';
+    comment.textContent = item.comment;
+    body.appendChild(comment);
   }
 
-  body.appendChild(actions);
+  const hasContent = item.comment || item.thumb_url;
+
+  // Screenshot below text, full width
+  if (item.thumb_url) {
+    const imgWrap = document.createElement('div');
+    imgWrap.className = 'feed-card-image-wrap';
+    const img = document.createElement('img');
+    img.className = 'feed-card-image';
+    img.src = item.full_url || item.thumb_url;
+    img.alt = '';
+    img.loading = 'lazy';
+    img.addEventListener('click', (e) => { e.stopPropagation(); openLightbox(item.full_url); });
+    img.onerror = () => { imgWrap.style.display = 'none'; };
+    imgWrap.appendChild(img);
+    body.appendChild(imgWrap);
+  }
+
+  // Actions line: only show for posts with content
+  if (hasContent) {
+    const actions = document.createElement('div');
+    actions.className = 'feed-card-actions';
+
+    const upBtn = document.createElement('button');
+    upBtn.className = 'reaction-btn up' + (item.user_reaction === 'up' ? ' active' : '');
+    upBtn.innerHTML = '\u25B2';
+    upBtn.addEventListener('click', (e) => { e.stopPropagation(); handleReaction(item.id, 'up', card); });
+
+    const scoreEl = document.createElement('span');
+    scoreEl.className = 'reaction-score';
+    scoreEl.textContent = item.score;
+
+    const downBtn = document.createElement('button');
+    downBtn.className = 'reaction-btn down' + (item.user_reaction === 'down' ? ' active' : '');
+    downBtn.innerHTML = '\u25BC';
+    downBtn.addEventListener('click', (e) => { e.stopPropagation(); handleReaction(item.id, 'down', card); });
+
+    actions.appendChild(upBtn);
+    actions.appendChild(scoreEl);
+    actions.appendChild(downBtn);
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'share-btn';
+    copyBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>';
+    copyBtn.title = 'Copy link';
+    copyBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(`${window.location.origin}/?post=${item.id}`);
+      copyBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+      setTimeout(() => { copyBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>'; }, 2000);
+    });
+    actions.appendChild(copyBtn);
+
+    if (item.thumb_url) {
+      const dlBtn = document.createElement('button');
+      dlBtn.className = 'share-btn';
+      dlBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+      dlBtn.title = 'Download image';
+      dlBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const a = document.createElement('a');
+        a.href = `/api/og-card/${item.id}`;
+        a.download = `claudedumb-${item.id}.png`;
+        a.click();
+      });
+      actions.appendChild(dlBtn);
+
+      const shareBtn = document.createElement('button');
+      shareBtn.className = 'share-btn';
+      shareBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>';
+      shareBtn.title = 'Share on X';
+      shareBtn.addEventListener('click', (e) => { e.stopPropagation(); shareVote(item.id, item.comment, item.vote); });
+      actions.appendChild(shareBtn);
+    }
+
+    body.appendChild(actions);
+  } else {
+    card.classList.add('feed-card-minimal');
+  }
+
   card.appendChild(body);
 
   card.addEventListener('click', () => flyToVote(item.latitude, item.longitude));
@@ -532,10 +581,11 @@ async function handleReaction(voteId, type, cardEl) {
 }
 
 // ---- Share ----
-function shareVote(voteId, comment) {
+function shareVote(voteId, comment, vote) {
+  const vibe = vote === 'smart' ? 'smart' : 'dumb';
   const text = comment
-    ? `claude is being dumb rn: "${comment}" \u2014 claudedumb.com`
-    : 'claude is being dumb rn \u{1F480} \u2014 claudedumb.com';
+    ? `claude is being ${vibe} rn: "${comment}" \u2014 claudedumb.com`
+    : `claude is being ${vibe} rn \u2014 claudedumb.com`;
   const url = `${window.location.origin}/s/${voteId}`;
   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank', 'width=550,height=420');
 }
@@ -601,7 +651,7 @@ function updateTrend() {
       }
     }
     const valid = points.filter(p => p.pct !== null);
-    const pctEl = document.getElementById('trend-pct');
+    const pctEl = document.getElementById('trend-pct-inline') || document.getElementById('trend-pct');
     if (valid.length >= 2) {
       const diff = valid[valid.length - 1].pct - valid[0].pct;
       const arrow = diff > 0 ? '\u2191' : diff < 0 ? '\u2193' : '\u2192';
@@ -609,9 +659,9 @@ function updateTrend() {
       pctEl.className = 'trend-pct ' + (diff > 0 ? 'up' : diff < 0 ? 'down' : '');
     } else { pctEl.textContent = ''; }
 
-    const container = document.getElementById('trend-chart');
-    const W = container.clientWidth || 800, H = 100;
-    const pad = { top: 16, bottom: 24, left: 12, right: 12 };
+    const container = document.getElementById('trend-chart-inline') || document.getElementById('trend-chart');
+    const W = container.clientWidth || 800, H = container.clientHeight || 80;
+    const pad = { top: 20, bottom: 22, left: 12, right: 12 };
     const plotW = W - pad.left - pad.right, plotH = H - pad.top - pad.bottom;
     const xStep = points.length > 1 ? plotW / (points.length - 1) : 0;
     const coords = points.map((p, i) => ({ x: pad.left + i * xStep, y: p.pct !== null ? pad.top + plotH - (p.pct / 100 * plotH) : null, ...p }));
@@ -629,21 +679,22 @@ function updateTrend() {
     svg += `<defs><linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--green)" stop-opacity="0.2"/><stop offset="100%" stop-color="var(--green)" stop-opacity="0"/></linearGradient></defs>`;
     const midY = pad.top + plotH / 2;
     svg += `<line x1="${pad.left}" y1="${midY}" x2="${W - pad.right}" y2="${midY}" stroke="var(--border)" stroke-dasharray="4 4"/>`;
-    svg += `<text x="${W - pad.right + 4}" y="${midY + 3}" fill="var(--text-3)" font-size="9" font-family="var(--font)">50%</text>`;
+    svg += `<text x="${W - pad.right + 4}" y="${midY + 4}" fill="var(--text-3)" font-size="11" font-family="var(--font)" font-weight="600">50%</text>`;
     if (areaD) svg += `<path d="${areaD}" fill="url(#trendGrad)"/>`;
     if (pathD) svg += `<path d="${pathD}" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"/>`;
     for (const c of coords) {
-      svg += `<text x="${c.x}" y="${H - 4}" text-anchor="middle" fill="var(--text-3)" font-size="10" font-family="var(--font)">${c.label}</text>`;
+      svg += `<text x="${c.x}" y="${H - 4}" text-anchor="middle" fill="var(--text-2)" font-size="11" font-weight="600" font-family="var(--font)">${c.label}</text>`;
       if (c.y !== null) {
         const dotColor = c.pct >= 70 ? 'var(--green)' : c.pct >= 40 ? 'var(--yellow)' : 'var(--red)';
-        svg += `<circle cx="${c.x}" cy="${c.y}" r="4" fill="${dotColor}" stroke="var(--bg-card)" stroke-width="2"/>`;
-        svg += `<text x="${c.x}" y="${c.y - 8}" text-anchor="middle" fill="var(--text-2)" font-size="10" font-weight="600" font-family="var(--font)">${c.pct}%</text>`;
+        svg += `<circle cx="${c.x}" cy="${c.y}" r="5" fill="${dotColor}" stroke="var(--bg-card)" stroke-width="2"/>`;
+        svg += `<text x="${c.x}" y="${c.y - 10}" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700" font-family="var(--font)">${c.pct}%</text>`;
       }
     }
     svg += `</svg>`;
     container.innerHTML = svg;
   });
 }
+
 
 // ---- Init ----
 initAttach();

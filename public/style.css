@@ -32,7 +32,7 @@
 
 html, body {
   height: 100%;
-  overflow: hidden;
+  margin: 0;
 }
 
 body {
@@ -43,7 +43,7 @@ body {
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
-  padding-bottom: 100px;
+  overflow: hidden;
 }
 
 /* Subtle grain texture */
@@ -467,18 +467,29 @@ main {
   width: 50%;
 }
 
-/* ---- Globe in left panel ---- */
-.globe-container {
-  flex: 1;
-  min-height: 200px;
-  max-height: 340px;
-  border-top: 1px solid var(--border);
-  margin-top: 0.3rem;
-  position: relative;
-  overflow: hidden;
+/* ---- Globe inline in sidebar ---- */
+.globe-inline {
   display: flex;
+  flex-direction: column;
   align-items: center;
+  margin: 0 -1.5rem;
+  padding-top: 0.5rem;
+  flex: 1;
+  min-height: 0;
   justify-content: center;
+}
+
+.globe-inline-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-3);
+  margin-bottom: 0.3rem;
+}
+
+.globe-trigger {
+  display: none;
 }
 
 @keyframes fadeSlideIn {
@@ -686,8 +697,9 @@ main {
 
 /* ---- Globe ---- */
 .globe-wrapper {
-  width: 100%;
-  height: 100%;
+  width: 340px;
+  height: 340px;
+  flex-shrink: 0;
   position: relative;
 }
 
@@ -811,14 +823,9 @@ main {
 .feed-list::-webkit-scrollbar { width: 0; }
 
 .feed-list::after {
-  content: 'claudedumb.com';
+  content: '';
   display: block;
-  text-align: center;
-  padding: 3rem 0 2rem;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--border);
-  letter-spacing: 2px;
+  padding: 1rem 0;
 }
 
 .feed-empty {
@@ -831,7 +838,7 @@ main {
 /* Feed cards */
 .feed-card {
   display: flex;
-  gap: 12px;
+  flex-direction: column;
   padding: 12px 16px;
   border-radius: 10px;
   margin-bottom: 4px;
@@ -847,26 +854,25 @@ main {
   box-shadow: var(--shadow-sm);
 }
 
-.feed-card-thumb-wrap {
-  width: 80px;
-  height: 60px;
-  flex-shrink: 0;
+.feed-card-image-wrap {
   border-radius: 8px;
   overflow: hidden;
   background: var(--bg);
   border: 1px solid var(--border);
+  margin-top: 8px;
 }
 
-.feed-card-thumb {
+.feed-card-image {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-height: 400px;
+  object-fit: contain;
   display: block;
   cursor: pointer;
   transition: opacity 0.12s;
+  background: #f0ede8;
 }
 
-.feed-card-thumb:hover { opacity: 0.8; }
+.feed-card-image:hover { opacity: 0.9; }
 
 .feed-card-body {
   flex: 1;
@@ -953,9 +959,31 @@ main {
 
 .share-btn:hover { color: var(--accent); background: rgba(0,0,0,0.04); }
 
+/* Pinned card */
+.feed-card-pinned {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), var(--shadow);
+}
+
+/* Minimal cards (no comment or screenshot) */
+.feed-card-minimal {
+  padding: 6px 16px;
+  border: none;
+  background: transparent;
+}
+
+.feed-card-minimal:hover {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.feed-card-minimal .feed-card-meta {
+  margin: 0;
+}
+
 /* Collapsed (downvoted) cards */
 .feed-card-collapsed .feed-card-body,
-.feed-card-collapsed .feed-card-thumb-wrap {
+.feed-card-collapsed .feed-card-image-wrap {
   display: none;
 }
 
@@ -1104,17 +1132,27 @@ main {
   line-height: 1;
 }
 
+/* ---- Inline Trend (left panel) ---- */
+.trend-inline {
+  border-top: 1px solid var(--border);
+  padding-top: 0.5rem;
+}
+
+.trend-inline .trend-chart {
+  height: 80px;
+}
+
+.trend-inline .trend-title {
+  font-size: 12px;
+}
+
+.trend-inline .trend-pct {
+  font-size: 13px;
+}
+
 /* ---- Footer: Trend ---- */
 .trend-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--bg-card);
-  border-top: 1px solid var(--border);
-  padding: 8px 24px 4px;
-  z-index: 50;
-  box-shadow: 0 -2px 12px rgba(0,0,0,0.04);
+  display: none;
 }
 
 .trend-header {
@@ -1160,7 +1198,7 @@ main {
   .panel-feed { order: 2; }
   /* Hide submission box and globe on mobile */
   .vote-area { display: none; }
-  .globe-container { display: none; }
+  .globe-inline { display: none; }
   .trend-footer { display: none; }
   body { padding-bottom: 0; }
   .feed-list::after { color: var(--text-2); }
