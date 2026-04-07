@@ -5,6 +5,10 @@
 let globeInstance = null;
 let selectedFile = null;
 let currentSort = 'newest';
+let feedOffset = 0;
+let feedLoading = false;
+let feedExhausted = false;
+const FEED_PAGE_SIZE = 30;
 
 const COMPONENTS = [
   { id: 'rwppv331jlwc', name: 'claude.ai' },
@@ -25,7 +29,7 @@ async function initGlobe() {
     countries = toGeoJSON(topo, 'countries');
   } catch (e) { console.warn('Country data failed'); }
 
-  const w = wrapper.clientWidth;
+  const w = wrapper.clientWidth || 340;
   const h = wrapper.clientHeight || w;
 
   globeInstance = Globe()(wrapper)
@@ -73,9 +77,20 @@ async function initGlobe() {
   ctrl.minDistance = 120;
   ctrl.maxDistance = 500;
 
-  window.addEventListener('resize', () => {
-    globeInstance.width(wrapper.clientWidth).height(wrapper.clientHeight);
-  });
+  function resizeGlobe() {
+    const w = wrapper.clientWidth;
+    const h = wrapper.clientHeight;
+    if (w > 0 && h > 0) {
+      globeInstance.width(w).height(h);
+      // Scale camera altitude so globe fits smaller containers
+      const minDim = Math.min(w, h);
+      const altitude = minDim < 200 ? 4.5 : minDim < 300 ? 3.8 : minDim < 400 ? 3.2 : minDim < 500 ? 2.8 : minDim < 600 ? 2.5 : 2.2;
+      globeInstance.pointOfView({ altitude });
+    }
+  }
+  window.addEventListener('resize', resizeGlobe);
+  // Re-check after layout settles
+  setTimeout(resizeGlobe, 200);
 }
 
 function toGeoJSON(topo, name) {
@@ -375,6 +390,36 @@ async function submitVote(type) {
 document.getElementById('btn-smart').addEventListener('click', () => submitVote('smart'));
 document.getElementById('btn-dumb').addEventListener('click', () => submitVote('dumb'));
 
+// Mobile vote bar (no comment/screenshot, just vote)
+function submitMobileVote(type) {
+  const fb = document.getElementById('mobile-vote-status');
+  fb.textContent = 'voting...';
+  fb.className = 'mobile-vote-feedback show';
+  fetch('/api/vote', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ vote: type }),
+  }).then(r => r.json()).then(data => {
+    if (data.success) {
+      const cityMsg = data.city ? ` from ${data.city}` : '';
+      fb.textContent = `recorded${cityMsg}`;
+      fb.className = 'mobile-vote-feedback show success';
+      updateVibes(); updateMeter(); loadVotes(); updateTrend(); loadFeed();
+    } else {
+      fb.textContent = data.error || 'failed';
+      fb.className = 'mobile-vote-feedback show error';
+    }
+    setTimeout(() => { fb.className = 'mobile-vote-feedback'; }, 2000);
+  }).catch(() => {
+    fb.textContent = 'network error';
+    fb.className = 'mobile-vote-feedback show error';
+    setTimeout(() => { fb.className = 'mobile-vote-feedback'; }, 2000);
+  });
+}
+
+document.getElementById('mobile-btn-smart').addEventListener('click', () => submitMobileVote('smart'));
+document.getElementById('mobile-btn-dumb').addEventListener('click', () => submitMobileVote('dumb'));
+
 // ---- Unified Feed ----
 function flyToVote(lat, lng) {
   if (!globeInstance || lat == null || lng == null) return;
@@ -385,18 +430,26 @@ function flyToVote(lat, lng) {
 
 const pinnedPostId = new URLSearchParams(window.location.search).get('post');
 
-function loadFeed() {
-  fetch(`/api/feed?sort=${currentSort}&limit=30`).then(r => r.json()).then(items => {
+function loadFeed(append) {
+  if (append && (feedLoading || feedExhausted)) return;
+  feedLoading = true;
+  if (!append) { feedOffset = 0; feedExhausted = false; }
+  fetch(`/api/feed?sort=${currentSort}&limit=${FEED_PAGE_SIZE}&offset=${feedOffset}`).then(r => r.json()).then(items => {
     const list = document.getElementById('feed-list');
     if (!list) return;
-    list.innerHTML = '';
-    if (items.length === 0) {
-      list.innerHTML = `<div class="feed-empty">${currentSort === 'trending' ? 'No screenshots yet. Vote dumb with proof!' : 'No votes in the last 24 hours.'}</div>`;
+    if (!append) {
+      list.innerHTML = '';
+    }
+    if (items.length < FEED_PAGE_SIZE) feedExhausted = true;
+    feedOffset += items.length;
+    if (items.length === 0 && !append) {
+      list.insertAdjacentHTML('beforeend', `<div class="feed-empty">${currentSort === 'trending' ? 'No screenshots yet. Vote dumb with proof!' : 'No votes in the last 24 hours.'}</div>`);
+      feedLoading = false;
       return;
     }
 
     let pinned = null;
-    if (pinnedPostId) {
+    if (pinnedPostId && !append) {
       const idx = items.findIndex(i => String(i.id) === pinnedPostId);
       if (idx !== -1) {
         pinned = items.splice(idx, 1)[0];
@@ -412,7 +465,8 @@ function loadFeed() {
     for (const item of items) {
       list.appendChild(renderFeedCard(item));
     }
-  }).catch(() => {});
+    feedLoading = false;
+  }).catch(() => { feedLoading = false; });
 }
 
 function renderFeedCard(item) {
@@ -559,8 +613,37 @@ document.getElementById('tab-trending').addEventListener('click', () => switchTa
 function switchTab(sort) {
   currentSort = sort;
   document.querySelectorAll('.feed-tab').forEach(t => t.classList.toggle('active', t.dataset.sort === sort));
-  loadFeed();
+  loadFeed(false);
 }
+
+// Infinite scroll + jump to top
+const feedListEl = document.querySelector('.feed-list');
+const jumpBtn = document.getElementById('jump-to-top');
+
+feedListEl.addEventListener('scroll', function() {
+  if (this.scrollTop + this.clientHeight >= this.scrollHeight - 200) {
+    loadFeed(true);
+  }
+  jumpBtn.classList.toggle('visible', this.scrollTop > 400);
+});
+
+// Mobile: window is the scroll container
+window.addEventListener('scroll', function() {
+  if (window.innerWidth <= 800) {
+    if (window.scrollY + window.innerHeight >= document.body.scrollHeight - 200) {
+      loadFeed(true);
+    }
+    jumpBtn.classList.toggle('visible', window.scrollY > 400);
+  }
+});
+
+jumpBtn.addEventListener('click', () => {
+  if (window.innerWidth <= 800) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    feedListEl.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+});
 
 // ---- Reactions ----
 async function handleReaction(voteId, type, cardEl) {

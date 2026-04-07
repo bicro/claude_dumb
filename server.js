@@ -227,7 +227,7 @@ if (process.env.DATABASE_URL) {
     },
     async getWallItems(limit, offset, ip) {
       const { rows } = await pool.query(`
-        SELECT v.id, v.comment, v.city, v.latitude, v.longitude, v.created_at, v.screenshot_key,
+        SELECT v.id, v.vote, v.comment, v.city, v.latitude, v.longitude, v.created_at, v.screenshot_key,
           COALESCE(r.score, 0)::int as score,
           COALESCE(r.ups, 0)::int as ups,
           COALESCE(r.downs, 0)::int as downs,
@@ -241,8 +241,8 @@ if (process.env.DATABASE_URL) {
           FROM reactions GROUP BY vote_id
         ) r ON r.vote_id = v.id
         LEFT JOIN reactions ur ON ur.vote_id = v.id AND ur.ip = $3
-        WHERE v.screenshot_key IS NOT NULL
-        ORDER BY (COALESCE(r.score, 0) + 1.0) / POWER(EXTRACT(EPOCH FROM (NOW() - v.created_at)) / 3600 + 2, 1.5) DESC
+        WHERE v.comment IS NOT NULL AND v.comment != ''
+        ORDER BY (COALESCE(r.score, 0) + 1.0 + CASE WHEN v.screenshot_key IS NOT NULL THEN 3.0 ELSE 0.0 END) / POWER(EXTRACT(EPOCH FROM (NOW() - v.created_at)) / 3600 + 2, 1.5) DESC
         LIMIT $1 OFFSET $2
       `, [limit, offset, ip]);
       return rows;
@@ -259,7 +259,6 @@ if (process.env.DATABASE_URL) {
           FROM reactions GROUP BY vote_id
         ) r ON r.vote_id = v.id
         LEFT JOIN reactions ur ON ur.vote_id = v.id AND ur.ip = $3
-        WHERE v.created_at > NOW() - INTERVAL '24 hours'
         ORDER BY v.created_at DESC
         LIMIT $1 OFFSET $2
       `, [limit, offset, ip]);
@@ -428,7 +427,7 @@ if (process.env.DATABASE_URL) {
     },
     async getWallItems(limit, offset, ip) {
       return sqliteDb.prepare(`
-        SELECT v.id, v.comment, v.city, v.latitude, v.longitude, v.created_at, v.screenshot_key,
+        SELECT v.id, v.vote, v.comment, v.city, v.latitude, v.longitude, v.created_at, v.screenshot_key,
           COALESCE(r.score, 0) as score,
           COALESCE(r.ups, 0) as ups,
           COALESCE(r.downs, 0) as downs,
@@ -442,8 +441,8 @@ if (process.env.DATABASE_URL) {
           FROM reactions GROUP BY vote_id
         ) r ON r.vote_id = v.id
         LEFT JOIN reactions ur ON ur.vote_id = v.id AND ur.ip = ?
-        WHERE v.screenshot_key IS NOT NULL
-        ORDER BY CAST(COALESCE(r.score, 0) + 1 AS REAL) / (((julianday('now') - julianday(v.created_at)) * 24 + 2) * ((julianday('now') - julianday(v.created_at)) * 24 + 2)) DESC
+        WHERE v.comment IS NOT NULL AND v.comment != ''
+        ORDER BY CAST(COALESCE(r.score, 0) + 1 + CASE WHEN v.screenshot_key IS NOT NULL THEN 3 ELSE 0 END AS REAL) / (((julianday('now') - julianday(v.created_at)) * 24 + 2) * ((julianday('now') - julianday(v.created_at)) * 24 + 2)) DESC
         LIMIT ? OFFSET ?
       `).all(ip, limit, offset);
     },
@@ -459,7 +458,6 @@ if (process.env.DATABASE_URL) {
           FROM reactions GROUP BY vote_id
         ) r ON r.vote_id = v.id
         LEFT JOIN reactions ur ON ur.vote_id = v.id AND ur.ip = ?
-        WHERE v.created_at > datetime('now', '-24 hours')
         ORDER BY v.created_at DESC
         LIMIT ? OFFSET ?
       `).all(ip, limit, offset);
@@ -694,7 +692,7 @@ app.get('/api/og-card/:voteId', async (req, res) => {
     const W = 1200, H = 630;
     const pad = 40;
     const headerH = 70;
-    const footerH = 50;
+    const footerH = 80;
     const imgArea = H - headerH - footerH;
 
     const screenshot = await sharp(screenshotBuf)
@@ -714,8 +712,8 @@ app.get('/api/og-card/:voteId', async (req, res) => {
       <text x="${pad}" y="42" font-family="monospace" font-size="28" font-weight="800" fill="#E36B2B">claudedumb.com</text>
       <text x="${W - pad}" y="42" font-family="monospace" font-size="14" font-weight="600" fill="#555" text-anchor="end">the claude vibe check</text>
       <rect x="${sx - 12}" y="${sy - 12}" width="${meta.width + 24}" height="${meta.height + 24}" rx="8" fill="#2a2723"/>
-      ${comment ? `<text x="${pad}" y="${H - 18}" font-family="monospace" font-size="16" fill="#b5b0a8" font-style="italic">\u201C${comment}\u201D</text>` : ''}
-      ${city ? `<text x="${W - pad}" y="${H - 18}" font-family="monospace" font-size="13" fill="#555" text-anchor="end">${city}</text>` : ''}
+      ${comment ? `<text x="${pad}" y="${H - 50}" font-family="monospace" font-size="16" fill="#b5b0a8" font-style="italic">\u201C${comment}\u201D</text>` : ''}
+      ${city ? `<text x="${W - pad}" y="${H - 50}" font-family="monospace" font-size="13" fill="#555" text-anchor="end">${city}</text>` : ''}
     </svg>`;
 
     const card = await sharp({
