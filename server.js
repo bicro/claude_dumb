@@ -264,6 +264,22 @@ if (process.env.DATABASE_URL) {
       `, [limit, offset, ip]);
       return rows;
     },
+    async getFeedPostById(id, ip) {
+      const { rows } = await pool.query(`
+        SELECT v.id, v.vote, v.comment, v.city, v.latitude, v.longitude, v.screenshot_key, v.created_at,
+          EXTRACT(EPOCH FROM (NOW() - v.created_at)) / 3600 as hours_ago,
+          COALESCE(r.score, 0)::int as score,
+          ur.type as user_reaction
+        FROM votes v
+        LEFT JOIN (
+          SELECT vote_id, SUM(CASE WHEN type='up' THEN 1 ELSE -1 END) as score
+          FROM reactions GROUP BY vote_id
+        ) r ON r.vote_id = v.id
+        LEFT JOIN reactions ur ON ur.vote_id = v.id AND ur.ip = $2
+        WHERE v.id = $1
+      `, [id, ip]);
+      return rows[0] || null;
+    },
     async getReactionScore(voteId) {
       const { rows } = await pool.query(
         `SELECT COALESCE(SUM(CASE WHEN type='up' THEN 1 ELSE -1 END), 0)::int as score FROM reactions WHERE vote_id = $1`,
@@ -462,6 +478,21 @@ if (process.env.DATABASE_URL) {
         LIMIT ? OFFSET ?
       `).all(ip, limit, offset);
     },
+    async getFeedPostById(id, ip) {
+      return sqliteDb.prepare(`
+        SELECT v.id, v.vote, v.comment, v.city, v.latitude, v.longitude, v.screenshot_key, v.created_at,
+          (julianday('now') - julianday(v.created_at)) * 24 as hours_ago,
+          COALESCE(r.score, 0) as score,
+          ur.type as user_reaction
+        FROM votes v
+        LEFT JOIN (
+          SELECT vote_id, SUM(CASE WHEN type='up' THEN 1 ELSE -1 END) as score
+          FROM reactions GROUP BY vote_id
+        ) r ON r.vote_id = v.id
+        LEFT JOIN reactions ur ON ur.vote_id = v.id AND ur.ip = ?
+        WHERE v.id = ?
+      `).get(ip, id) || null;
+    },
     async getReactionScore(voteId) {
       const row = sqliteDb.prepare(
         `SELECT COALESCE(SUM(CASE WHEN type='up' THEN 1 ELSE -1 END), 0) as score FROM reactions WHERE vote_id = ?`
@@ -606,6 +637,31 @@ app.get('/api/feed', async (req, res) => {
       full_url: item.screenshot_key ? getScreenshotUrl(item.screenshot_key, false) : null,
     }));
     res.json(result);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ---- Single Post by ID (for shared links) ----
+app.get('/api/feed/post/:id', async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (!id) return res.status(400).json({ error: 'Invalid post ID' });
+    const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress;
+    const item = await db.getFeedPostById(id, ip);
+    if (!item) return res.status(404).json({ error: 'Post not found' });
+    res.json({
+      id: item.id,
+      vote: item.vote || 'dumb',
+      comment: item.comment,
+      city: item.city,
+      latitude: item.latitude,
+      longitude: item.longitude,
+      created_at: item.created_at,
+      hours_ago: item.hours_ago,
+      score: item.score || 0,
+      user_reaction: item.user_reaction || null,
+      thumb_url: item.screenshot_key ? getScreenshotUrl(item.screenshot_key, true) : null,
+      full_url: item.screenshot_key ? getScreenshotUrl(item.screenshot_key, false) : null,
+    });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 

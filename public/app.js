@@ -4,7 +4,8 @@
 
 let globeInstance = null;
 let selectedFile = null;
-let currentSort = 'newest';
+const _pinnedParam = new URLSearchParams(window.location.search).get('post');
+let currentSort = _pinnedParam ? 'trending' : 'newest';
 let feedOffset = 0;
 let feedLoading = false;
 let feedExhausted = false;
@@ -429,12 +430,15 @@ function flyToVote(lat, lng) {
 }
 
 const pinnedPostId = new URLSearchParams(window.location.search).get('post');
+const pinnedPostPromise = pinnedPostId
+  ? fetch(`/api/feed/post/${pinnedPostId}`).then(r => r.ok ? r.json() : null).catch(() => null)
+  : Promise.resolve(null);
 
 function loadFeed(append) {
   if (append && (feedLoading || feedExhausted)) return;
   feedLoading = true;
   if (!append) { feedOffset = 0; feedExhausted = false; }
-  fetch(`/api/feed?sort=${currentSort}&limit=${FEED_PAGE_SIZE}&offset=${feedOffset}`).then(r => r.json()).then(items => {
+  fetch(`/api/feed?sort=${currentSort}&limit=${FEED_PAGE_SIZE}&offset=${feedOffset}`).then(r => r.json()).then(async items => {
     const list = document.getElementById('feed-list');
     if (!list) return;
     if (!append) {
@@ -448,16 +452,16 @@ function loadFeed(append) {
       return;
     }
 
-    let pinned = null;
+    // Remove pinned post from tab results to avoid duplicate
     if (pinnedPostId && !append) {
       const idx = items.findIndex(i => String(i.id) === pinnedPostId);
-      if (idx !== -1) {
-        pinned = items.splice(idx, 1)[0];
-      }
+      if (idx !== -1) items.splice(idx, 1);
     }
 
-    if (pinned) {
-      const card = renderFeedCard(pinned);
+    // Pin the shared post at the top of trending only
+    const pinnedPost = !append && currentSort === 'trending' ? await pinnedPostPromise : null;
+    if (pinnedPost) {
+      const card = renderFeedCard(pinnedPost);
       card.classList.add('feed-card-pinned');
       list.appendChild(card);
     }
@@ -609,6 +613,8 @@ function getRelativeTime(dateStr) {
 // ---- Feed Tabs ----
 document.getElementById('tab-newest').addEventListener('click', () => switchTab('newest'));
 document.getElementById('tab-trending').addEventListener('click', () => switchTab('trending'));
+// Sync active tab UI with currentSort (may differ from HTML default when ?post= is present)
+document.querySelectorAll('.feed-tab').forEach(t => t.classList.toggle('active', t.dataset.sort === currentSort));
 
 function switchTab(sort) {
   currentSort = sort;
