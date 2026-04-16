@@ -470,6 +470,16 @@ function loadFeed(append) {
       list.appendChild(renderFeedCard(item));
     }
     feedLoading = false;
+
+    // If the container isn't full enough to scroll, load more
+    if (!feedExhausted) {
+      const el = document.querySelector('.feed-list');
+      const useMobile = window.innerWidth <= 800;
+      const needsMore = useMobile
+        ? document.body.scrollHeight <= window.innerHeight
+        : el && el.scrollHeight <= el.clientHeight;
+      if (needsMore) loadFeed(true);
+    }
   }).catch(() => { feedLoading = false; });
 }
 
