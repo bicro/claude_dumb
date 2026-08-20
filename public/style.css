@@ -80,6 +80,8 @@ header {
   letter-spacing: -0.03em;
 }
 
+.site-title { font-size: inherit; }
+
 .logo .accent { color: var(--accent); }
 .logo .tld { color: var(--text-3); font-weight: 500; }
 
