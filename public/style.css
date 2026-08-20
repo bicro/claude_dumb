@@ -1249,6 +1249,27 @@ main {
   display: none;
 }
 
+.advertise-bubble {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 40;
+  padding: 9px 13px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--text-2);
+  box-shadow: var(--shadow-lg);
+  font-size: 11px;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.advertise-bubble strong { color: var(--accent); }
+.advertise-bubble:hover { transform: translateY(-2px); border-color: var(--accent); }
+
 /* ---- Responsive ---- */
 @media (max-width: 1200px) {
   main { grid-template-columns: minmax(380px, 500px) 1fr; }
@@ -1365,5 +1386,12 @@ main {
     transform: translateX(-50%);
     align-self: auto;
     margin-top: 0;
+  }
+
+  .advertise-bubble {
+    right: 10px;
+    bottom: 70px;
+    padding: 8px 10px;
+    font-size: 10px;
   }
 }
