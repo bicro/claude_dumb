@@ -8,6 +8,16 @@ const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Keep claudedumb.com as the single canonical domain. Render terminates TLS and
+// forwards the original Host header, so this also covers both HTTP and HTTPS.
+app.use((req, res, next) => {
+  const hostname = (req.hostname || '').toLowerCase();
+  if (hostname === 'claudebad.com' || hostname === 'www.claudebad.com') {
+    return res.redirect(301, `https://claudedumb.com${req.originalUrl}`);
+  }
+  next();
+});
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
