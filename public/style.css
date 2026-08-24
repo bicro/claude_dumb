@@ -818,6 +818,39 @@ main {
 
 .feed-tabs { display: flex; gap: 4px; }
 
+.status-guide {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.status-guide h2 {
+  margin-bottom: 3px;
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.status-guide p {
+  max-width: 36rem;
+  color: var(--text-2);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.status-guide a {
+  flex-shrink: 0;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-decoration: none;
+}
+
+.status-guide a:hover { text-decoration: underline; }
+
 .feed-tab {
   font-family: var(--font);
   font-size: 13px;
@@ -1303,6 +1336,7 @@ main {
   .header-nav { gap: 0.6rem; }
   .header-status { font-size: 10px; }
   .vibes-hero-status { font-size: 1.6rem; word-break: break-word; }
+  .status-guide { align-items: flex-start; flex-direction: column; gap: 0.45rem; }
 
   /* Show mobile vote bar */
   .mobile-vote-bar {
