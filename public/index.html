@@ -24,6 +24,38 @@
       "description": "Live community reports and status signals for Claude AI."
     }
   </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is Claude down or is it just me?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Check Claude's official status, then compare it with the newest community reports here. If the official page is green but many fresh reports mention errors or slowness, a partial or regional issue may still be developing."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is Claude slow or returning errors?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Slow responses, overloaded errors, login failures, and timeouts can come from a Claude incident, heavy demand, rate limits, or a local browser or network problem. Retry in a new chat and compare the Claude.ai, Claude API, and Claude Code status signals."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does this tracker cover Claude.ai, Claude API, and Claude Code?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. It combines community reports with official component status for Claude.ai, Claude API, Claude Code, and related services. claudedumb.com is an independent community tracker and is not affiliated with Anthropic."
+          }
+        }
+      ]
+    }
+  </script>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -102,6 +134,23 @@
           </div>
           <a href="https://status.claude.com/" target="_blank" rel="noopener">View Claude's official status ↗</a>
         </section>
+        <details class="status-faq">
+          <summary>Claude status FAQ</summary>
+          <div class="status-faq-grid">
+            <article>
+              <h3>Is Claude down or is it just me?</h3>
+              <p>Check Claude's official status, then compare it with the newest community reports here. If the official page is green but many fresh reports mention errors or slowness, a partial or regional issue may still be developing.</p>
+            </article>
+            <article>
+              <h3>Why is Claude slow or returning errors?</h3>
+              <p>Slow responses, overloaded errors, login failures, and timeouts can come from a Claude incident, heavy demand, rate limits, or a local browser or network problem. Retry in a new chat and compare the Claude.ai, Claude API, and Claude Code status signals.</p>
+            </article>
+            <article>
+              <h3>Does this tracker cover Claude.ai, Claude API, and Claude Code?</h3>
+              <p>Yes. It combines community reports with official component status for Claude.ai, Claude API, Claude Code, and related services. claudedumb.com is an independent community tracker and is not affiliated with Anthropic.</p>
+            </article>
+          </div>
+        </details>
       </div>
       <div class="feed-list" id="feed-list"></div>
       <div class="globe-trigger" id="globe-trigger"></div>
