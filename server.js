@@ -641,6 +641,10 @@ function formatReportDate(day, options = {}) {
   });
 }
 
+function reportNoun(count) {
+  return count === 1 ? 'report' : 'reports';
+}
+
 function comparisonCopy(story) {
   if (story.baselineDumbPercent === null) return 'There is not enough prior data for a seven-day comparison.';
   const magnitude = Math.abs(story.deltaVsBaseline);
@@ -728,7 +732,7 @@ function renderTrendBars(days) {
   const maxTotal = Math.max(...days.map(day => day.total), 1);
   return days.map(day => {
     const height = Math.max(8, Math.round((day.total / maxTotal) * 100));
-    const label = `${formatReportDate(day.day, { short: true })}: ${day.total} reports, ${day.dumbPercent}% negative`;
+    const label = `${formatReportDate(day.day, { short: true })}: ${day.total} ${reportNoun(day.total)}, ${day.dumbPercent}% negative`;
     const contents = `<span class="trend-bar" style="--height:${height}%;--negative:${day.dumbPercent}%;--signal:${day.signal.accent}"></span><span>${new Date(`${day.day}T00:00:00Z`).getUTCDate()}</span>`;
     return day.total
       ? `<a class="trend-day" href="/reports/${day.day}" aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">${contents}</a>`
@@ -737,7 +741,7 @@ function renderTrendBars(days) {
 }
 
 function renderDailyCard(story, index) {
-  const alt = `Claude community report for ${formatReportDate(story.day)}: ${story.dumbPercent}% negative from ${story.total} reports`;
+  const alt = `Claude community report for ${formatReportDate(story.day)}: ${story.dumbPercent}% negative from ${story.total} ${reportNoun(story.total)}`;
   return `<article class="dispatch-card" data-report-day="${story.day}">
     <a class="dispatch-image-link" href="/reports/${story.day}">
       <img src="/api/report-card/${story.day}/card.png?width=540" srcset="/api/report-card/${story.day}/card.png?width=540 540w, /api/report-card/${story.day}/card.png?width=1080 1080w" sizes="(max-width: 700px) 82vw, 390px" width="540" height="675" alt="${escapeHtml(alt)}" ${index ? 'loading="lazy"' : ''}>
@@ -787,7 +791,7 @@ function renderCommunityReportPage(report) {
   const weekDirection = Math.abs(report.weekDelta) <= 4
     ? 'about even with the previous week'
     : `${Math.abs(report.weekDelta)} points ${report.weekDelta > 0 ? 'more' : 'less'} negative than the previous week`;
-  const description = `${lead.dumbPercent}% of ${lead.total} Claude community reports were negative in the latest daily signal. Explore the visual dispatch and 30-day history.`;
+  const description = `${lead.dumbPercent}% of ${lead.total} Claude community ${reportNoun(lead.total)} were negative in the latest daily signal. Explore the visual dispatch and 30-day history.`;
   const canonical = 'https://claudedumb.com/reports';
   const image = lead.total ? `https://claudedumb.com/api/report-card/${lead.day}/card.png?width=1080` : null;
   const schema = {
@@ -813,7 +817,7 @@ function renderCommunityReportPage(report) {
         <p class="eyebrow">${leadIsToday ? 'Today’s dispatch' : 'Latest dispatch'} · ${formatReportDate(lead.day, { short: true })}${leadIsToday ? ' · updating' : ''}</p>
         <span class="signal-stamp">${lead.signal.label}</span>
         <h1>${escapeHtml(lead.signal.headline)}.</h1>
-        <p class="lead-dek"><strong>${lead.dumbPercent}% negative</strong> from ${lead.total} community reports${leadIsToday ? ' so far today' : ''}. ${comparisonCopy(lead)}</p>
+        <p class="lead-dek"><strong>${lead.dumbPercent}% negative</strong> from ${lead.total} community ${reportNoun(lead.total)}${leadIsToday ? ' so far today' : ''}. ${comparisonCopy(lead)}</p>
         <div class="lead-actions">${lead.total ? `<a class="primary-action" href="/reports/${lead.day}">Read the full story</a>` : '<a class="primary-action" href="/">Be the first to report</a>'}<a href="/">Add your report →</a></div>
       </div>
       <div class="signal-now" aria-label="Today’s Claude community signal">
@@ -822,7 +826,7 @@ function renderCommunityReportPage(report) {
     </section>
 
     <section class="trend-strip" aria-labelledby="trend-title">
-      <div class="section-intro"><div><p class="eyebrow">Fourteen-day pulse</p><h2 id="trend-title">The shape of the signal</h2></div><p>${report.lastSeven.total} reports this week · ${report.lastSeven.dumbPercent}% negative · ${weekDirection}.</p></div>
+      <div class="section-intro"><div><p class="eyebrow">Fourteen-day pulse</p><h2 id="trend-title">The shape of the signal</h2></div><p>${report.lastSeven.total} ${reportNoun(report.lastSeven.total)} this week · ${report.lastSeven.dumbPercent}% negative · ${weekDirection}.</p></div>
       <div class="trend-bars">${renderTrendBars(trendDays)}</div>
       <div class="trend-legend"><span><i class="legend-dumb"></i> negative</span><span><i class="legend-smart"></i> positive</span><small>bar height = report volume</small></div>
     </section>
@@ -834,8 +838,8 @@ function renderCommunityReportPage(report) {
     </section>
 
     <section class="field-notes">
-      <div><p class="eyebrow">Field note 01</p><strong>${report.peakDay.total}</strong><p>reports on ${formatReportDate(report.peakDay.day, { short: true })}, the busiest day in this window.</p></div>
-      <div><p class="eyebrow">Field note 02</p><strong>${report.contextReports}</strong><p>reports included a comment or screenshot instead of only a vote.</p></div>
+      <div><p class="eyebrow">Field note 01</p><strong>${report.peakDay.total}</strong><p>${reportNoun(report.peakDay.total)} on ${formatReportDate(report.peakDay.day, { short: true })}, the busiest day in this window.</p></div>
+      <div><p class="eyebrow">Field note 02</p><strong>${report.contextReports}</strong><p>${reportNoun(report.contextReports)} included a comment or screenshot instead of only a vote.</p></div>
       <div><p class="eyebrow">Field note 03</p><strong>${report.visibleCountries.length}</strong><p>countries cleared the privacy threshold of three reports.</p></div>
     </section>
 
@@ -857,7 +861,7 @@ function renderCommunityReportPage(report) {
 function renderDailyStoryPage(report, story) {
   const date = formatReportDate(story.day);
   const title = `${story.signal.headline}: Claude Community Report for ${date}`;
-  const description = `${story.dumbPercent}% of ${story.total} community reports rated Claude negatively on ${date}. ${comparisonCopy(story)}`;
+  const description = `${story.dumbPercent}% of ${story.total} community ${reportNoun(story.total)} rated Claude negatively on ${date}. ${comparisonCopy(story)}`;
   const canonical = `https://claudedumb.com/reports/${story.day}`;
   const image = `https://claudedumb.com/api/report-card/${story.day}/card.png?width=1080`;
   const robots = story.total >= 10 ? 'index, follow, max-image-preview:large' : 'noindex, follow, max-image-preview:large';
@@ -879,12 +883,12 @@ function renderDailyStoryPage(report, story) {
       <p class="eyebrow">Daily dispatch · ${date}${story.day === utcDay(new Date()) ? ' · updating' : ''}</p>
       <span class="signal-stamp">${story.signal.label}</span>
       <h1>${escapeHtml(story.signal.headline)}.</h1>
-      <p class="story-lede">On ${date}, the community submitted <strong>${story.total} reports</strong>. ${story.dumb} marked Claude dumb and ${story.smart} marked it smart, producing a <strong>${story.dumbPercent}% negative signal</strong>.</p>
+      <p class="story-lede">On ${date}, the community submitted <strong>${story.total} ${reportNoun(story.total)}</strong>. ${story.dumb} marked Claude dumb and ${story.smart} marked it smart, producing a <strong>${story.dumbPercent}% negative signal</strong>.</p>
       <p>${comparisonCopy(story)} ${countryCopy}</p>
       <p class="caveat">This describes community perception, not a verified root cause or official incident. A negative report may reflect response quality, slowness, an error, or an outage.</p>
       <div class="story-actions"><a class="primary-action" href="/api/report-card/${story.day}/card.png?width=1080&amp;download=1" download>Download story card</a><a href="/">Add your signal →</a></div>
     </div>
-    <figure class="story-visual"><img src="/api/report-card/${story.day}/card.png?width=540" srcset="/api/report-card/${story.day}/card.png?width=540 540w, /api/report-card/${story.day}/card.png?width=1080 1080w" sizes="(max-width: 800px) 92vw, 480px" width="540" height="675" alt="Claude community report for ${date}: ${story.dumbPercent}% negative from ${story.total} reports"><figcaption>Share-ready daily card · generated from the underlying reports</figcaption></figure>
+    <figure class="story-visual"><img src="/api/report-card/${story.day}/card.png?width=540" srcset="/api/report-card/${story.day}/card.png?width=540 540w, /api/report-card/${story.day}/card.png?width=1080 1080w" sizes="(max-width: 800px) 92vw, 480px" width="540" height="675" alt="Claude community report for ${date}: ${story.dumbPercent}% negative from ${story.total} ${reportNoun(story.total)}"><figcaption>Share-ready daily card · generated from the underlying reports</figcaption></figure>
   </article>
   <section class="story-evidence"><p class="eyebrow">The numbers</p><div><span><strong>${story.total}</strong> total reports</span><span><strong class="dumb">${story.dumb}</strong> dumb</span><span><strong class="smart">${story.smart}</strong> smart</span><span><strong>${story.contextReports}</strong> with context</span></div></section>
   <aside class="next-dispatch"><p>See how the signal changed before and after this day.</p><a href="/reports">← Browse every daily dispatch</a></aside>
@@ -926,7 +930,7 @@ function renderReportCardSvg(story) {
     <text x="84" y="674" fill="#f6f3ef" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="230" font-weight="800" letter-spacing="-18">${story.dumbPercent}%</text>
     <text x="84" y="732" fill="#aaa39a" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="25" letter-spacing="3">NEGATIVE COMMUNITY SIGNAL</text>
     <rect x="84" y="798" width="820" height="48" rx="8" fill="#58b985"/><rect x="84" y="798" width="${negativeWidth}" height="48" rx="8" fill="#e36b2b"/>
-    <text x="84" y="920" fill="#f6f3ef" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="34" font-weight="700">${story.total} REPORTS</text>
+    <text x="84" y="920" fill="#f6f3ef" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="34" font-weight="700">${story.total} ${reportNoun(story.total).toUpperCase()}</text>
     <text x="84" y="972" fill="#aaa39a" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="23">${story.dumb} DUMB  ·  ${story.smart} SMART  ·  ${story.contextReports} WITH CONTEXT</text>
     <rect x="84" y="1052" width="820" height="1" fill="#3a3630"/>
     <text x="84" y="1120" fill="${story.signal.accent}" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="24" font-weight="700">${escapeXml(comparison)}</text>
