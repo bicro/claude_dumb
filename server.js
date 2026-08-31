@@ -744,11 +744,10 @@ function renderDailyCard(story, index) {
   const alt = `Claude community report for ${formatReportDate(story.day)}: ${story.dumbPercent}% negative from ${story.total} ${reportNoun(story.total)}`;
   return `<article class="dispatch-card" data-report-day="${story.day}">
     <a class="dispatch-image-link" href="/reports/${story.day}">
-      <img src="/api/report-card/${story.day}/card.png?width=540" srcset="/api/report-card/${story.day}/card.png?width=540 540w, /api/report-card/${story.day}/card.png?width=1080 1080w" sizes="(max-width: 700px) 82vw, 390px" width="540" height="675" alt="${escapeHtml(alt)}" ${index ? 'loading="lazy"' : ''}>
+      <img src="/api/report-card/${story.day}/card.png?width=540&amp;theme=light" srcset="/api/report-card/${story.day}/card.png?width=540&amp;theme=light 540w, /api/report-card/${story.day}/card.png?width=1080&amp;theme=light 1080w" sizes="(max-width: 700px) 82vw, 390px" width="540" height="675" alt="${escapeHtml(alt)}" ${index ? 'loading="lazy"' : ''}>
     </a>
     <div class="dispatch-caption">
-      <div><time datetime="${story.day}">${formatReportDate(story.day, { short: true })}</time><strong>${escapeHtml(story.signal.headline)}</strong></div>
-      <a href="/reports/${story.day}" aria-label="Read the ${formatReportDate(story.day)} report">Read story →</a>
+      <a href="/reports/${story.day}" aria-label="Read the ${formatReportDate(story.day)} report"><time datetime="${story.day}">${formatReportDate(story.day, { short: true })}</time><strong>${escapeHtml(story.signal.headline)}</strong></a>
     </div>
   </article>`;
 }
@@ -765,7 +764,7 @@ function reportDocumentHead({ title, description, canonical, image, robots = 'in
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${escapeHtml(description)}">
   <meta property="og:url" content="${canonical}">
-  ${image ? `<meta property="og:image" content="${image}">
+  ${image ? `<meta property="og:image" content="${escapeHtml(image)}">
   <meta property="og:image:width" content="1080">
   <meta property="og:image:height" content="1350">` : ''}
   <meta name="twitter:card" content="${image ? 'summary_large_image' : 'summary'}">
@@ -779,7 +778,7 @@ function reportDocumentHead({ title, description, canonical, image, robots = 'in
 function renderReportHeader() {
   return `<header class="site-header">
     <a href="/" class="logo">claude<span>dumb</span><small>.com</small></a>
-    <nav><a href="/reports">Dispatches</a><a href="/">Live vibe check →</a></nav>
+    <nav><a class="header-cta" href="/">← Live status &amp; report</a></nav>
   </header>`;
 }
 
@@ -793,7 +792,7 @@ function renderCommunityReportPage(report) {
     : `${Math.abs(report.weekDelta)} points ${report.weekDelta > 0 ? 'more' : 'less'} negative than the previous week`;
   const description = `${lead.dumbPercent}% of ${lead.total} Claude community ${reportNoun(lead.total)} were negative in the latest daily signal. Explore the visual dispatch and 30-day history.`;
   const canonical = 'https://claudedumb.com/reports';
-  const image = lead.total ? `https://claudedumb.com/api/report-card/${lead.day}/card.png?width=1080` : null;
+  const image = lead.total ? `https://claudedumb.com/api/report-card/${lead.day}/card.png?width=1080&theme=light` : null;
   const schema = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -818,7 +817,7 @@ function renderCommunityReportPage(report) {
         <span class="signal-stamp">${lead.signal.label}</span>
         <h1>${escapeHtml(lead.signal.headline)}.</h1>
         <p class="lead-dek"><strong>${lead.dumbPercent}% negative</strong> from ${lead.total} community ${reportNoun(lead.total)}${leadIsToday ? ' so far today' : ''}. ${comparisonCopy(lead)}</p>
-        <div class="lead-actions">${lead.total ? `<a class="primary-action" href="/reports/${lead.day}">Read the full story</a>` : '<a class="primary-action" href="/">Be the first to report</a>'}<a href="/">Add your report →</a></div>
+        ${lead.total ? '' : '<a class="primary-action" href="/">Be the first to report</a>'}
       </div>
       <div class="signal-now" aria-label="Today’s Claude community signal">
         <span>negative share</span><strong>${lead.dumbPercent}%</strong><small>${lead.dumb} dumb · ${lead.smart} smart</small>
@@ -832,26 +831,19 @@ function renderCommunityReportPage(report) {
     </section>
 
     <section class="dispatch-section" aria-labelledby="dispatch-title">
-      <div class="section-intro"><div><p class="eyebrow">Swipe the archive</p><h2 id="dispatch-title">Daily dispatches</h2></div><p>Each card is a share-ready visual backed by a permanent, text-based report.</p></div>
-      <div class="rail-controls"><button type="button" id="dispatch-prev" aria-label="Previous dispatch">←</button><span id="dispatch-position">1 / ${feedDays.length}</span><button type="button" id="dispatch-next" aria-label="Next dispatch">→</button></div>
+      <div class="section-intro dispatch-intro"><div><p class="eyebrow">Daily evidence</p><h2 id="dispatch-title">Recent reports</h2></div><div class="dispatch-tools"><p>Swipe through each day.</p><div class="rail-controls"><button type="button" id="dispatch-prev" aria-label="Previous dispatch">←</button><span id="dispatch-position">1 / ${feedDays.length}</span><button type="button" id="dispatch-next" aria-label="Next dispatch">→</button></div></div></div>
       <div class="dispatch-rail" id="dispatch-rail" tabindex="0">${feedDays.length ? feedDays.map(renderDailyCard).join('') : '<p class="empty-dispatch">No daily dispatches yet. Community reports will appear here.</p>'}</div>
     </section>
 
-    <section class="field-notes">
-      <div><p class="eyebrow">Field note 01</p><strong>${report.peakDay.total}</strong><p>${reportNoun(report.peakDay.total)} on ${formatReportDate(report.peakDay.day, { short: true })}, the busiest day in this window.</p></div>
-      <div><p class="eyebrow">Field note 02</p><strong>${report.contextReports}</strong><p>${reportNoun(report.contextReports)} included a comment or screenshot instead of only a vote.</p></div>
-      <div><p class="eyebrow">Field note 03</p><strong>${report.visibleCountries.length}</strong><p>countries cleared the privacy threshold of three reports.</p></div>
-    </section>
-
     <details class="source-notes">
-      <summary><span>Source notes and complete 30-day table</span><small>Open the underlying data ↓</small></summary>
+      <summary><span>Methodology and complete 30-day data</span><small>View source notes ↓</small></summary>
       <div class="source-grid">
         <div class="table-wrap"><table><thead><tr><th>Date</th><th>Total</th><th>Smart</th><th>Dumb</th><th>Negative</th></tr></thead><tbody>${dailyRows}</tbody></table></div>
-        <aside><h2>How to read this</h2><ul><li>Reports are voluntary community submissions, not unique users.</li><li>“Dumb” can mean poor quality, slowness, an error, or an outage.</li><li>Daily boundaries use UTC and today remains incomplete.</li><li>Locations are approximate and only shown at country level after three reports.</li></ul><a href="https://status.claude.com/" target="_blank" rel="noopener">Compare Claude’s official status ↗</a></aside>
+        <aside><h2>How to read this</h2><p class="source-summary">${report.contextReports} reports included context. ${report.visibleCountries.length} countries cleared the privacy threshold.</p><ul><li>Reports are voluntary community submissions, not unique users.</li><li>“Dumb” can mean poor quality, slowness, an error, or an outage.</li><li>Daily boundaries use UTC and today remains incomplete.</li><li>Locations are approximate and only shown at country level after three reports.</li></ul><a href="https://status.claude.com/" target="_blank" rel="noopener">Compare Claude’s official status ↗</a></aside>
       </div>
     </details>
   </main>
-  <footer>Independent community tracker · not affiliated with Anthropic · <a href="/">Submit a report</a></footer>
+  <footer>Independent community tracker · not affiliated with Anthropic</footer>
   <script src="/analytics.js"></script>
   <script src="/reports.js"></script>
 </body>
@@ -863,7 +855,7 @@ function renderDailyStoryPage(report, story) {
   const title = `${story.signal.headline}: Claude Community Report for ${date}`;
   const description = `${story.dumbPercent}% of ${story.total} community ${reportNoun(story.total)} rated Claude negatively on ${date}. ${comparisonCopy(story)}`;
   const canonical = `https://claudedumb.com/reports/${story.day}`;
-  const image = `https://claudedumb.com/api/report-card/${story.day}/card.png?width=1080`;
+  const image = `https://claudedumb.com/api/report-card/${story.day}/card.png?width=1080&theme=light`;
   const robots = story.total >= 10 ? 'index, follow, max-image-preview:large' : 'noindex, follow, max-image-preview:large';
   const schema = {
     '@context': 'https://schema.org', '@type': 'Article', headline: title, description, url: canonical, image,
@@ -886,13 +878,12 @@ function renderDailyStoryPage(report, story) {
       <p class="story-lede">On ${date}, the community submitted <strong>${story.total} ${reportNoun(story.total)}</strong>. ${story.dumb} marked Claude dumb and ${story.smart} marked it smart, producing a <strong>${story.dumbPercent}% negative signal</strong>.</p>
       <p>${comparisonCopy(story)} ${countryCopy}</p>
       <p class="caveat">This describes community perception, not a verified root cause or official incident. A negative report may reflect response quality, slowness, an error, or an outage.</p>
-      <div class="story-actions"><a class="primary-action" href="/api/report-card/${story.day}/card.png?width=1080&amp;download=1" download>Download story card</a><a href="/">Add your signal →</a></div>
     </div>
-    <figure class="story-visual"><img src="/api/report-card/${story.day}/card.png?width=540" srcset="/api/report-card/${story.day}/card.png?width=540 540w, /api/report-card/${story.day}/card.png?width=1080 1080w" sizes="(max-width: 800px) 92vw, 480px" width="540" height="675" alt="Claude community report for ${date}: ${story.dumbPercent}% negative from ${story.total} ${reportNoun(story.total)}"><figcaption>Share-ready daily card · generated from the underlying reports</figcaption></figure>
+    <figure class="story-visual"><img src="/api/report-card/${story.day}/card.png?width=540&amp;theme=light" srcset="/api/report-card/${story.day}/card.png?width=540&amp;theme=light 540w, /api/report-card/${story.day}/card.png?width=1080&amp;theme=light 1080w" sizes="(max-width: 800px) 92vw, 480px" width="540" height="675" alt="Claude community report for ${date}: ${story.dumbPercent}% negative from ${story.total} ${reportNoun(story.total)}"><figcaption><a href="/api/report-card/${story.day}/card.png?width=1080&amp;theme=light&amp;download=1" download>Download share card ↓</a></figcaption></figure>
   </article>
   <section class="story-evidence"><p class="eyebrow">The numbers</p><div><span><strong>${story.total}</strong> total reports</span><span><strong class="dumb">${story.dumb}</strong> dumb</span><span><strong class="smart">${story.smart}</strong> smart</span><span><strong>${story.contextReports}</strong> with context</span></div></section>
-  <aside class="next-dispatch"><p>See how the signal changed before and after this day.</p><a href="/reports">← Browse every daily dispatch</a></aside>
-</main><footer>Independent community tracker · not affiliated with Anthropic · <a href="https://status.claude.com/">Official Claude status</a></footer><script src="/analytics.js"></script><script src="/reports.js"></script></body></html>`;
+  <aside class="next-dispatch"><a href="/reports">← Browse every daily report</a><a href="/">Report how Claude is doing now →</a></aside>
+</main><footer>Independent community tracker · not affiliated with Anthropic</footer><script src="/analytics.js"></script><script src="/reports.js"></script></body></html>`;
 }
 
 const storyCache = new Map();
@@ -919,23 +910,23 @@ function renderReportCardSvg(story) {
     ? 'NO PRIOR BASELINE'
     : `${story.deltaVsBaseline >= 0 ? '+' : ''}${story.deltaVsBaseline} PTS VS PRIOR 7 DAYS`;
   return `<svg width="1080" height="1350" viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg">
-    <defs><pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#2d2a25" stroke-width="1"/></pattern></defs>
-    <rect width="1080" height="1350" fill="#181714"/><rect width="1080" height="1350" fill="url(#grid)" opacity=".55"/><rect width="12" height="1350" fill="${story.signal.accent}"/>
-    <text x="84" y="92" fill="#f6f3ef" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="34" font-weight="800">claude<tspan fill="#e36b2b">dumb</tspan><tspan fill="#aaa39a" font-size="18">.com</tspan></text>
-    <text x="996" y="92" fill="#aaa39a" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" text-anchor="end">DAILY DISPATCH</text>
-    <line x1="84" y1="132" x2="996" y2="132" stroke="#3a3630" stroke-width="2"/>
-    <text x="84" y="204" fill="#aaa39a" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="24">${escapeXml(formatReportDate(story.day).toUpperCase())}</text>
+    <defs><pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#ded8d1" stroke-width="1"/></pattern></defs>
+    <rect width="1080" height="1350" fill="#f6f3ef"/><rect width="1080" height="1350" fill="url(#grid)" opacity=".58"/><rect width="12" height="1350" fill="${story.signal.accent}"/>
+    <text x="84" y="92" fill="#1a1815" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="34" font-weight="800">claude<tspan fill="#e36b2b">dumb</tspan><tspan fill="#b5b0a8" font-size="18">.com</tspan></text>
+    <text x="996" y="92" fill="#8a8480" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" text-anchor="end">DAILY DISPATCH</text>
+    <line x1="84" y1="132" x2="996" y2="132" stroke="#e5e0da" stroke-width="2"/>
+    <text x="84" y="204" fill="#8a8480" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="24">${escapeXml(formatReportDate(story.day).toUpperCase())}</text>
     <text x="84" y="306" fill="${story.signal.accent}" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="50" font-weight="800" letter-spacing="5">${story.signal.label}</text>
-    <text x="84" y="412" fill="#f6f3ef" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="58" font-weight="700">${escapeXml(story.signal.headline)}</text>
-    <text x="84" y="674" fill="#f6f3ef" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="230" font-weight="800" letter-spacing="-18">${story.dumbPercent}%</text>
-    <text x="84" y="732" fill="#aaa39a" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="25" letter-spacing="3">NEGATIVE COMMUNITY SIGNAL</text>
-    <rect x="84" y="798" width="820" height="48" rx="8" fill="#58b985"/><rect x="84" y="798" width="${negativeWidth}" height="48" rx="8" fill="#e36b2b"/>
-    <text x="84" y="920" fill="#f6f3ef" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="34" font-weight="700">${story.total} ${reportNoun(story.total).toUpperCase()}</text>
-    <text x="84" y="972" fill="#aaa39a" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="23">${story.dumb} DUMB  ·  ${story.smart} SMART  ·  ${story.contextReports} WITH CONTEXT</text>
-    <rect x="84" y="1052" width="820" height="1" fill="#3a3630"/>
+    <text x="84" y="412" fill="#1a1815" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="58" font-weight="700">${escapeXml(story.signal.headline)}</text>
+    <text x="84" y="674" fill="#1a1815" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="230" font-weight="800" letter-spacing="-18">${story.dumbPercent}%</text>
+    <text x="84" y="732" fill="#8a8480" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="25" letter-spacing="3">NEGATIVE COMMUNITY SIGNAL</text>
+    <rect x="84" y="798" width="820" height="48" rx="8" fill="#5a9a1f"/><rect x="84" y="798" width="${negativeWidth}" height="48" rx="8" fill="#d63031"/>
+    <text x="84" y="920" fill="#1a1815" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="34" font-weight="700">${story.total} ${reportNoun(story.total).toUpperCase()}</text>
+    <text x="84" y="972" fill="#8a8480" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="23">${story.dumb} DUMB  ·  ${story.smart} SMART  ·  ${story.contextReports} WITH CONTEXT</text>
+    <rect x="84" y="1052" width="820" height="1" fill="#e5e0da"/>
     <text x="84" y="1120" fill="${story.signal.accent}" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="24" font-weight="700">${escapeXml(comparison)}</text>
-    <text x="84" y="1238" fill="#aaa39a" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="19">VOLUNTARY REPORTS · NOT OFFICIAL ANTHROPIC STATUS</text>
-    <text x="996" y="1290" fill="#f6f3ef" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" text-anchor="end">claudedumb.com/reports</text>
+    <text x="84" y="1238" fill="#8a8480" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="19">VOLUNTARY REPORTS · NOT OFFICIAL ANTHROPIC STATUS</text>
+    <text x="996" y="1290" fill="#1a1815" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" text-anchor="end">claudedumb.com/reports</text>
   </svg>`;
 }
 
