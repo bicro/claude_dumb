@@ -851,6 +851,14 @@ main {
 
 .status-guide a:hover { text-decoration: underline; }
 
+.status-guide-links {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+}
+
 .status-faq {
   border-top: 1px solid var(--border);
   padding-top: 10px;
@@ -1370,6 +1378,7 @@ main {
   .header-status { font-size: 10px; }
   .vibes-hero-status { font-size: 1.6rem; word-break: break-word; }
   .status-guide { align-items: flex-start; flex-direction: column; gap: 0.45rem; }
+  .status-guide-links { text-align: left; }
   .status-faq-grid { grid-template-columns: 1fr; }
 
   /* Show mobile vote bar */

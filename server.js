@@ -212,6 +212,16 @@ if (process.env.DATABASE_URL) {
       `);
       return rows;
     },
+    async getCommunityReportVotes(days = 30) {
+      const safeDays = Math.min(Math.max(Number.parseInt(days, 10) || 30, 7), 90);
+      const { rows } = await pool.query(`
+        SELECT vote, city, comment, screenshot_key, created_at
+        FROM votes
+        WHERE created_at >= NOW() - ($1::int * INTERVAL '1 day')
+        ORDER BY created_at ASC
+      `, [safeDays]);
+      return rows;
+    },
     async getRecentVoteByIP(ip) {
       const { rows } = await pool.query(
         `SELECT id FROM votes WHERE ip = $1 AND created_at > NOW() - INTERVAL '5 minutes'`,
@@ -432,6 +442,15 @@ if (process.env.DATABASE_URL) {
         ORDER BY day ASC
       `).all();
     },
+    async getCommunityReportVotes(days = 30) {
+      const safeDays = Math.min(Math.max(Number.parseInt(days, 10) || 30, 7), 90);
+      return sqliteDb.prepare(`
+        SELECT vote, city, comment, screenshot_key, created_at
+        FROM votes
+        WHERE created_at >= datetime('now', ?)
+        ORDER BY created_at ASC
+      `).all(`-${safeDays} days`);
+    },
     async getRecentVoteByIP(ip) {
       return sqliteDb.prepare(
         `SELECT id FROM votes WHERE ip = ? AND created_at > datetime('now', '-5 minutes')`
@@ -565,6 +584,214 @@ async function geolocateIP(ip) {
   geoCache.set(ip, null);
   return null;
 }
+
+// ---- Crawlable community report ----
+function utcDay(date) {
+  const value = typeof date === 'string' && /^\d{4}-\d{2}-\d{2} \d{2}:/.test(date)
+    ? `${date.replace(' ', 'T')}Z`
+    : date;
+  return new Date(value).toISOString().slice(0, 10);
+}
+
+function buildCommunityReport(votes, days = 30) {
+  const now = new Date();
+  const dayRows = new Map();
+  for (let offset = days - 1; offset >= 0; offset -= 1) {
+    const date = new Date(now);
+    date.setUTCDate(date.getUTCDate() - offset);
+    dayRows.set(utcDay(date), { day: utcDay(date), smart: 0, dumb: 0, total: 0 });
+  }
+
+  const countries = new Map();
+  let smart = 0;
+  let dumb = 0;
+  let contextReports = 0;
+
+  for (const row of votes) {
+    if (row.vote === 'smart') smart += 1;
+    if (row.vote === 'dumb') dumb += 1;
+    if (row.comment || row.screenshot_key) contextReports += 1;
+
+    const day = dayRows.get(utcDay(row.created_at));
+    if (day && (row.vote === 'smart' || row.vote === 'dumb')) {
+      day[row.vote] += 1;
+      day.total += 1;
+    }
+
+    if (row.city) {
+      const country = String(row.city).split(',').pop().trim();
+      if (country) countries.set(country, (countries.get(country) || 0) + 1);
+    }
+  }
+
+  const daily = [...dayRows.values()];
+  const lastSeven = daily.slice(-7).reduce((sum, row) => ({
+    smart: sum.smart + row.smart,
+    dumb: sum.dumb + row.dumb,
+    total: sum.total + row.total,
+  }), { smart: 0, dumb: 0, total: 0 });
+  const peakDay = daily.reduce((peak, row) => row.total > peak.total ? row : peak, daily[0]);
+  const visibleCountries = [...countries.entries()]
+    .filter(([, count]) => count >= 3)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([country, count]) => ({ country, count }));
+
+  return {
+    days,
+    startDate: daily[0].day,
+    endDate: daily[daily.length - 1].day,
+    updatedAt: now.toISOString(),
+    daily,
+    total: smart + dumb,
+    smart,
+    dumb,
+    dumbPercent: smart + dumb ? Math.round((dumb / (smart + dumb)) * 100) : 0,
+    lastSeven: {
+      ...lastSeven,
+      dumbPercent: lastSeven.total ? Math.round((lastSeven.dumb / lastSeven.total) * 100) : 0,
+    },
+    peakDay,
+    contextReports,
+    visibleCountries,
+  };
+}
+
+function renderCommunityReportPage(report) {
+  const formatDate = day => new Date(`${day}T00:00:00Z`).toLocaleDateString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC',
+  });
+  const schema = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: 'Claude Community Quality Report',
+    description: `Daily smart and dumb community reports about Claude over the last ${report.days} days.`,
+    url: 'https://claudedumb.com/reports',
+    temporalCoverage: `${report.startDate}/${report.endDate}`,
+    dateModified: report.updatedAt,
+    creator: { '@type': 'Organization', name: 'claudedumb.com', url: 'https://claudedumb.com/' },
+    measurementTechnique: 'Voluntary community reports submitted to claudedumb.com',
+    variableMeasured: [
+      { '@type': 'PropertyValue', name: 'Smart reports', value: report.smart },
+      { '@type': 'PropertyValue', name: 'Dumb reports', value: report.dumb },
+      { '@type': 'PropertyValue', name: 'Dumb report share', value: `${report.dumbPercent}%` },
+    ],
+  }).replace(/</g, '\\u003c');
+  const dailyRows = report.daily.slice().reverse().map(row => `
+    <tr>
+      <th scope="row">${formatDate(row.day)}</th>
+      <td>${row.total}</td>
+      <td class="smart">${row.smart}</td>
+      <td class="dumb">${row.dumb}</td>
+      <td>${row.total ? Math.round((row.dumb / row.total) * 100) : 0}%</td>
+    </tr>`).join('');
+  const countryRows = report.visibleCountries.length
+    ? report.visibleCountries.map(item => `<li><span>${escapeHtml(item.country)}</span><strong>${item.count} reports</strong></li>`).join('')
+    : '<li class="muted">No country has reached the 3-report privacy threshold yet.</li>';
+  const narrative = report.total
+    ? `Community members submitted <strong>${report.total} reports</strong> in the last ${report.days} days. ${report.dumbPercent}% marked Claude as dumb. The busiest day was <strong>${formatDate(report.peakDay.day)}</strong> with ${report.peakDay.total} reports.`
+    : `No community reports were submitted in this ${report.days}-day window.`;
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Community Quality Report & History | claudedumb.com</title>
+  <meta name="description" content="Explore 30 days of Claude community quality reports, daily smart-vs-dumb history, trends, and transparent methodology.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://claudedumb.com/reports">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="claudedumb.com">
+  <meta property="og:title" content="Claude Community Quality Report & History">
+  <meta property="og:description" content="30 days of community-reported Claude quality trends and daily history.">
+  <meta property="og:url" content="https://claudedumb.com/reports">
+  <meta name="twitter:card" content="summary">
+  <script type="application/ld+json">${schema}</script>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/reports.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="/" class="logo">claude<span>dumb</span><small>.com</small></a>
+    <a href="/">Live vibe check →</a>
+  </header>
+  <main>
+    <nav class="crumb" aria-label="Breadcrumb"><a href="/">Home</a> / Community report</nav>
+    <section class="intro">
+      <p class="eyebrow">Community data · updated daily</p>
+      <h1>Claude Community Quality Report</h1>
+      <p class="dek">A transparent, rolling history of whether community members found Claude smart or dumb—not an official Anthropic uptime report.</p>
+      <p class="updated">Updated <time datetime="${report.updatedAt}">${formatDate(report.endDate)}</time> · Reporting window ${formatDate(report.startDate)}–${formatDate(report.endDate)}</p>
+    </section>
+    <section class="metrics" aria-label="Community report metrics">
+      <article><span>7-day reports</span><strong>${report.lastSeven.total}</strong></article>
+      <article><span>Marked dumb</span><strong class="dumb">${report.lastSeven.dumbPercent}%</strong></article>
+      <article><span>Marked smart</span><strong class="smart">${report.lastSeven.smart}</strong></article>
+      <article><span>30-day context</span><strong>${report.contextReports}</strong></article>
+    </section>
+    <section class="card story">
+      <p class="eyebrow">What the community reported</p>
+      <h2>The last 30 days in one sentence</h2>
+      <p>${narrative}</p>
+      <p class="caveat">A “dumb” report can describe poor answer quality, slowness, an error, or an outage. This dataset measures community perception; it does not establish root cause.</p>
+    </section>
+    <section class="grid">
+      <article class="card table-card">
+        <div class="section-heading">
+          <div><p class="eyebrow">Daily history</p><h2>Smart vs. dumb reports</h2></div>
+          <a href="/">Submit a live report →</a>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Total</th><th>Smart</th><th>Dumb</th><th>Dumb share</th></tr></thead>
+            <tbody>${dailyRows}</tbody>
+          </table>
+        </div>
+      </article>
+      <aside class="card countries">
+        <p class="eyebrow">Approximate geography</p>
+        <h2>Countries with 3+ reports</h2>
+        <ul>${countryRows}</ul>
+        <p class="caveat">Locations are derived approximately from IP addresses. Cities are never published here, and countries below the threshold are hidden.</p>
+      </aside>
+    </section>
+    <section class="card methodology">
+      <p class="eyebrow">Methodology</p>
+      <h2>How to read this report</h2>
+      <ul>
+        <li>Each row represents a voluntary “smart” or “dumb” submission to claudedumb.com.</li>
+        <li>People may submit again after five minutes, so reports are not unique users.</li>
+        <li>Daily boundaries use UTC. The current day is incomplete and may change.</li>
+        <li>Community signals can surface quality problems before an official incident, but they do not replace <a href="https://status.claude.com/" target="_blank" rel="noopener">Claude’s official status page</a>.</li>
+      </ul>
+    </section>
+    <section class="cta">
+      <h2>How is Claude behaving for you?</h2>
+      <p>Add your signal to tomorrow’s report.</p>
+      <a href="/">Submit a community report</a>
+    </section>
+  </main>
+  <footer>Independent community tracker · not affiliated with Anthropic · <a href="/">claudedumb.com</a></footer>
+  <script src="/analytics.js"></script>
+</body>
+</html>`;
+}
+
+app.get('/reports', async (req, res) => {
+  try {
+    const days = 30;
+    const votes = await db.getCommunityReportVotes(days);
+    const report = buildCommunityReport(votes, days);
+    res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+    res.send(renderCommunityReportPage(report));
+  } catch (e) {
+    console.error('Community report error:', e);
+    res.status(500).send('Unable to load the community report right now.');
+  }
+});
 
 // ---- API Routes ----
 
