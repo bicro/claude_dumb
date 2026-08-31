@@ -213,13 +213,23 @@ if (process.env.DATABASE_URL) {
       return rows;
     },
     async getCommunityReportVotes(days = 30) {
-      const safeDays = Math.min(Math.max(Number.parseInt(days, 10) || 30, 7), 90);
+      const safeDays = Math.min(Math.max(Number.parseInt(days, 10) || 30, 7), 730);
       const { rows } = await pool.query(`
         SELECT vote, city, comment, screenshot_key, created_at
         FROM votes
         WHERE created_at >= NOW() - ($1::int * INTERVAL '1 day')
         ORDER BY created_at ASC
       `, [safeDays]);
+      return rows;
+    },
+    async getCommunityReportVotesForRange(startDay, endDay) {
+      const { rows } = await pool.query(`
+        SELECT vote, city, comment, screenshot_key, created_at
+        FROM votes
+        WHERE created_at >= $1::date
+          AND created_at < ($2::date + INTERVAL '1 day')
+        ORDER BY created_at ASC
+      `, [startDay, endDay]);
       return rows;
     },
     async getRecentVoteByIP(ip) {
@@ -443,13 +453,22 @@ if (process.env.DATABASE_URL) {
       `).all();
     },
     async getCommunityReportVotes(days = 30) {
-      const safeDays = Math.min(Math.max(Number.parseInt(days, 10) || 30, 7), 90);
+      const safeDays = Math.min(Math.max(Number.parseInt(days, 10) || 30, 7), 730);
       return sqliteDb.prepare(`
         SELECT vote, city, comment, screenshot_key, created_at
         FROM votes
         WHERE created_at >= datetime('now', ?)
         ORDER BY created_at ASC
       `).all(`-${safeDays} days`);
+    },
+    async getCommunityReportVotesForRange(startDay, endDay) {
+      return sqliteDb.prepare(`
+        SELECT vote, city, comment, screenshot_key, created_at
+        FROM votes
+        WHERE created_at >= datetime(?)
+          AND created_at < datetime(?, '+1 day')
+        ORDER BY created_at ASC
+      `).all(startDay, endDay);
     },
     async getRecentVoteByIP(ip) {
       return sqliteDb.prepare(
@@ -593,43 +612,95 @@ function utcDay(date) {
   return new Date(value).toISOString().slice(0, 10);
 }
 
-function buildCommunityReport(votes, days = 30) {
-  const now = new Date();
-  const dayRows = new Map();
-  for (let offset = days - 1; offset >= 0; offset -= 1) {
-    const date = new Date(now);
-    date.setUTCDate(date.getUTCDate() - offset);
-    dayRows.set(utcDay(date), { day: utcDay(date), smart: 0, dumb: 0, total: 0 });
-  }
-
-  const countries = new Map();
-  let smart = 0;
-  let dumb = 0;
-  let contextReports = 0;
-
-  for (const row of votes) {
-    if (row.vote === 'smart') smart += 1;
-    if (row.vote === 'dumb') dumb += 1;
-    if (row.comment || row.screenshot_key) contextReports += 1;
-
-    const day = dayRows.get(utcDay(row.created_at));
-    if (day && (row.vote === 'smart' || row.vote === 'dumb')) {
-      day[row.vote] += 1;
-      day.total += 1;
-    }
-
-    if (row.city) {
-      const country = String(row.city).split(',').pop().trim();
-      if (country) countries.set(country, (countries.get(country) || 0) + 1);
-    }
-  }
-
-  const daily = [...dayRows.values()];
-  const lastSeven = daily.slice(-7).reduce((sum, row) => ({
+function summarizeVotes(rows) {
+  const summary = rows.reduce((sum, row) => ({
     smart: sum.smart + row.smart,
     dumb: sum.dumb + row.dumb,
     total: sum.total + row.total,
   }), { smart: 0, dumb: 0, total: 0 });
+  return {
+    ...summary,
+    dumbPercent: summary.total ? Math.round((summary.dumb / summary.total) * 100) : 0,
+  };
+}
+
+function classifyCommunitySignal(total, dumbPercent) {
+  if (total < 3) return { label: 'QUIET', headline: 'Not enough signal yet', accent: '#aaa39a' };
+  if (dumbPercent >= 80) return { label: 'ROUGH', headline: 'Community signal was rough', accent: '#e36b2b' };
+  if (dumbPercent >= 65) return { label: 'SHAKY', headline: 'Claude had a shaky day', accent: '#e3a52b' };
+  if (dumbPercent >= 45) return { label: 'MIXED', headline: 'The community was split', accent: '#6f8fa8' };
+  return { label: 'SOLID', headline: 'Claude had a solid day', accent: '#58b985' };
+}
+
+function formatReportDate(day, options = {}) {
+  return new Date(`${day}T00:00:00Z`).toLocaleDateString('en-US', {
+    month: options.short ? 'short' : 'long',
+    day: 'numeric',
+    year: options.noYear ? undefined : 'numeric',
+    timeZone: 'UTC',
+  });
+}
+
+function comparisonCopy(story) {
+  if (story.baselineDumbPercent === null) return 'There is not enough prior data for a seven-day comparison.';
+  const magnitude = Math.abs(story.deltaVsBaseline);
+  if (magnitude <= 4) return `That was roughly in line with the prior seven-day baseline of ${story.baselineDumbPercent}% negative.`;
+  const direction = story.deltaVsBaseline > 0 ? 'more' : 'less';
+  return `That was ${magnitude} percentage points ${direction} negative than the prior seven-day baseline.`;
+}
+
+function buildCommunityReport(votes, days = 30, endDate = new Date()) {
+  const windowEnd = new Date(endDate);
+  const dayRows = new Map();
+  for (let offset = days - 1; offset >= 0; offset -= 1) {
+    const date = new Date(windowEnd);
+    date.setUTCDate(date.getUTCDate() - offset);
+    const day = utcDay(date);
+    dayRows.set(day, { day, smart: 0, dumb: 0, total: 0, contextReports: 0, countries: new Map() });
+  }
+
+  const countries = new Map();
+  let contextReports = 0;
+  for (const row of votes) {
+    const day = dayRows.get(utcDay(row.created_at));
+    if (!day || (row.vote !== 'smart' && row.vote !== 'dumb')) continue;
+    day[row.vote] += 1;
+    day.total += 1;
+    if (row.comment || row.screenshot_key) {
+      day.contextReports += 1;
+      contextReports += 1;
+    }
+    if (row.city) {
+      const country = String(row.city).split(',').pop().trim();
+      if (country) {
+        day.countries.set(country, (day.countries.get(country) || 0) + 1);
+        countries.set(country, (countries.get(country) || 0) + 1);
+      }
+    }
+  }
+
+  const daily = [...dayRows.values()];
+  daily.forEach((row, index) => {
+    row.dumbPercent = row.total ? Math.round((row.dumb / row.total) * 100) : 0;
+    row.signal = classifyCommunitySignal(row.total, row.dumbPercent);
+    const baseline = summarizeVotes(daily.slice(Math.max(0, index - 7), index));
+    row.baselineDumbPercent = baseline.total ? baseline.dumbPercent : null;
+    row.deltaVsBaseline = baseline.total ? row.dumbPercent - baseline.dumbPercent : 0;
+    if (row.total >= 5 && baseline.total && row.deltaVsBaseline >= 12) {
+      row.signal = { label: 'SPIKE', headline: 'Negative reports jumped', accent: '#e36b2b' };
+    } else if (row.total >= 5 && baseline.total && row.deltaVsBaseline <= -12) {
+      row.signal = { label: 'RECOVERY', headline: 'Claude bounced back', accent: '#58b985' };
+    }
+    row.visibleCountries = [...row.countries.entries()]
+      .filter(([, count]) => count >= 3)
+      .sort((a, b) => b[1] - a[1])
+      .map(([country, count]) => ({ country, count }));
+    delete row.countries;
+  });
+
+  const totalSummary = summarizeVotes(daily);
+  const lastSeven = summarizeVotes(daily.slice(-7));
+  const previousSeven = summarizeVotes(daily.slice(-14, -7));
   const peakDay = daily.reduce((peak, row) => row.total > peak.total ? row : peak, daily[0]);
   const visibleCountries = [...countries.entries()]
     .filter(([, count]) => count >= 3)
@@ -641,143 +712,227 @@ function buildCommunityReport(votes, days = 30) {
     days,
     startDate: daily[0].day,
     endDate: daily[daily.length - 1].day,
-    updatedAt: now.toISOString(),
+    updatedAt: new Date().toISOString(),
     daily,
-    total: smart + dumb,
-    smart,
-    dumb,
-    dumbPercent: smart + dumb ? Math.round((dumb / (smart + dumb)) * 100) : 0,
-    lastSeven: {
-      ...lastSeven,
-      dumbPercent: lastSeven.total ? Math.round((lastSeven.dumb / lastSeven.total) * 100) : 0,
-    },
+    ...totalSummary,
+    lastSeven,
+    previousSeven,
+    weekDelta: previousSeven.total ? lastSeven.dumbPercent - previousSeven.dumbPercent : 0,
     peakDay,
     contextReports,
     visibleCountries,
   };
 }
 
+function renderTrendBars(days) {
+  const maxTotal = Math.max(...days.map(day => day.total), 1);
+  return days.map(day => {
+    const height = Math.max(8, Math.round((day.total / maxTotal) * 100));
+    const label = `${formatReportDate(day.day, { short: true })}: ${day.total} reports, ${day.dumbPercent}% negative`;
+    const contents = `<span class="trend-bar" style="--height:${height}%;--negative:${day.dumbPercent}%;--signal:${day.signal.accent}"></span><span>${new Date(`${day.day}T00:00:00Z`).getUTCDate()}</span>`;
+    return day.total
+      ? `<a class="trend-day" href="/reports/${day.day}" aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">${contents}</a>`
+      : `<span class="trend-day" aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">${contents}</span>`;
+  }).join('');
+}
+
+function renderDailyCard(story, index) {
+  const alt = `Claude community report for ${formatReportDate(story.day)}: ${story.dumbPercent}% negative from ${story.total} reports`;
+  return `<article class="dispatch-card" data-report-day="${story.day}">
+    <a class="dispatch-image-link" href="/reports/${story.day}">
+      <img src="/api/report-card/${story.day}/card.png?width=540" srcset="/api/report-card/${story.day}/card.png?width=540 540w, /api/report-card/${story.day}/card.png?width=1080 1080w" sizes="(max-width: 700px) 82vw, 390px" width="540" height="675" alt="${escapeHtml(alt)}" ${index ? 'loading="lazy"' : ''}>
+    </a>
+    <div class="dispatch-caption">
+      <div><time datetime="${story.day}">${formatReportDate(story.day, { short: true })}</time><strong>${escapeHtml(story.signal.headline)}</strong></div>
+      <a href="/reports/${story.day}" aria-label="Read the ${formatReportDate(story.day)} report">Read story →</a>
+    </div>
+  </article>`;
+}
+
+function reportDocumentHead({ title, description, canonical, image, robots = 'index, follow, max-image-preview:large', schema, ogType = 'article' }) {
+  return `<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHtml(title)}</title>
+  <meta name="description" content="${escapeHtml(description)}">
+  <meta name="robots" content="${robots}">
+  <link rel="canonical" href="${canonical}">
+  <meta property="og:type" content="${ogType}">
+  <meta property="og:site_name" content="claudedumb.com">
+  <meta property="og:title" content="${escapeHtml(title)}">
+  <meta property="og:description" content="${escapeHtml(description)}">
+  <meta property="og:url" content="${canonical}">
+  ${image ? `<meta property="og:image" content="${image}">
+  <meta property="og:image:width" content="1080">
+  <meta property="og:image:height" content="1350">` : ''}
+  <meta name="twitter:card" content="${image ? 'summary_large_image' : 'summary'}">
+  ${schema ? `<script type="application/ld+json">${JSON.stringify(schema).replace(/</g, '\\u003c')}</script>` : ''}
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/reports.css">`;
+}
+
+function renderReportHeader() {
+  return `<header class="site-header">
+    <a href="/" class="logo">claude<span>dumb</span><small>.com</small></a>
+    <nav><a href="/reports">Dispatches</a><a href="/">Live vibe check →</a></nav>
+  </header>`;
+}
+
 function renderCommunityReportPage(report) {
-  const formatDate = day => new Date(`${day}T00:00:00Z`).toLocaleDateString('en-US', {
-    month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC',
-  });
-  const schema = JSON.stringify({
+  const lead = report.daily.slice().reverse().find(day => day.total > 0) || report.daily[report.daily.length - 1];
+  const leadIsToday = lead.day === report.endDate;
+  const feedDays = report.daily.slice().reverse().filter(day => day.total > 0).slice(0, 14);
+  const trendDays = report.daily.slice(-14);
+  const weekDirection = Math.abs(report.weekDelta) <= 4
+    ? 'about even with the previous week'
+    : `${Math.abs(report.weekDelta)} points ${report.weekDelta > 0 ? 'more' : 'less'} negative than the previous week`;
+  const description = `${lead.dumbPercent}% of ${lead.total} Claude community reports were negative in the latest daily signal. Explore the visual dispatch and 30-day history.`;
+  const canonical = 'https://claudedumb.com/reports';
+  const image = lead.total ? `https://claudedumb.com/api/report-card/${lead.day}/card.png?width=1080` : null;
+  const schema = {
     '@context': 'https://schema.org',
-    '@type': 'Dataset',
-    name: 'Claude Community Quality Report',
-    description: `Daily smart and dumb community reports about Claude over the last ${report.days} days.`,
-    url: 'https://claudedumb.com/reports',
-    temporalCoverage: `${report.startDate}/${report.endDate}`,
-    dateModified: report.updatedAt,
-    creator: { '@type': 'Organization', name: 'claudedumb.com', url: 'https://claudedumb.com/' },
-    measurementTechnique: 'Voluntary community reports submitted to claudedumb.com',
-    variableMeasured: [
-      { '@type': 'PropertyValue', name: 'Smart reports', value: report.smart },
-      { '@type': 'PropertyValue', name: 'Dumb reports', value: report.dumb },
-      { '@type': 'PropertyValue', name: 'Dumb report share', value: `${report.dumbPercent}%` },
+    '@graph': [
+      { '@type': 'CollectionPage', name: 'Claude Community Dispatch', url: canonical, dateModified: report.updatedAt, ...(image ? { primaryImageOfPage: image } : {}) },
+      { '@type': 'Dataset', name: 'Claude Community Quality Reports', url: canonical, temporalCoverage: `${report.startDate}/${report.endDate}`, creator: { '@type': 'Organization', name: 'claudedumb.com' }, measurementTechnique: 'Voluntary community reports submitted to claudedumb.com' },
     ],
-  }).replace(/</g, '\\u003c');
-  const dailyRows = report.daily.slice().reverse().map(row => `
-    <tr>
-      <th scope="row">${formatDate(row.day)}</th>
-      <td>${row.total}</td>
-      <td class="smart">${row.smart}</td>
-      <td class="dumb">${row.dumb}</td>
-      <td>${row.total ? Math.round((row.dumb / row.total) * 100) : 0}%</td>
-    </tr>`).join('');
-  const countryRows = report.visibleCountries.length
-    ? report.visibleCountries.map(item => `<li><span>${escapeHtml(item.country)}</span><strong>${item.count} reports</strong></li>`).join('')
-    : '<li class="muted">No country has reached the 3-report privacy threshold yet.</li>';
-  const narrative = report.total
-    ? `Community members submitted <strong>${report.total} reports</strong> in the last ${report.days} days. ${report.dumbPercent}% marked Claude as dumb. The busiest day was <strong>${formatDate(report.peakDay.day)}</strong> with ${report.peakDay.total} reports.`
-    : `No community reports were submitted in this ${report.days}-day window.`;
+  };
+  const dailyRows = report.daily.slice().reverse().map(row => `<tr><th scope="row"><a href="/reports/${row.day}">${formatReportDate(row.day, { short: true })}</a></th><td>${row.total}</td><td>${row.smart}</td><td>${row.dumb}</td><td>${row.dumbPercent}%</td></tr>`).join('');
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Claude Community Quality Report & History | claudedumb.com</title>
-  <meta name="description" content="Explore 30 days of Claude community quality reports, daily smart-vs-dumb history, trends, and transparent methodology.">
-  <meta name="robots" content="index, follow, max-image-preview:large">
-  <link rel="canonical" href="https://claudedumb.com/reports">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="claudedumb.com">
-  <meta property="og:title" content="Claude Community Quality Report & History">
-  <meta property="og:description" content="30 days of community-reported Claude quality trends and daily history.">
-  <meta property="og:url" content="https://claudedumb.com/reports">
-  <meta name="twitter:card" content="summary">
-  <script type="application/ld+json">${schema}</script>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/reports.css">
+  ${reportDocumentHead({ title: 'Claude Vibe Dispatch: Daily Community Stories', description, canonical, image, schema, ogType: 'website' })}
 </head>
 <body>
-  <header class="site-header">
-    <a href="/" class="logo">claude<span>dumb</span><small>.com</small></a>
-    <a href="/">Live vibe check →</a>
-  </header>
+  ${renderReportHeader()}
   <main>
-    <nav class="crumb" aria-label="Breadcrumb"><a href="/">Home</a> / Community report</nav>
-    <section class="intro">
-      <p class="eyebrow">Community data · updated daily</p>
-      <h1>Claude Community Quality Report</h1>
-      <p class="dek">A transparent, rolling history of whether community members found Claude smart or dumb—not an official Anthropic uptime report.</p>
-      <p class="updated">Updated <time datetime="${report.updatedAt}">${formatDate(report.endDate)}</time> · Reporting window ${formatDate(report.startDate)}–${formatDate(report.endDate)}</p>
+    <nav class="crumb" aria-label="Breadcrumb"><a href="/">Home</a> / Dispatches</nav>
+    <section class="lead-story" style="--lead-accent:${lead.signal.accent}">
+      <div class="lead-copy">
+        <p class="eyebrow">${leadIsToday ? 'Today’s dispatch' : 'Latest dispatch'} · ${formatReportDate(lead.day, { short: true })}${leadIsToday ? ' · updating' : ''}</p>
+        <span class="signal-stamp">${lead.signal.label}</span>
+        <h1>${escapeHtml(lead.signal.headline)}.</h1>
+        <p class="lead-dek"><strong>${lead.dumbPercent}% negative</strong> from ${lead.total} community reports${leadIsToday ? ' so far today' : ''}. ${comparisonCopy(lead)}</p>
+        <div class="lead-actions">${lead.total ? `<a class="primary-action" href="/reports/${lead.day}">Read the full story</a>` : '<a class="primary-action" href="/">Be the first to report</a>'}<a href="/">Add your report →</a></div>
+      </div>
+      <div class="signal-now" aria-label="Today’s Claude community signal">
+        <span>negative share</span><strong>${lead.dumbPercent}%</strong><small>${lead.dumb} dumb · ${lead.smart} smart</small>
+      </div>
     </section>
-    <section class="metrics" aria-label="Community report metrics">
-      <article><span>7-day reports</span><strong>${report.lastSeven.total}</strong></article>
-      <article><span>Marked dumb</span><strong class="dumb">${report.lastSeven.dumbPercent}%</strong></article>
-      <article><span>Marked smart</span><strong class="smart">${report.lastSeven.smart}</strong></article>
-      <article><span>30-day context</span><strong>${report.contextReports}</strong></article>
+
+    <section class="trend-strip" aria-labelledby="trend-title">
+      <div class="section-intro"><div><p class="eyebrow">Fourteen-day pulse</p><h2 id="trend-title">The shape of the signal</h2></div><p>${report.lastSeven.total} reports this week · ${report.lastSeven.dumbPercent}% negative · ${weekDirection}.</p></div>
+      <div class="trend-bars">${renderTrendBars(trendDays)}</div>
+      <div class="trend-legend"><span><i class="legend-dumb"></i> negative</span><span><i class="legend-smart"></i> positive</span><small>bar height = report volume</small></div>
     </section>
-    <section class="card story">
-      <p class="eyebrow">What the community reported</p>
-      <h2>The last 30 days in one sentence</h2>
-      <p>${narrative}</p>
-      <p class="caveat">A “dumb” report can describe poor answer quality, slowness, an error, or an outage. This dataset measures community perception; it does not establish root cause.</p>
+
+    <section class="dispatch-section" aria-labelledby="dispatch-title">
+      <div class="section-intro"><div><p class="eyebrow">Swipe the archive</p><h2 id="dispatch-title">Daily dispatches</h2></div><p>Each card is a share-ready visual backed by a permanent, text-based report.</p></div>
+      <div class="rail-controls"><button type="button" id="dispatch-prev" aria-label="Previous dispatch">←</button><span id="dispatch-position">1 / ${feedDays.length}</span><button type="button" id="dispatch-next" aria-label="Next dispatch">→</button></div>
+      <div class="dispatch-rail" id="dispatch-rail" tabindex="0">${feedDays.length ? feedDays.map(renderDailyCard).join('') : '<p class="empty-dispatch">No daily dispatches yet. Community reports will appear here.</p>'}</div>
     </section>
-    <section class="grid">
-      <article class="card table-card">
-        <div class="section-heading">
-          <div><p class="eyebrow">Daily history</p><h2>Smart vs. dumb reports</h2></div>
-          <a href="/">Submit a live report →</a>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Date</th><th>Total</th><th>Smart</th><th>Dumb</th><th>Dumb share</th></tr></thead>
-            <tbody>${dailyRows}</tbody>
-          </table>
-        </div>
-      </article>
-      <aside class="card countries">
-        <p class="eyebrow">Approximate geography</p>
-        <h2>Countries with 3+ reports</h2>
-        <ul>${countryRows}</ul>
-        <p class="caveat">Locations are derived approximately from IP addresses. Cities are never published here, and countries below the threshold are hidden.</p>
-      </aside>
+
+    <section class="field-notes">
+      <div><p class="eyebrow">Field note 01</p><strong>${report.peakDay.total}</strong><p>reports on ${formatReportDate(report.peakDay.day, { short: true })}, the busiest day in this window.</p></div>
+      <div><p class="eyebrow">Field note 02</p><strong>${report.contextReports}</strong><p>reports included a comment or screenshot instead of only a vote.</p></div>
+      <div><p class="eyebrow">Field note 03</p><strong>${report.visibleCountries.length}</strong><p>countries cleared the privacy threshold of three reports.</p></div>
     </section>
-    <section class="card methodology">
-      <p class="eyebrow">Methodology</p>
-      <h2>How to read this report</h2>
-      <ul>
-        <li>Each row represents a voluntary “smart” or “dumb” submission to claudedumb.com.</li>
-        <li>People may submit again after five minutes, so reports are not unique users.</li>
-        <li>Daily boundaries use UTC. The current day is incomplete and may change.</li>
-        <li>Community signals can surface quality problems before an official incident, but they do not replace <a href="https://status.claude.com/" target="_blank" rel="noopener">Claude’s official status page</a>.</li>
-      </ul>
-    </section>
-    <section class="cta">
-      <h2>How is Claude behaving for you?</h2>
-      <p>Add your signal to tomorrow’s report.</p>
-      <a href="/">Submit a community report</a>
-    </section>
+
+    <details class="source-notes">
+      <summary><span>Source notes and complete 30-day table</span><small>Open the underlying data ↓</small></summary>
+      <div class="source-grid">
+        <div class="table-wrap"><table><thead><tr><th>Date</th><th>Total</th><th>Smart</th><th>Dumb</th><th>Negative</th></tr></thead><tbody>${dailyRows}</tbody></table></div>
+        <aside><h2>How to read this</h2><ul><li>Reports are voluntary community submissions, not unique users.</li><li>“Dumb” can mean poor quality, slowness, an error, or an outage.</li><li>Daily boundaries use UTC and today remains incomplete.</li><li>Locations are approximate and only shown at country level after three reports.</li></ul><a href="https://status.claude.com/" target="_blank" rel="noopener">Compare Claude’s official status ↗</a></aside>
+      </div>
+    </details>
   </main>
-  <footer>Independent community tracker · not affiliated with Anthropic · <a href="/">claudedumb.com</a></footer>
+  <footer>Independent community tracker · not affiliated with Anthropic · <a href="/">Submit a report</a></footer>
   <script src="/analytics.js"></script>
+  <script src="/reports.js"></script>
 </body>
 </html>`;
+}
+
+function renderDailyStoryPage(report, story) {
+  const date = formatReportDate(story.day);
+  const title = `${story.signal.headline}: Claude Community Report for ${date}`;
+  const description = `${story.dumbPercent}% of ${story.total} community reports rated Claude negatively on ${date}. ${comparisonCopy(story)}`;
+  const canonical = `https://claudedumb.com/reports/${story.day}`;
+  const image = `https://claudedumb.com/api/report-card/${story.day}/card.png?width=1080`;
+  const robots = story.total >= 10 ? 'index, follow, max-image-preview:large' : 'noindex, follow, max-image-preview:large';
+  const schema = {
+    '@context': 'https://schema.org', '@type': 'Article', headline: title, description, url: canonical, image,
+    datePublished: `${story.day}T23:59:00Z`, dateModified: story.day === utcDay(new Date()) ? report.updatedAt : `${story.day}T23:59:00Z`,
+    author: { '@type': 'Organization', name: 'claudedumb.com', url: 'https://claudedumb.com/' },
+    mainEntityOfPage: canonical,
+  };
+  const countryCopy = story.visibleCountries.length
+    ? `The country-level sample included ${story.visibleCountries.map(item => `${item.country} (${item.count})`).join(', ')}.`
+    : 'No country cleared the three-report privacy threshold for this day.';
+
+  return `<!DOCTYPE html><html lang="en"><head>${reportDocumentHead({ title, description, canonical, image, robots, schema })}</head>
+<body>${renderReportHeader()}<main>
+  <nav class="crumb" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/reports">Dispatches</a> / ${date}</nav>
+  <article class="story-layout" style="--lead-accent:${story.signal.accent}">
+    <div class="story-copy">
+      <p class="eyebrow">Daily dispatch · ${date}${story.day === utcDay(new Date()) ? ' · updating' : ''}</p>
+      <span class="signal-stamp">${story.signal.label}</span>
+      <h1>${escapeHtml(story.signal.headline)}.</h1>
+      <p class="story-lede">On ${date}, the community submitted <strong>${story.total} reports</strong>. ${story.dumb} marked Claude dumb and ${story.smart} marked it smart, producing a <strong>${story.dumbPercent}% negative signal</strong>.</p>
+      <p>${comparisonCopy(story)} ${countryCopy}</p>
+      <p class="caveat">This describes community perception, not a verified root cause or official incident. A negative report may reflect response quality, slowness, an error, or an outage.</p>
+      <div class="story-actions"><a class="primary-action" href="/api/report-card/${story.day}/card.png?width=1080&amp;download=1" download>Download story card</a><a href="/">Add your signal →</a></div>
+    </div>
+    <figure class="story-visual"><img src="/api/report-card/${story.day}/card.png?width=540" srcset="/api/report-card/${story.day}/card.png?width=540 540w, /api/report-card/${story.day}/card.png?width=1080 1080w" sizes="(max-width: 800px) 92vw, 480px" width="540" height="675" alt="Claude community report for ${date}: ${story.dumbPercent}% negative from ${story.total} reports"><figcaption>Share-ready daily card · generated from the underlying reports</figcaption></figure>
+  </article>
+  <section class="story-evidence"><p class="eyebrow">The numbers</p><div><span><strong>${story.total}</strong> total reports</span><span><strong class="dumb">${story.dumb}</strong> dumb</span><span><strong class="smart">${story.smart}</strong> smart</span><span><strong>${story.contextReports}</strong> with context</span></div></section>
+  <aside class="next-dispatch"><p>See how the signal changed before and after this day.</p><a href="/reports">← Browse every daily dispatch</a></aside>
+</main><footer>Independent community tracker · not affiliated with Anthropic · <a href="https://status.claude.com/">Official Claude status</a></footer><script src="/analytics.js"></script><script src="/reports.js"></script></body></html>`;
+}
+
+const storyCache = new Map();
+
+async function loadStory(day) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return null;
+  const cached = storyCache.get(day);
+  if (cached && cached.expires > Date.now()) return cached.value;
+  const endDate = new Date(`${day}T12:00:00Z`);
+  if (Number.isNaN(endDate.getTime()) || day > utcDay(new Date())) return null;
+  const startDate = new Date(endDate);
+  startDate.setUTCDate(startDate.getUTCDate() - 29);
+  const rows = await db.getCommunityReportVotesForRange(utcDay(startDate), day);
+  const report = buildCommunityReport(rows, 30, endDate);
+  const story = report.daily.find(row => row.day === day);
+  const value = story && story.total ? { report, story } : null;
+  storyCache.set(day, { value, expires: Date.now() + 5 * 60 * 1000 });
+  return value;
+}
+
+function renderReportCardSvg(story) {
+  const negativeWidth = Math.round(820 * story.dumbPercent / 100);
+  const comparison = story.baselineDumbPercent === null
+    ? 'NO PRIOR BASELINE'
+    : `${story.deltaVsBaseline >= 0 ? '+' : ''}${story.deltaVsBaseline} PTS VS PRIOR 7 DAYS`;
+  return `<svg width="1080" height="1350" viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#2d2a25" stroke-width="1"/></pattern></defs>
+    <rect width="1080" height="1350" fill="#181714"/><rect width="1080" height="1350" fill="url(#grid)" opacity=".55"/><rect width="12" height="1350" fill="${story.signal.accent}"/>
+    <text x="84" y="92" fill="#f6f3ef" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="34" font-weight="800">claude<tspan fill="#e36b2b">dumb</tspan><tspan fill="#aaa39a" font-size="18">.com</tspan></text>
+    <text x="996" y="92" fill="#aaa39a" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" text-anchor="end">DAILY DISPATCH</text>
+    <line x1="84" y1="132" x2="996" y2="132" stroke="#3a3630" stroke-width="2"/>
+    <text x="84" y="204" fill="#aaa39a" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="24">${escapeXml(formatReportDate(story.day).toUpperCase())}</text>
+    <text x="84" y="306" fill="${story.signal.accent}" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="50" font-weight="800" letter-spacing="5">${story.signal.label}</text>
+    <text x="84" y="412" fill="#f6f3ef" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="58" font-weight="700">${escapeXml(story.signal.headline)}</text>
+    <text x="84" y="674" fill="#f6f3ef" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="230" font-weight="800" letter-spacing="-18">${story.dumbPercent}%</text>
+    <text x="84" y="732" fill="#aaa39a" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="25" letter-spacing="3">NEGATIVE COMMUNITY SIGNAL</text>
+    <rect x="84" y="798" width="820" height="48" rx="8" fill="#58b985"/><rect x="84" y="798" width="${negativeWidth}" height="48" rx="8" fill="${story.signal.accent}"/>
+    <text x="84" y="920" fill="#f6f3ef" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="34" font-weight="700">${story.total} REPORTS</text>
+    <text x="84" y="972" fill="#aaa39a" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="23">${story.dumb} DUMB  ·  ${story.smart} SMART  ·  ${story.contextReports} WITH CONTEXT</text>
+    <rect x="84" y="1052" width="820" height="1" fill="#3a3630"/>
+    <text x="84" y="1120" fill="${story.signal.accent}" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="24" font-weight="700">${escapeXml(comparison)}</text>
+    <text x="84" y="1238" fill="#aaa39a" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="19">VOLUNTARY REPORTS · NOT OFFICIAL ANTHROPIC STATUS</text>
+    <text x="996" y="1290" fill="#f6f3ef" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" text-anchor="end">claudedumb.com/reports</text>
+  </svg>`;
 }
 
 app.get('/reports', async (req, res) => {
@@ -790,6 +945,40 @@ app.get('/reports', async (req, res) => {
   } catch (e) {
     console.error('Community report error:', e);
     res.status(500).send('Unable to load the community report right now.');
+  }
+});
+
+app.get('/reports/:day', async (req, res) => {
+  try {
+    const result = await loadStory(req.params.day);
+    if (!result) return res.status(404).send('Daily report not found.');
+    res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+    res.send(renderDailyStoryPage(result.report, result.story));
+  } catch (e) {
+    console.error('Daily report error:', e);
+    res.status(500).send('Unable to load this daily report right now.');
+  }
+});
+
+app.get('/api/report-card/:day/card.png', async (req, res) => {
+  try {
+    const result = await loadStory(req.params.day);
+    if (!result) return res.status(404).send('Report card not found.');
+    const requestedWidth = Number.parseInt(req.query.width, 10) || 1080;
+    const width = requestedWidth <= 540 ? 540 : 1080;
+    const image = await sharp(Buffer.from(renderReportCardSvg(result.story)))
+      .resize({ width })
+      .png({ compressionLevel: 9 })
+      .toBuffer();
+    res.set({
+      'Content-Type': 'image/png',
+      'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+      ...(req.query.download === '1' ? { 'Content-Disposition': `attachment; filename="claude-community-report-${req.params.day}.png"` } : {}),
+    });
+    res.send(image);
+  } catch (e) {
+    console.error('Report card error:', e);
+    res.status(500).send('Unable to generate this report card right now.');
   }
 });
 
