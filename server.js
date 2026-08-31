@@ -925,7 +925,7 @@ function renderReportCardSvg(story) {
     <text x="84" y="412" fill="#f6f3ef" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="58" font-weight="700">${escapeXml(story.signal.headline)}</text>
     <text x="84" y="674" fill="#f6f3ef" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="230" font-weight="800" letter-spacing="-18">${story.dumbPercent}%</text>
     <text x="84" y="732" fill="#aaa39a" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="25" letter-spacing="3">NEGATIVE COMMUNITY SIGNAL</text>
-    <rect x="84" y="798" width="820" height="48" rx="8" fill="#58b985"/><rect x="84" y="798" width="${negativeWidth}" height="48" rx="8" fill="${story.signal.accent}"/>
+    <rect x="84" y="798" width="820" height="48" rx="8" fill="#58b985"/><rect x="84" y="798" width="${negativeWidth}" height="48" rx="8" fill="#e36b2b"/>
     <text x="84" y="920" fill="#f6f3ef" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="34" font-weight="700">${story.total} REPORTS</text>
     <text x="84" y="972" fill="#aaa39a" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="23">${story.dumb} DUMB  ·  ${story.smart} SMART  ·  ${story.contextReports} WITH CONTEXT</text>
     <rect x="84" y="1052" width="820" height="1" fill="#3a3630"/>
