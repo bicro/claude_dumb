@@ -18,6 +18,38 @@ app.use((req, res, next) => {
   next();
 });
 
+// Keep the sitemap aligned with the daily stories that are substantial enough
+// to index. The checked-in file remains a resilient fallback if reporting data
+// is temporarily unavailable.
+app.get('/sitemap.xml', async (req, res) => {
+  try {
+    const days = 90;
+    const votes = await db.getCommunityReportVotes(days);
+    const report = buildCommunityReport(votes, days);
+    const storyEntries = report.daily
+      .filter(day => day.total >= 10)
+      .map(day => sitemapEntry({
+        loc: `https://claudedumb.com/reports/${day.day}`,
+        lastmod: day.day === report.endDate ? report.updatedAt : day.day,
+        image: `https://claudedumb.com/api/report-card/${day.day}/card.png?width=1080&theme=light`,
+      }))
+      .join('');
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${sitemapEntry({ loc: 'https://claudedumb.com/' })}${sitemapEntry({ loc: 'https://claudedumb.com/reports', lastmod: report.updatedAt })}${storyEntries}</urlset>`;
+
+    res.set({
+      'Content-Type': 'application/xml; charset=utf-8',
+      'Cache-Control': 'public, max-age=300, stale-while-revalidate=3600',
+    });
+    res.send(xml);
+  } catch (error) {
+    console.error('Dynamic sitemap error:', error);
+    res.sendFile(path.join(__dirname, 'public', 'sitemap.xml'));
+  }
+});
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -79,6 +111,17 @@ function escapeHtml(str) {
 
 function escapeXml(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+
+function sitemapEntry({ loc, lastmod, image }) {
+  return `  <url>
+    <loc>${escapeXml(loc)}</loc>${lastmod ? `
+    <lastmod>${escapeXml(lastmod)}</lastmod>` : ''}${image ? `
+    <image:image>
+      <image:loc>${escapeXml(image)}</image:loc>
+    </image:image>` : ''}
+  </url>
+`;
 }
 
 // ---- Multer ----
