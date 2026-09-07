@@ -108,6 +108,7 @@ h2 { margin-bottom: 7px; font-size: clamp(22px, 3vw, 32px); line-height: 1.12; l
 }
 .lead-dek { max-width: 680px; margin-bottom: 0; color: #5f5a55; font-size: 15px; }
 .lead-dek strong { color: var(--text); }
+.lead-status { margin: -8px 0 14px; color: var(--lead-accent); font-size: 16px; }
 .primary-action {
   display: inline-block;
   margin-top: 22px;
@@ -237,6 +238,7 @@ thead th { position: sticky; top: 0; background: var(--surface-2); color: var(--
   border-bottom: 1px solid var(--border);
 }
 .story-copy h1 { font-size: clamp(42px, 5.7vw, 68px); }
+.story-topic { display: block; margin-bottom: 13px; color: var(--muted); font-size: .2em; line-height: 1.35; letter-spacing: .02em; text-transform: uppercase; }
 .story-lede { color: #5f5a55; font-size: 16px; }
 .story-copy > p:not(.eyebrow):not(.story-lede):not(.caveat) { color: #6e6862; font-size: 12px; }
 .story-visual { margin: 0; }

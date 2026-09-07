@@ -833,14 +833,18 @@ function renderCommunityReportPage(report) {
   const weekDirection = Math.abs(report.weekDelta) <= 4
     ? 'about even with the previous week'
     : `${Math.abs(report.weekDelta)} points ${report.weekDelta > 0 ? 'more' : 'less'} negative than the previous week`;
-  const description = `${lead.dumbPercent}% of ${lead.total} Claude community ${reportNoun(lead.total)} were negative in the latest daily signal. Explore the visual dispatch and 30-day history.`;
+  const description = 'Browse Claude status history from community reports: daily outage, error, slowness, and response-quality signals, with trends and shareable report cards.';
   const canonical = 'https://claudedumb.com/reports';
   const image = lead.total ? `https://claudedumb.com/api/report-card/${lead.day}/card.png?width=1080&theme=light` : null;
   const schema = {
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'CollectionPage', name: 'Claude Community Dispatch', url: canonical, dateModified: report.updatedAt, ...(image ? { primaryImageOfPage: image } : {}) },
+      { '@type': 'CollectionPage', name: 'Claude Status History and Daily Community Reports', url: canonical, dateModified: report.updatedAt, about: { '@type': 'SoftwareApplication', name: 'Claude' }, ...(image ? { primaryImageOfPage: image } : {}) },
       { '@type': 'Dataset', name: 'Claude Community Quality Reports', url: canonical, temporalCoverage: `${report.startDate}/${report.endDate}`, creator: { '@type': 'Organization', name: 'claudedumb.com' }, measurementTechnique: 'Voluntary community reports submitted to claudedumb.com' },
+      { '@type': 'BreadcrumbList', itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Claude live status', item: 'https://claudedumb.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Claude status history', item: canonical },
+      ] },
     ],
   };
   const dailyRows = report.daily.slice().reverse().map(row => `<tr><th scope="row"><a href="/reports/${row.day}">${formatReportDate(row.day, { short: true })}</a></th><td>${row.total}</td><td>${row.smart}</td><td>${row.dumb}</td><td>${row.dumbPercent}%</td></tr>`).join('');
@@ -848,17 +852,18 @@ function renderCommunityReportPage(report) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
-  ${reportDocumentHead({ title: 'Claude Vibe Dispatch: Daily Community Stories', description, canonical, image, schema, ogType: 'website' })}
+  ${reportDocumentHead({ title: 'Claude Status History & Daily Community Reports | ClaudeDumb', description, canonical, image, schema, ogType: 'website' })}
 </head>
 <body>
   ${renderReportHeader()}
   <main>
-    <nav class="crumb" aria-label="Breadcrumb"><a href="/">Home</a> / Dispatches</nav>
+    <nav class="crumb" aria-label="Breadcrumb"><a href="/">Claude live status</a> / Claude status history</nav>
     <section class="lead-story" style="--lead-accent:${lead.signal.accent}">
       <div class="lead-copy">
-        <p class="eyebrow">${leadIsToday ? 'Today’s dispatch' : 'Latest dispatch'} · ${formatReportDate(lead.day, { short: true })}${leadIsToday ? ' · updating' : ''}</p>
+        <p class="eyebrow">${leadIsToday ? 'Today’s Claude status' : 'Latest Claude status'} · ${formatReportDate(lead.day, { short: true })}${leadIsToday ? ' · updating' : ''}</p>
         <span class="signal-stamp">${lead.signal.label}</span>
-        <h1>${escapeHtml(lead.signal.headline)}.</h1>
+        <h1>Claude status history.</h1>
+        <p class="lead-status"><strong>${escapeHtml(lead.signal.headline)}.</strong></p>
         <p class="lead-dek"><strong>${lead.dumbPercent}% negative</strong> from ${lead.total} community ${reportNoun(lead.total)}${leadIsToday ? ' so far today' : ''}. ${comparisonCopy(lead)}</p>
         ${lead.total ? '' : '<a class="primary-action" href="/">Be the first to report</a>'}
       </div>
@@ -895,16 +900,27 @@ function renderCommunityReportPage(report) {
 
 function renderDailyStoryPage(report, story) {
   const date = formatReportDate(story.day);
-  const title = `${story.signal.headline}: Claude Community Report for ${date}`;
+  const title = `Claude Status on ${date}: ${story.signal.headline}`;
   const description = `${story.dumbPercent}% of ${story.total} community ${reportNoun(story.total)} rated Claude negatively on ${date}. ${comparisonCopy(story)}`;
   const canonical = `https://claudedumb.com/reports/${story.day}`;
   const image = `https://claudedumb.com/api/report-card/${story.day}/card.png?width=1080&theme=light`;
   const robots = story.total >= 10 ? 'index, follow, max-image-preview:large' : 'noindex, follow, max-image-preview:large';
   const schema = {
-    '@context': 'https://schema.org', '@type': 'Article', headline: title, description, url: canonical, image,
-    datePublished: `${story.day}T23:59:00Z`, dateModified: story.day === utcDay(new Date()) ? report.updatedAt : `${story.day}T23:59:00Z`,
-    author: { '@type': 'Organization', name: 'claudedumb.com', url: 'https://claudedumb.com/' },
-    mainEntityOfPage: canonical,
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Article', headline: title, description, url: canonical, image,
+        datePublished: `${story.day}T23:59:00Z`, dateModified: story.day === utcDay(new Date()) ? report.updatedAt : `${story.day}T23:59:00Z`,
+        author: { '@type': 'Organization', name: 'claudedumb.com', url: 'https://claudedumb.com/' },
+        mainEntityOfPage: canonical,
+        about: { '@type': 'SoftwareApplication', name: 'Claude' },
+      },
+      { '@type': 'BreadcrumbList', itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Claude live status', item: 'https://claudedumb.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Claude status history', item: 'https://claudedumb.com/reports' },
+        { '@type': 'ListItem', position: 3, name: `Claude status on ${date}`, item: canonical },
+      ] },
+    ],
   };
   const countryCopy = story.visibleCountries.length
     ? `The country-level sample included ${story.visibleCountries.map(item => `${item.country} (${item.count})`).join(', ')}.`
@@ -912,12 +928,12 @@ function renderDailyStoryPage(report, story) {
 
   return `<!DOCTYPE html><html lang="en"><head>${reportDocumentHead({ title, description, canonical, image, robots, schema })}</head>
 <body>${renderReportHeader()}<main>
-  <nav class="crumb" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/reports">Dispatches</a> / ${date}</nav>
+  <nav class="crumb" aria-label="Breadcrumb"><a href="/">Claude live status</a> / <a href="/reports">Claude status history</a> / ${date}</nav>
   <article class="story-layout" style="--lead-accent:${story.signal.accent}">
     <div class="story-copy">
       <p class="eyebrow">Daily dispatch · ${date}${story.day === utcDay(new Date()) ? ' · updating' : ''}</p>
       <span class="signal-stamp">${story.signal.label}</span>
-      <h1>${escapeHtml(story.signal.headline)}.</h1>
+      <h1><span class="story-topic">Claude status on ${date}</span>${escapeHtml(story.signal.headline)}.</h1>
       <p class="story-lede">On ${date}, the community submitted <strong>${story.total} ${reportNoun(story.total)}</strong>. ${story.dumb} marked Claude dumb and ${story.smart} marked it smart, producing a <strong>${story.dumbPercent}% negative signal</strong>.</p>
       <p>${comparisonCopy(story)} ${countryCopy}</p>
       <p class="caveat">This describes community perception, not a verified root cause or official incident. A negative report may reflect response quality, slowness, an error, or an outage.</p>
@@ -925,7 +941,7 @@ function renderDailyStoryPage(report, story) {
     <figure class="story-visual"><img src="/api/report-card/${story.day}/card.png?width=540&amp;theme=light" srcset="/api/report-card/${story.day}/card.png?width=540&amp;theme=light 540w, /api/report-card/${story.day}/card.png?width=1080&amp;theme=light 1080w" sizes="(max-width: 800px) 92vw, 480px" width="540" height="675" alt="Claude community report for ${date}: ${story.dumbPercent}% negative from ${story.total} ${reportNoun(story.total)}"><figcaption><a href="/api/report-card/${story.day}/card.png?width=1080&amp;theme=light&amp;download=1" download>Download share card ↓</a></figcaption></figure>
   </article>
   <section class="story-evidence"><p class="eyebrow">The numbers</p><div><span><strong>${story.total}</strong> total reports</span><span><strong class="dumb">${story.dumb}</strong> dumb</span><span><strong class="smart">${story.smart}</strong> smart</span><span><strong>${story.contextReports}</strong> with context</span></div></section>
-  <aside class="next-dispatch"><a href="/reports">← Browse every daily report</a><a href="/">Report how Claude is doing now →</a></aside>
+  <aside class="next-dispatch"><a href="/reports">← Browse Claude status history</a><a href="/">Report how Claude is doing now →</a></aside>
 </main><footer>Independent community tracker · not affiliated with Anthropic</footer><script src="/analytics.js"></script><script src="/reports.js"></script></body></html>`;
 }
 
