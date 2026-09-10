@@ -827,7 +827,7 @@ main {
   border-top: 1px solid var(--border);
 }
 
-.status-guide h2 {
+.status-guide h1 {
   margin-bottom: 3px;
   font-size: 13px;
   line-height: 1.25;
