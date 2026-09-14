@@ -50,6 +50,55 @@ ${sitemapEntry({ loc: 'https://claudedumb.com/' })}${sitemapEntry({ loc: 'https:
   }
 });
 
+function homepageVibeView(vibes) {
+  const smart = Number(vibes?.smart) || 0;
+  const dumb = Number(vibes?.dumb) || 0;
+  const total = smart + dumb;
+  const smartPercent = total ? Math.round((smart / total) * 100) : 50;
+
+  if (!total) return { label: 'No Votes Yet', tone: 'mixed', smart, dumb, total };
+  if (smartPercent >= 70) return { label: 'Being Smart', tone: 'smart', smart, dumb, total };
+  if (smartPercent >= 40) return { label: 'Kinda Dumb', tone: 'mixed', smart, dumb, total };
+  return { label: 'Being Dumb', tone: 'dumb', smart, dumb, total };
+}
+
+function renderHomepage(vibes, counts) {
+  const view = homepageVibeView(vibes);
+  const hourSmart = Number(counts?.smart) || 0;
+  const hourDumb = Number(counts?.dumb) || 0;
+  const hourTotal = hourSmart + hourDumb;
+  const smartWidth = hourTotal ? (hourSmart / hourTotal) * 100 : 50;
+  const template = fs.readFileSync(path.join(__dirname, 'public', 'index.html'), 'utf8');
+
+  return template
+    .replace(
+      '<div class="vibes-hero-status" id="vibes-status">Loading...</div>',
+      `<div class="vibes-hero-status ${view.tone}" id="vibes-status">${view.label}</div>`,
+    )
+    .replace(
+      '<div class="vibes-hero-count" id="vibes-count"></div>',
+      `<div class="vibes-hero-count" id="vibes-count">${view.total} vote${view.total === 1 ? '' : 's'} in the last 24 hours</div>`,
+    )
+    .replace('<span class="meter-val smart" id="count-smart">0</span>', `<span class="meter-val smart" id="count-smart">${hourSmart} smart</span>`)
+    .replace('<span class="meter-val dumb" id="count-dumb">0</span>', `<span class="meter-val dumb" id="count-dumb">${hourDumb} dumb</span>`)
+    .replace('<div class="meter-fill smart" id="meter-smart"></div>', `<div class="meter-fill smart" id="meter-smart" style="width:${smartWidth}%"></div>`)
+    .replace('<div class="meter-fill dumb" id="meter-dumb"></div>', `<div class="meter-fill dumb" id="meter-dumb" style="width:${100 - smartWidth}%"></div>`);
+}
+
+// Serve real community status in the initial HTML. This keeps the primary
+// search landing page useful before JavaScript loads and avoids indexing stale
+// placeholders such as "Loading..." and zero counts.
+app.get('/', async (req, res) => {
+  try {
+    const [vibes, counts] = await Promise.all([db.getVibes(), db.getVoteCounts()]);
+    res.set('Cache-Control', 'public, max-age=30, stale-while-revalidate=120');
+    res.type('html').send(renderHomepage(vibes, counts));
+  } catch (error) {
+    console.error('Homepage status render error:', error);
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  }
+});
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
