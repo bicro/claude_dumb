@@ -7,6 +7,10 @@ const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+// Update this only when the homepage's search-facing content changes. Keeping
+// it stable gives crawlers a truthful freshness signal instead of making every
+// request look like a new revision.
+const HOMEPAGE_CONTENT_UPDATED = '2026-09-17';
 
 // Keep claudedumb.com as the single canonical domain. Render terminates TLS and
 // forwards the original Host header, so this also covers both HTTP and HTTPS.
@@ -30,14 +34,14 @@ app.get('/sitemap.xml', async (req, res) => {
       .filter(day => day.total >= 10)
       .map(day => sitemapEntry({
         loc: `https://claudedumb.com/reports/${day.day}`,
-        lastmod: day.day === report.endDate ? report.updatedAt : day.day,
+        lastmod: day.updatedAt,
         image: `https://claudedumb.com/api/report-card/${day.day}/card.png?width=1080&theme=light`,
       }))
       .join('');
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-${sitemapEntry({ loc: 'https://claudedumb.com/' })}${sitemapEntry({ loc: 'https://claudedumb.com/reports', lastmod: report.updatedAt })}${storyEntries}</urlset>`;
+${sitemapEntry({ loc: 'https://claudedumb.com/', lastmod: HOMEPAGE_CONTENT_UPDATED })}${sitemapEntry({ loc: 'https://claudedumb.com/reports', lastmod: report.updatedAt })}${storyEntries}</urlset>`;
 
     res.set({
       'Content-Type': 'application/xml; charset=utf-8',
@@ -752,7 +756,15 @@ function buildCommunityReport(votes, days = 30, endDate = new Date()) {
     const date = new Date(windowEnd);
     date.setUTCDate(date.getUTCDate() - offset);
     const day = utcDay(date);
-    dayRows.set(day, { day, smart: 0, dumb: 0, total: 0, contextReports: 0, countries: new Map() });
+    dayRows.set(day, {
+      day,
+      smart: 0,
+      dumb: 0,
+      total: 0,
+      contextReports: 0,
+      countries: new Map(),
+      updatedAt: `${day}T00:00:00.000Z`,
+    });
   }
 
   const countries = new Map();
@@ -762,6 +774,12 @@ function buildCommunityReport(votes, days = 30, endDate = new Date()) {
     if (!day || (row.vote !== 'smart' && row.vote !== 'dumb')) continue;
     day[row.vote] += 1;
     day.total += 1;
+    const createdAt = new Date(typeof row.created_at === 'string' && /^\d{4}-\d{2}-\d{2} \d{2}:/.test(row.created_at)
+      ? `${row.created_at.replace(' ', 'T')}Z`
+      : row.created_at);
+    if (!Number.isNaN(createdAt.getTime()) && createdAt.toISOString() > day.updatedAt) {
+      day.updatedAt = createdAt.toISOString();
+    }
     if (row.comment || row.screenshot_key) {
       day.contextReports += 1;
       contextReports += 1;
@@ -808,7 +826,7 @@ function buildCommunityReport(votes, days = 30, endDate = new Date()) {
     days,
     startDate: daily[0].day,
     endDate: daily[daily.length - 1].day,
-    updatedAt: new Date().toISOString(),
+    updatedAt: daily.reduce((latest, row) => row.updatedAt > latest ? row.updatedAt : latest, daily[0].updatedAt),
     daily,
     ...totalSummary,
     lastSeven,
@@ -959,7 +977,7 @@ function renderDailyStoryPage(report, story) {
     '@graph': [
       {
         '@type': 'Article', headline: title, description, url: canonical, image,
-        datePublished: `${story.day}T23:59:00Z`, dateModified: story.day === utcDay(new Date()) ? report.updatedAt : `${story.day}T23:59:00Z`,
+        datePublished: `${story.day}T23:59:00Z`, dateModified: story.updatedAt,
         author: { '@type': 'Organization', name: 'claudedumb.com', url: 'https://claudedumb.com/' },
         mainEntityOfPage: canonical,
         about: { '@type': 'SoftwareApplication', name: 'Claude' },
