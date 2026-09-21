@@ -10,7 +10,10 @@ const PORT = process.env.PORT || 3000;
 // Update this only when the homepage's search-facing content changes. Keeping
 // it stable gives crawlers a truthful freshness signal instead of making every
 // request look like a new revision.
-const HOMEPAGE_CONTENT_UPDATED = '2026-09-17';
+const HOMEPAGE_CONTENT_UPDATED = '2026-09-21';
+const API_STATUS_PAGE_UPDATED = '2026-09-21';
+const CLAUDE_STATUS_CACHE_MS = 60 * 1000;
+let claudeStatusCache = { data: null, fetchedAt: 0 };
 
 // Keep claudedumb.com as the single canonical domain. Render terminates TLS and
 // forwards the original Host header, so this also covers both HTTP and HTTPS.
@@ -21,6 +24,24 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+async function getClaudeStatusSummary() {
+  const now = Date.now();
+  if (claudeStatusCache.data && now - claudeStatusCache.fetchedAt < CLAUDE_STATUS_CACHE_MS) {
+    return claudeStatusCache.data;
+  }
+
+  try {
+    const response = await fetch('https://status.claude.com/api/v2/summary.json');
+    if (!response.ok) throw new Error(`Claude status returned ${response.status}`);
+    const data = await response.json();
+    claudeStatusCache = { data, fetchedAt: now };
+    return data;
+  } catch (error) {
+    if (claudeStatusCache.data) return claudeStatusCache.data;
+    throw error;
+  }
+}
 
 // Keep the sitemap aligned with the daily stories that are substantial enough
 // to index. The checked-in file remains a resilient fallback if reporting data
@@ -41,7 +62,7 @@ app.get('/sitemap.xml', async (req, res) => {
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-${sitemapEntry({ loc: 'https://claudedumb.com/', lastmod: HOMEPAGE_CONTENT_UPDATED })}${sitemapEntry({ loc: 'https://claudedumb.com/reports', lastmod: report.updatedAt })}${storyEntries}</urlset>`;
+${sitemapEntry({ loc: 'https://claudedumb.com/', lastmod: HOMEPAGE_CONTENT_UPDATED })}${sitemapEntry({ loc: 'https://claudedumb.com/claude-api-status', lastmod: API_STATUS_PAGE_UPDATED })}${sitemapEntry({ loc: 'https://claudedumb.com/reports', lastmod: report.updatedAt })}${storyEntries}</urlset>`;
 
     res.set({
       'Content-Type': 'application/xml; charset=utf-8',
@@ -89,6 +110,103 @@ function renderHomepage(vibes, counts) {
     .replace('<div class="meter-fill dumb" id="meter-dumb"></div>', `<div class="meter-fill dumb" id="meter-dumb" style="width:${100 - smartWidth}%"></div>`);
 }
 
+function renderClaudeApiStatusPage(statusData, vibes) {
+  const component = statusData?.components?.find(item => item.name === 'Claude API (api.anthropic.com)');
+  const componentStatus = component?.status || 'unknown';
+  const statusCopy = componentStatus === 'operational'
+    ? 'Operational'
+    : componentStatus === 'degraded_performance'
+      ? 'Degraded performance'
+      : componentStatus === 'partial_outage'
+        ? 'Partial outage'
+        : componentStatus === 'major_outage'
+          ? 'Major outage'
+          : 'Status unavailable';
+  const statusTone = componentStatus === 'operational' ? 'smart' : componentStatus === 'unknown' ? 'mixed' : 'dumb';
+  const community = homepageVibeView(vibes);
+  const negativePercent = community.total ? Math.round((community.dumb / community.total) * 100) : 0;
+  const updatedAt = component?.updated_at || statusData?.page?.updated_at || null;
+  const incidents = (statusData?.incidents || []).filter(incident => incident.status !== 'resolved');
+  const canonical = 'https://claudedumb.com/claude-api-status';
+  const title = 'Claude API Status: Is api.anthropic.com Down? | ClaudeDumb';
+  const description = 'Check the live Claude API status for api.anthropic.com, compare official Anthropic status with community reports, and troubleshoot common 429, 500, and 529 errors.';
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        name: 'Claude API status',
+        url: canonical,
+        description,
+        dateModified: API_STATUS_PAGE_UPDATED,
+        about: { '@type': 'SoftwareApplication', name: 'Claude API', applicationCategory: 'DeveloperApplication' },
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'Is the Claude API down right now?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Check the live official Claude API component status on this page, then compare it with recent community reports. Short regional or capacity issues may appear in community reports before an official incident is posted.' },
+          },
+          {
+            '@type': 'Question',
+            name: 'What does a Claude API 529 error mean?',
+            acceptedAnswer: { '@type': 'Answer', text: 'A 529 overloaded_error usually means Anthropic is temporarily overloaded. Retry with exponential backoff and jitter, and avoid sending an immediate burst of identical requests.' },
+          },
+          {
+            '@type': 'Question',
+            name: 'Why is the Claude API failing when official status is operational?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Check the HTTP status code. Authentication, permission, malformed request, and account rate-limit errors can occur even while the service itself is operational.' },
+          },
+        ],
+      },
+    ],
+  };
+  const incidentHtml = incidents.length
+    ? `<div class="api-incident"><strong>Active official incident</strong><span>${escapeHtml(incidents[0].name)}</span></div>`
+    : '<p class="api-clear">No unresolved official incidents are listed.</p>';
+
+  return `<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHtml(title)}</title>
+  <meta name="description" content="${escapeHtml(description)}">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="${canonical}">
+  <meta property="og:type" content="website"><meta property="og:site_name" content="claudedumb.com">
+  <meta property="og:title" content="Claude API Status: Is api.anthropic.com Down?">
+  <meta property="og:description" content="${escapeHtml(description)}"><meta property="og:url" content="${canonical}">
+  <meta name="twitter:card" content="summary"><meta name="twitter:title" content="Claude API Status: Is api.anthropic.com Down?">
+  <meta name="twitter:description" content="${escapeHtml(description)}">
+  <script type="application/ld+json">${JSON.stringify(schema).replace(/</g, '\\u003c')}</script>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/reports.css"></head>
+<body class="api-status-page"><header class="site-header"><a class="logo" href="/">claude<span>dumb</span><small>.com</small></a><nav><a class="header-cta" href="/reports">Status history</a></nav></header>
+<main><nav class="crumb" aria-label="Breadcrumb"><a href="/">Claude live status</a> / Claude API status</nav>
+  <section class="api-hero">
+    <div class="api-hero-copy"><p class="eyebrow">Live Claude API status</p><h1>Is the Claude API down right now?</h1><p class="api-dek">Official status for <strong>api.anthropic.com</strong>, compared with fresh community reports from people using Claude.</p></div>
+    <div class="api-official-card ${statusTone}"><span>Official Claude API status</span><strong>${escapeHtml(statusCopy)}</strong>${updatedAt ? `<small>Component last changed <time datetime="${escapeHtml(updatedAt)}">${escapeHtml(new Date(updatedAt).toLocaleString('en-US', { timeZone: 'UTC', timeZoneName: 'short' }))}</time></small>` : '<small>Official update time unavailable</small>'}<a href="https://status.claude.com/" target="_blank" rel="noopener">Open Anthropic status ↗</a></div>
+  </section>
+  <section class="api-signal-grid" aria-label="Current Claude API signals">
+    <article><p class="eyebrow">Community pulse · 24 hours</p><strong>${community.total}</strong><span>${community.total === 1 ? 'report' : 'reports'}</span><p>${community.total ? `${negativePercent}% were negative.` : 'No community signal yet.'} Reports may describe errors, slowness, outages, or response quality.</p><a href="/">Add your Claude report →</a></article>
+    <article><p class="eyebrow">Official incidents</p>${incidentHtml}<p>Official status can lag brief, regional, or account-specific problems, so compare both signals.</p><a href="/reports">Browse community status history →</a></article>
+  </section>
+  <section class="api-errors" aria-labelledby="api-errors-title"><div class="section-intro"><div><p class="eyebrow">Fast diagnosis</p><h2 id="api-errors-title">What your Claude API error means</h2></div><p>Service status and request errors are different. Start with the HTTP code before assuming an outage.</p></div>
+    <div class="table-wrap"><table><thead><tr><th scope="col">Code</th><th scope="col">Meaning</th><th scope="col">First response</th></tr></thead><tbody>
+      <tr><th scope="row">400</th><td>Invalid request</td><td>Validate the request body, model name, and parameters.</td></tr>
+      <tr><th scope="row">401</th><td>Authentication error</td><td>Check that the API key is present and valid.</td></tr>
+      <tr><th scope="row">403</th><td>Permission error</td><td>Confirm the key and workspace can access the requested resource.</td></tr>
+      <tr><th scope="row">429</th><td>Rate limit</td><td>Back off, reduce concurrency, and inspect your account limits.</td></tr>
+      <tr><th scope="row">500</th><td>API error</td><td>Retry safely with exponential backoff and check live status.</td></tr>
+      <tr><th scope="row">529</th><td>Overloaded</td><td>Retry with exponential backoff and jitter; avoid synchronized bursts.</td></tr>
+    </tbody></table></div>
+  </section>
+  <section class="api-faq"><p class="eyebrow">Claude API status FAQ</p><h2>Before you retry</h2><details open><summary>Is the Claude API down right now?</summary><p>The live card above comes from Anthropic's official Claude API component. Compare it with the community pulse: a burst of recent negative reports can reveal a developing or localized issue.</p></details><details><summary>What does a 529 overloaded_error mean?</summary><p>Anthropic is temporarily overloaded. Use exponential backoff with jitter and make retries idempotent where possible.</p></details><details><summary>Why do requests fail while status is green?</summary><p>Malformed requests, invalid keys, missing permissions, and account rate limits do not require a service-wide incident. The error code table above separates those cases from likely server-side failures.</p></details></section>
+  <p class="caveat api-caveat">claudedumb.com is an independent community tracker and is not affiliated with Anthropic. Community reports are voluntary submissions, not unique users or verified incidents.</p>
+</main><footer>Independent community tracker · <a href="/">Live Claude status</a> · <a href="/reports">Status history</a></footer><script src="/analytics.js"></script></body></html>`;
+}
+
 // Serve real community status in the initial HTML. This keeps the primary
 // search landing page useful before JavaScript loads and avoids indexing stale
 // placeholders such as "Loading..." and zero counts.
@@ -100,6 +218,17 @@ app.get('/', async (req, res) => {
   } catch (error) {
     console.error('Homepage status render error:', error);
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  }
+});
+
+app.get('/claude-api-status', async (req, res) => {
+  try {
+    const [statusData, vibes] = await Promise.all([getClaudeStatusSummary(), db.getVibes()]);
+    res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+    res.type('html').send(renderClaudeApiStatusPage(statusData, vibes));
+  } catch (error) {
+    console.error('Claude API status page error:', error);
+    res.status(503).send('Claude API status is temporarily unavailable.');
   }
 });
 
@@ -1132,9 +1261,7 @@ app.get('/api/votes/daily', async (req, res) => {
 
 app.get('/api/claude-status', async (req, res) => {
   try {
-    const response = await fetch('https://status.claude.com/api/v2/summary.json');
-    const data = await response.json();
-    res.json(data);
+    res.json(await getClaudeStatusSummary());
   } catch (err) {
     res.status(502).json({ error: 'Failed to fetch Claude status' });
   }
