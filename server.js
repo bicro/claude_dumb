@@ -6,6 +6,9 @@ const sharp = require('sharp');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
 const app = express();
+// Trust exactly one hop (the platform's reverse proxy) so req.ip is derived
+// safely from X-Forwarded-For and cannot be spoofed by client-supplied headers.
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
 // Update this only when the homepage's search-facing content changes. Keeping
 // it stable gives crawlers a truthful freshness signal instead of making every
@@ -1287,7 +1290,7 @@ app.get('/api/feed', async (req, res) => {
     const sort = req.query.sort || 'newest';
     const limit = Math.min(parseInt(req.query.limit) || 30, 50);
     const offset = parseInt(req.query.offset) || 0;
-    const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress;
+    const ip = req.ip;
 
     let items;
     if (sort === 'trending') {
