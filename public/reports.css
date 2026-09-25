@@ -254,6 +254,20 @@ th, td { padding: 10px 11px; border-bottom: 1px solid var(--border); text-align:
 .api-signal-grid article > a { font-size: 10px; font-weight: 700; text-decoration: none; }
 .api-clear { margin: 8px 0 14px; color: var(--smart); font-size: 16px; font-weight: 700; }
 .api-incident { display: grid; gap: 4px; margin: 8px 0 14px; color: var(--dumb); font-size: 11px; }
+.api-history { padding: 46px 0; border-bottom: 1px solid var(--border); }
+.api-history-list { border-top: 1px solid var(--border); }
+.api-history-item { display: grid; grid-template-columns: minmax(170px, .55fr) minmax(220px, .9fr) minmax(300px, 1.4fr); gap: 24px; padding: 22px 0; border-bottom: 1px solid var(--border); }
+.api-history-item h3, .api-history-item p { margin: 0; }
+.api-history-item h3 { font-size: 13px; line-height: 1.4; }
+.api-history-item h3 a { color: var(--text); text-decoration: none; }
+.api-history-item h3 a:hover { color: var(--accent); }
+.api-history-item p { color: var(--muted); font-size: 10px; }
+.api-history-meta { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 6px 8px; color: var(--muted); font-size: 9px; text-transform: uppercase; }
+.api-history-meta time { flex-basis: 100%; color: var(--text); font-weight: 700; }
+.api-history-meta span { padding: 2px 6px; border: 1px solid var(--border); border-radius: 999px; }
+.api-history-item.major .api-history-meta span:first-of-type, .api-history-item.critical .api-history-meta span:first-of-type { border-color: #edc2b1; color: var(--dumb); }
+.api-history-source { display: inline-block; margin-top: 18px; font-size: 10px; font-weight: 700; text-decoration: none; }
+.api-history-empty { margin: 22px 0 0; color: var(--muted); font-size: 11px; }
 .api-errors { padding: 46px 0; border-bottom: 1px solid var(--border); }
 .api-errors .table-wrap { max-height: none; }
 .api-errors th:first-child { width: 80px; color: var(--accent); text-align: left; }
@@ -273,6 +287,7 @@ th, td { padding: 10px 11px; border-bottom: 1px solid var(--border); text-align:
   .api-status-page .section-intro { align-items: flex-start; flex-direction: column; gap: 10px; }
   .api-errors .table-wrap { overflow-x: auto; }
   .api-errors table { min-width: 620px; }
+  .api-history-item { grid-template-columns: 1fr; gap: 10px; }
 }
 tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
 th:first-child { text-align: left; }
