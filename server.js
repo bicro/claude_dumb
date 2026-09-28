@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 // Update this only when the homepage's search-facing content changes. Keeping
 // it stable gives crawlers a truthful freshness signal instead of making every
 // request look like a new revision.
-const HOMEPAGE_CONTENT_UPDATED = '2026-09-21';
+const HOMEPAGE_CONTENT_UPDATED = '2026-09-28';
 const API_STATUS_PAGE_UPDATED = '2026-09-24';
 const CLAUDE_STATUS_CACHE_MS = 60 * 1000;
 const CLAUDE_INCIDENTS_CACHE_MS = 5 * 60 * 1000;
@@ -108,13 +108,17 @@ function homepageVibeView(vibes) {
   return { label: 'Being Dumb', tone: 'dumb', smart, dumb, total };
 }
 
-function renderHomepage(vibes, counts) {
+function renderHomepage(vibes, counts, incidentsData) {
   const view = homepageVibeView(vibes);
   const hourSmart = Number(counts?.smart) || 0;
   const hourDumb = Number(counts?.dumb) || 0;
   const hourTotal = hourSmart + hourDumb;
   const smartWidth = hourTotal ? (hourSmart / hourTotal) * 100 : 50;
   const template = fs.readFileSync(path.join(__dirname, 'public', 'index.html'), 'utf8');
+  const apiComponentName = 'Claude API (api.anthropic.com)';
+  const latestApiIncident = (incidentsData?.incidents || [])
+    .filter(incident => incident.status === 'resolved' && (incident.components || []).some(item => item.name === apiComponentName))
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
 
   return template
     .replace(
@@ -128,7 +132,23 @@ function renderHomepage(vibes, counts) {
     .replace('<span class="meter-val smart" id="count-smart">0</span>', `<span class="meter-val smart" id="count-smart">${hourSmart} smart</span>`)
     .replace('<span class="meter-val dumb" id="count-dumb">0</span>', `<span class="meter-val dumb" id="count-dumb">${hourDumb} dumb</span>`)
     .replace('<div class="meter-fill smart" id="meter-smart"></div>', `<div class="meter-fill smart" id="meter-smart" style="width:${smartWidth}%"></div>`)
-    .replace('<div class="meter-fill dumb" id="meter-dumb"></div>', `<div class="meter-fill dumb" id="meter-dumb" style="width:${100 - smartWidth}%"></div>`);
+    .replace('<div class="meter-fill dumb" id="meter-dumb"></div>', `<div class="meter-fill dumb" id="meter-dumb" style="width:${100 - smartWidth}%"></div>`)
+    .replace(
+      '<span class="latest-incident-kicker">Claude API status</span>',
+      latestApiIncident
+        ? `<span class="latest-incident-kicker">Latest official API incident · ${escapeHtml(formatIncidentDate(latestApiIncident.created_at))}</span>`
+        : '<span class="latest-incident-kicker">Claude API status</span>',
+    )
+    .replace(
+      '<strong>Live status and recent incident history</strong>',
+      latestApiIncident ? `<strong>${escapeHtml(latestApiIncident.name)}</strong>` : '<strong>Live status and recent incident history</strong>',
+    )
+    .replace(
+      '<span class="latest-incident-cta">Check api.anthropic.com →</span>',
+      latestApiIncident
+        ? '<span class="latest-incident-cta">See impact, duration, and recent history →</span>'
+        : '<span class="latest-incident-cta">Check api.anthropic.com →</span>',
+    );
 }
 
 function formatIncidentDate(value) {
@@ -277,9 +297,13 @@ function renderClaudeApiStatusPage(statusData, incidentsData, vibes) {
 // placeholders such as "Loading..." and zero counts.
 app.get('/', async (req, res) => {
   try {
-    const [vibes, counts] = await Promise.all([db.getVibes(), db.getVoteCounts()]);
+    const [vibes, counts, incidentsData] = await Promise.all([
+      db.getVibes(),
+      db.getVoteCounts(),
+      getClaudeApiIncidents(),
+    ]);
     res.set('Cache-Control', 'public, max-age=30, stale-while-revalidate=120');
-    res.type('html').send(renderHomepage(vibes, counts));
+    res.type('html').send(renderHomepage(vibes, counts, incidentsData));
   } catch (error) {
     console.error('Homepage status render error:', error);
     res.sendFile(path.join(__dirname, 'public', 'index.html'));

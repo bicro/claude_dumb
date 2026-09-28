@@ -855,8 +855,61 @@ main {
   display: flex;
   flex-shrink: 0;
   flex-direction: column;
-  gap: 4px;
-  text-align: right;
+  width: min(260px, 48%);
+  gap: 6px;
+  text-align: left;
+}
+
+.status-guide .latest-incident-link {
+  display: grid;
+  gap: 3px;
+  padding: 9px 11px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-hover);
+  color: var(--text);
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.status-guide .latest-incident-link:hover {
+  border-color: var(--accent);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.latest-incident-kicker,
+.latest-incident-cta {
+  color: var(--text-2);
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.latest-incident-kicker { text-transform: uppercase; }
+
+.latest-incident-link strong {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 10px;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.latest-incident-link .latest-incident-cta {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.status-guide-secondary {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.status-guide-secondary a {
+  color: var(--text-2);
+  font-size: 9px;
 }
 
 .status-faq {
@@ -1378,7 +1431,7 @@ main {
   .header-status { font-size: 10px; }
   .vibes-hero-status { font-size: 1.6rem; word-break: break-word; }
   .status-guide { align-items: flex-start; flex-direction: column; gap: 0.45rem; }
-  .status-guide-links { text-align: left; }
+  .status-guide-links { width: 100%; text-align: left; }
   .status-faq-grid { grid-template-columns: 1fr; }
 
   /* Show mobile vote bar */

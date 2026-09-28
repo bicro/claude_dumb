@@ -8,4 +8,12 @@
     defaults: '2026-01-30',
     person_profiles: 'identified_only',
   });
+
+  document.addEventListener('click', event => {
+    const incidentLink = event.target.closest('.latest-incident-link');
+    if (!incidentLink) return;
+    window.posthog.capture('latest_api_incident_clicked', {
+      target_path: incidentLink.getAttribute('href'),
+    });
+  });
 })();
