@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 3000;
 // request look like a new revision.
 const HOMEPAGE_CONTENT_UPDATED = '2026-09-28';
 const API_STATUS_PAGE_UPDATED = '2026-09-24';
+const CLAUDE_API_COMPONENT = 'Claude API (api.anthropic.com)';
 const CLAUDE_STATUS_CACHE_MS = 60 * 1000;
 const CLAUDE_INCIDENTS_CACHE_MS = 5 * 60 * 1000;
 let claudeStatusCache = { data: null, fetchedAt: 0 };
@@ -64,14 +65,31 @@ async function getClaudeApiIncidents() {
   }
 }
 
+function latestClaudeApiContentDate(incidentsData, fallback) {
+  const latestIncidentTimestamp = (incidentsData?.incidents || [])
+    .filter(incident => (incident.components || []).some(item => item.name === CLAUDE_API_COMPONENT))
+    .map(incident => incident.updated_at || incident.resolved_at || incident.created_at)
+    .filter(Boolean)
+    .sort((a, b) => new Date(b) - new Date(a))[0];
+
+  if (!latestIncidentTimestamp || Number.isNaN(new Date(latestIncidentTimestamp).getTime())) return fallback;
+  const incidentDate = new Date(latestIncidentTimestamp).toISOString().slice(0, 10);
+  return incidentDate > fallback ? incidentDate : fallback;
+}
+
 // Keep the sitemap aligned with the daily stories that are substantial enough
 // to index. The checked-in file remains a resilient fallback if reporting data
 // is temporarily unavailable.
 app.get('/sitemap.xml', async (req, res) => {
   try {
     const days = 90;
-    const votes = await db.getCommunityReportVotes(days);
+    const [votes, incidentsData] = await Promise.all([
+      db.getCommunityReportVotes(days),
+      getClaudeApiIncidents(),
+    ]);
     const report = buildCommunityReport(votes, days);
+    const homepageUpdated = latestClaudeApiContentDate(incidentsData, HOMEPAGE_CONTENT_UPDATED);
+    const apiStatusUpdated = latestClaudeApiContentDate(incidentsData, API_STATUS_PAGE_UPDATED);
     const storyEntries = report.daily
       .filter(day => day.total >= 10)
       .map(day => sitemapEntry({
@@ -83,7 +101,7 @@ app.get('/sitemap.xml', async (req, res) => {
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-${sitemapEntry({ loc: 'https://claudedumb.com/', lastmod: HOMEPAGE_CONTENT_UPDATED })}${sitemapEntry({ loc: 'https://claudedumb.com/claude-api-status', lastmod: API_STATUS_PAGE_UPDATED })}${sitemapEntry({ loc: 'https://claudedumb.com/reports', lastmod: report.updatedAt })}${storyEntries}</urlset>`;
+${sitemapEntry({ loc: 'https://claudedumb.com/', lastmod: homepageUpdated })}${sitemapEntry({ loc: 'https://claudedumb.com/claude-api-status', lastmod: apiStatusUpdated })}${sitemapEntry({ loc: 'https://claudedumb.com/reports', lastmod: report.updatedAt })}${storyEntries}</urlset>`;
 
     res.set({
       'Content-Type': 'application/xml; charset=utf-8',
@@ -115,9 +133,8 @@ function renderHomepage(vibes, counts, incidentsData) {
   const hourTotal = hourSmart + hourDumb;
   const smartWidth = hourTotal ? (hourSmart / hourTotal) * 100 : 50;
   const template = fs.readFileSync(path.join(__dirname, 'public', 'index.html'), 'utf8');
-  const apiComponentName = 'Claude API (api.anthropic.com)';
   const latestApiIncident = (incidentsData?.incidents || [])
-    .filter(incident => incident.status === 'resolved' && (incident.components || []).some(item => item.name === apiComponentName))
+    .filter(incident => incident.status === 'resolved' && (incident.components || []).some(item => item.name === CLAUDE_API_COMPONENT))
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
 
   return template
@@ -187,8 +204,7 @@ function renderClaudeApiStatusPage(statusData, incidentsData, vibes) {
   const community = homepageVibeView(vibes);
   const negativePercent = community.total ? Math.round((community.dumb / community.total) * 100) : 0;
   const updatedAt = component?.updated_at || statusData?.page?.updated_at || null;
-  const apiComponentName = 'Claude API (api.anthropic.com)';
-  const affectsApi = incident => (incident.components || []).some(item => item.name === apiComponentName);
+  const affectsApi = incident => (incident.components || []).some(item => item.name === CLAUDE_API_COMPONENT);
   const activeIncidents = (statusData?.incidents || [])
     .filter(incident => incident.status !== 'resolved' && affectsApi(incident));
   const recentApiIncidents = (incidentsData?.incidents || [])
@@ -198,6 +214,7 @@ function renderClaudeApiStatusPage(statusData, incidentsData, vibes) {
   const canonical = 'https://claudedumb.com/claude-api-status';
   const title = 'Claude API Status: Is api.anthropic.com Down? | ClaudeDumb';
   const description = 'Check the live Claude API status and recent outage history for api.anthropic.com, compare official incidents with community reports, and troubleshoot 429, 500, and 529 errors.';
+  const apiContentUpdated = latestClaudeApiContentDate(incidentsData, API_STATUS_PAGE_UPDATED);
   const schema = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -206,7 +223,7 @@ function renderClaudeApiStatusPage(statusData, incidentsData, vibes) {
         name: 'Claude API status',
         url: canonical,
         description,
-        dateModified: API_STATUS_PAGE_UPDATED,
+        dateModified: apiContentUpdated,
         about: { '@type': 'SoftwareApplication', name: 'Claude API', applicationCategory: 'DeveloperApplication' },
       },
       {
