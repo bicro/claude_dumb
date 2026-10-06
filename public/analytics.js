@@ -16,4 +16,13 @@
       target_path: incidentLink.getAttribute('href'),
     });
   });
+
+  document.addEventListener('click', event => {
+    const apiStatusLink = event.target.closest('.api-status-nav-link');
+    if (!apiStatusLink) return;
+    window.posthog.capture('api_status_nav_clicked', {
+      source_path: window.location.pathname,
+      target_path: apiStatusLink.getAttribute('href'),
+    });
+  });
 })();

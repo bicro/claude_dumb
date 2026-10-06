@@ -112,6 +112,17 @@ header {
 .header-status-dot.minor { color: var(--yellow); }
 .header-status-dot.major, .header-status-dot.critical { color: var(--red); }
 
+.header-section-link {
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+
+.header-section-link:hover { color: var(--accent); }
+
 .gh-link {
   color: var(--text-3);
   display: flex;
@@ -1429,6 +1440,8 @@ main {
   .tagline { display: none; }
   .header-nav { gap: 0.6rem; }
   .header-status { font-size: 10px; }
+  .header-section-link { font-size: 10px; }
+  .gh-link { display: none; }
   .vibes-hero-status { font-size: 1.6rem; word-break: break-word; }
   .status-guide { align-items: flex-start; flex-direction: column; gap: 0.45rem; }
   .status-guide-links { width: 100%; text-align: left; }

@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 // Update this only when the homepage's search-facing content changes. Keeping
 // it stable gives crawlers a truthful freshness signal instead of making every
 // request look like a new revision.
-const HOMEPAGE_CONTENT_UPDATED = '2026-09-28';
+const HOMEPAGE_CONTENT_UPDATED = '2026-10-05';
 const API_STATUS_PAGE_UPDATED = '2026-09-24';
 const CLAUDE_API_COMPONENT = 'Claude API (api.anthropic.com)';
 const CLAUDE_STATUS_CACHE_MS = 60 * 1000;
@@ -1127,7 +1127,7 @@ function reportDocumentHead({ title, description, canonical, image, robots = 'in
 function renderReportHeader() {
   return `<header class="site-header">
     <a href="/" class="logo">claude<span>dumb</span><small>.com</small></a>
-    <nav><a class="header-cta" href="/">← Live status &amp; report</a></nav>
+    <nav><a class="header-cta api-status-nav-link" href="/claude-api-status">API status</a><a class="header-cta" href="/">← Live status</a></nav>
   </header>`;
 }
 
