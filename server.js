@@ -42,7 +42,11 @@ async function getClaudeStatusSummary() {
     return data;
   } catch (error) {
     if (claudeStatusCache.data) return claudeStatusCache.data;
-    throw error;
+    console.error('Claude status summary fetch error:', error);
+    // Keep the public status page useful and crawlable during an upstream
+    // timeout. The renderer makes the missing live signal explicit while the
+    // incident archive, community pulse, and troubleshooting content remain.
+    return { page: {}, components: [], incidents: [] };
   }
 }
 
