@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 // it stable gives crawlers a truthful freshness signal instead of making every
 // request look like a new revision.
 const HOMEPAGE_CONTENT_UPDATED = '2026-10-05';
-const API_STATUS_PAGE_UPDATED = '2026-09-24';
+const API_STATUS_PAGE_UPDATED = '2026-10-12';
 const CLAUDE_API_COMPONENT = 'Claude API (api.anthropic.com)';
 const CLAUDE_STATUS_CACHE_MS = 60 * 1000;
 const CLAUDE_INCIDENTS_CACHE_MS = 5 * 60 * 1000;
@@ -94,6 +94,12 @@ app.get('/sitemap.xml', async (req, res) => {
     const report = buildCommunityReport(votes, days);
     const homepageUpdated = latestClaudeApiContentDate(incidentsData, HOMEPAGE_CONTENT_UPDATED);
     const apiStatusUpdated = latestClaudeApiContentDate(incidentsData, API_STATUS_PAGE_UPDATED);
+    const incidentEntries = claudeApiIncidents(incidentsData, 5)
+      .map(incident => sitemapEntry({
+        loc: `https://claudedumb.com${claudeApiIncidentPath(incident)}`,
+        lastmod: incident.updated_at || incident.resolved_at || incident.created_at,
+      }))
+      .join('');
     const storyEntries = report.daily
       .filter(day => day.total >= 10)
       .map(day => sitemapEntry({
@@ -105,7 +111,7 @@ app.get('/sitemap.xml', async (req, res) => {
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-${sitemapEntry({ loc: 'https://claudedumb.com/', lastmod: homepageUpdated })}${sitemapEntry({ loc: 'https://claudedumb.com/claude-api-status', lastmod: apiStatusUpdated })}${sitemapEntry({ loc: 'https://claudedumb.com/reports', lastmod: report.updatedAt })}${storyEntries}</urlset>`;
+${sitemapEntry({ loc: 'https://claudedumb.com/', lastmod: homepageUpdated })}${sitemapEntry({ loc: 'https://claudedumb.com/claude-api-status', lastmod: apiStatusUpdated })}${incidentEntries}${sitemapEntry({ loc: 'https://claudedumb.com/reports', lastmod: report.updatedAt })}${storyEntries}</urlset>`;
 
     res.set({
       'Content-Type': 'application/xml; charset=utf-8',
@@ -192,6 +198,45 @@ function formatIncidentDuration(start, end) {
   return remainder ? `${hours}h ${remainder}m` : `${hours}h`;
 }
 
+function claudeApiIncidents(incidentsData, limit) {
+  const incidents = (incidentsData?.incidents || [])
+    .filter(incident => (incident.components || []).some(item => item.name === CLAUDE_API_COMPONENT))
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  return Number.isInteger(limit) ? incidents.slice(0, limit) : incidents;
+}
+
+function incidentSlug(name) {
+  return String(name || 'incident')
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 90) || 'incident';
+}
+
+function claudeApiIncidentPath(incident) {
+  return `/claude-api-status/incidents/${encodeURIComponent(incident.id)}/${incidentSlug(incident.name)}`;
+}
+
+function formatIncidentTimestamp(value) {
+  if (!value) return 'Time unavailable';
+  return new Date(value).toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone: 'UTC',
+    timeZoneName: 'short',
+  });
+}
+
+function incidentUpdateSummary(value, maxLength = 360) {
+  const text = String(value || '').replace(/\s+/g, ' ').trim();
+  if (!text) return 'No additional update text was provided.';
+  return text.length > maxLength ? `${text.slice(0, maxLength - 3)}...` : text;
+}
+
 function renderClaudeApiStatusPage(statusData, incidentsData, vibes) {
   const component = statusData?.components?.find(item => item.name === 'Claude API (api.anthropic.com)');
   const componentStatus = component?.status || 'unknown';
@@ -211,9 +256,8 @@ function renderClaudeApiStatusPage(statusData, incidentsData, vibes) {
   const affectsApi = incident => (incident.components || []).some(item => item.name === CLAUDE_API_COMPONENT);
   const activeIncidents = (statusData?.incidents || [])
     .filter(incident => incident.status !== 'resolved' && affectsApi(incident));
-  const recentApiIncidents = (incidentsData?.incidents || [])
-    .filter(incident => incident.status === 'resolved' && affectsApi(incident))
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+  const recentApiIncidents = claudeApiIncidents(incidentsData)
+    .filter(incident => incident.status === 'resolved')
     .slice(0, 5);
   const canonical = 'https://claudedumb.com/claude-api-status';
   const title = 'Claude API Status: Is api.anthropic.com Down? | ClaudeDumb';
@@ -260,10 +304,10 @@ function renderClaudeApiStatusPage(statusData, incidentsData, vibes) {
       const latestUpdate = incident.incident_updates?.[0]?.body || 'Anthropic marked this incident resolved.';
       const summary = latestUpdate.length > 240 ? `${latestUpdate.slice(0, 237)}...` : latestUpdate;
       const impact = incident.impact === 'major' || incident.impact === 'critical' ? 'Major impact' : 'Minor impact';
-      const link = incident.shortlink || 'https://status.claude.com/';
+      const link = claudeApiIncidentPath(incident);
       return `<article class="api-history-item ${escapeHtml(incident.impact || 'minor')}">
         <div class="api-history-meta"><time datetime="${escapeHtml(incident.created_at)}">${escapeHtml(formatIncidentDate(incident.created_at))}</time><span>${escapeHtml(impact)}</span><span>${escapeHtml(formatIncidentDuration(incident.created_at, incident.resolved_at))}</span></div>
-        <h3><a href="${escapeHtml(link)}" target="_blank" rel="noopener">${escapeHtml(incident.name)}</a></h3>
+        <h3><a class="api-incident-detail-link" data-incident-id="${escapeHtml(incident.id)}" href="${escapeHtml(link)}">${escapeHtml(incident.name)}</a></h3>
         <p>${escapeHtml(summary)}</p>
       </article>`;
     }).join('')
@@ -313,6 +357,66 @@ function renderClaudeApiStatusPage(statusData, incidentsData, vibes) {
 </main><footer>Independent community tracker · <a href="/">Live Claude status</a> · <a href="/reports">Status history</a></footer><script src="/analytics.js"></script></body></html>`;
 }
 
+function renderClaudeApiIncidentPage(incident, storyResult) {
+  const canonicalPath = claudeApiIncidentPath(incident);
+  const canonical = `https://claudedumb.com${canonicalPath}`;
+  const date = formatIncidentDate(incident.created_at);
+  const duration = formatIncidentDuration(incident.created_at, incident.resolved_at);
+  const impact = incident.impact === 'major' || incident.impact === 'critical' ? 'Major impact' : 'Minor impact';
+  const title = `${incident.name} — Claude API Incident on ${date} | ClaudeDumb`;
+  const description = `${impact} Claude API incident on ${date}, lasting ${duration}. Read the official timeline and compare it with community reports from the same day.`;
+  const updates = [...(incident.incident_updates || [])]
+    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  const updateHtml = updates.length
+    ? updates.map(update => `<article class="incident-timeline-item">
+      <div><time datetime="${escapeHtml(update.created_at)}">${escapeHtml(formatIncidentTimestamp(update.created_at))}</time><span>${escapeHtml(update.status || 'update')}</span></div>
+      <p>${escapeHtml(incidentUpdateSummary(update.body))}</p>
+    </article>`).join('')
+    : '<p class="api-history-empty">No official timeline updates were included.</p>';
+  const components = (incident.components || [])
+    .map(component => `<li>${escapeHtml(component.name)}</li>`)
+    .join('');
+  const story = storyResult?.story;
+  const incidentDay = new Date(incident.created_at).toISOString().slice(0, 10);
+  const communityHtml = story
+    ? `<strong>${story.dumbPercent}% negative</strong><p>${story.total} community ${reportNoun(story.total)} on ${escapeHtml(date)}: ${story.dumb} dumb and ${story.smart} smart. Community reports describe perception and are not proof that this incident caused every reported problem.</p><a href="/reports/${incidentDay}">Read that day’s community report →</a>`
+    : `<strong>No matching community sample</strong><p>There were not enough community reports to publish a daily comparison for ${escapeHtml(date)}.</p><a href="/reports">Browse community status history →</a>`;
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        name: incident.name,
+        url: canonical,
+        description,
+        datePublished: incident.created_at,
+        dateModified: incident.updated_at || incident.resolved_at || incident.created_at,
+        about: { '@type': 'SoftwareApplication', name: 'Claude API', applicationCategory: 'DeveloperApplication' },
+      },
+      { '@type': 'BreadcrumbList', itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Claude live status', item: 'https://claudedumb.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Claude API status', item: 'https://claudedumb.com/claude-api-status' },
+        { '@type': 'ListItem', position: 3, name: incident.name, item: canonical },
+      ] },
+    ],
+  };
+
+  return `<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHtml(title)}</title><meta name="description" content="${escapeHtml(description)}">
+  <meta name="robots" content="index, follow, max-image-preview:large"><link rel="canonical" href="${canonical}">
+  <meta property="og:type" content="article"><meta property="og:site_name" content="claudedumb.com"><meta property="og:title" content="${escapeHtml(title)}"><meta property="og:description" content="${escapeHtml(description)}"><meta property="og:url" content="${canonical}">
+  <meta name="twitter:card" content="summary"><script type="application/ld+json">${JSON.stringify(schema).replace(/</g, '\\u003c')}</script>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"><link rel="stylesheet" href="/reports.css"></head>
+<body class="api-status-page incident-detail-page"><header class="site-header"><a class="logo" href="/">claude<span>dumb</span><small>.com</small></a><nav><a class="header-cta api-status-nav-link" href="/claude-api-status">API status</a><a class="header-cta" href="/reports">Community history</a></nav></header>
+<main><nav class="crumb" aria-label="Breadcrumb"><a href="/">Claude live status</a> / <a href="/claude-api-status">Claude API status</a> / ${escapeHtml(date)}</nav>
+  <article class="incident-hero ${escapeHtml(incident.impact || 'minor')}"><p class="eyebrow">Official Claude API incident · ${escapeHtml(date)}</p><h1>${escapeHtml(incident.name)}</h1><p>${escapeHtml(description)}</p><div class="incident-facts"><span><small>Impact</small><strong>${escapeHtml(impact)}</strong></span><span><small>Duration</small><strong>${escapeHtml(duration)}</strong></span><span><small>Final status</small><strong>${escapeHtml(incident.status || 'unknown')}</strong></span></div></article>
+  <section class="incident-grid"><div><p class="eyebrow">Official timeline</p><h2>What happened</h2><div class="incident-timeline">${updateHtml}</div></div><aside><p class="eyebrow">Community comparison</p>${communityHtml}<h3>Affected services</h3><ul>${components}</ul><a href="${escapeHtml(incident.shortlink || 'https://status.claude.com/')}" target="_blank" rel="noopener">View the source on Anthropic Status ↗</a></aside></section>
+  <aside class="next-dispatch"><a href="/claude-api-status#api-history-title">← Recent Claude API incidents</a><a href="/">Is Claude down now? →</a></aside>
+  <p class="caveat api-caveat">Official incident details come from Anthropic Status. Community reports are voluntary submissions, not unique users or verified incident attribution. claudedumb.com is independent and not affiliated with Anthropic.</p>
+</main><footer>Independent community tracker · <a href="/claude-api-status">Claude API status</a> · <a href="/reports">Community history</a></footer><script src="/analytics.js"></script></body></html>`;
+}
+
 // Serve real community status in the initial HTML. This keeps the primary
 // search landing page useful before JavaScript loads and avoids indexing stale
 // placeholders such as "Loading..." and zero counts.
@@ -343,6 +447,29 @@ app.get('/claude-api-status', async (req, res) => {
   } catch (error) {
     console.error('Claude API status page error:', error);
     res.status(503).send('Claude API status is temporarily unavailable.');
+  }
+});
+
+app.get('/claude-api-status/incidents/:incidentId/:slug?', async (req, res) => {
+  try {
+    if (!/^[a-zA-Z0-9_-]+$/.test(req.params.incidentId)) return res.status(404).send('Incident not found.');
+    const incidentsData = await getClaudeApiIncidents();
+    const incidents = claudeApiIncidents(incidentsData);
+    if (!incidents.length) {
+      res.set('Retry-After', '300');
+      return res.status(503).send('Claude API incident history is temporarily unavailable.');
+    }
+    const incident = incidents.find(item => item.id === req.params.incidentId);
+    if (!incident) return res.status(404).send('Incident not found.');
+    const canonicalPath = claudeApiIncidentPath(incident);
+    if (req.path !== canonicalPath) return res.redirect(301, canonicalPath);
+    const incidentDay = new Date(incident.created_at).toISOString().slice(0, 10);
+    const storyResult = await loadStory(incidentDay);
+    res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=3600');
+    res.type('html').send(renderClaudeApiIncidentPage(incident, storyResult));
+  } catch (error) {
+    console.error('Claude API incident page error:', error);
+    res.status(500).send('Unable to load this Claude API incident right now.');
   }
 });
 

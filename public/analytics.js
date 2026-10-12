@@ -25,4 +25,14 @@
       target_path: apiStatusLink.getAttribute('href'),
     });
   });
+
+  document.addEventListener('click', event => {
+    const detailLink = event.target.closest('.api-incident-detail-link');
+    if (!detailLink) return;
+    window.posthog.capture('api_incident_detail_clicked', {
+      incident_id: detailLink.dataset.incidentId,
+      source_path: window.location.pathname,
+      target_path: detailLink.getAttribute('href'),
+    });
+  });
 })();
